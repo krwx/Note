@@ -1,3 +1,9 @@
+- [script 标签的 async 和 defer 属性](#script-标签的-async-和-defer-属性)
+  - [延迟加载 js 脚本的方法：](#延迟加载-js-脚本的方法)
+  - [遇到 script 标签为什么会阻塞](#遇到-script-标签为什么会阻塞)
+- [函数节流与防抖](#函数节流与防抖)
+
+
 # script 标签的 async 和 defer 属性
 - defer 属性
   - 会让脚本的加载与文档的解析同步解析，然后在文档解析完成后再执行这个脚本文件。脚本最后顺序执行
@@ -32,3 +38,50 @@ JavaScript是单线程，在JavaScript运行时其他的事情不能被浏览器
 
 为什么浏览器遇到 script 标签，解析完脚本后会立即执行？:  
 >当浏览器遇到一个`<script>`标签时，脚本可能在运行过程中修改页面内容，所以浏览器无法预知 JavaScript 是否会修改页面内容。因此，浏览器停下来，运行此 JavaScript 代码，
+
+# 函数节流与防抖
+- 函数防抖
+  - 函数防抖是指在事件被触发 n 秒后再执行回调，如果在这 n 秒内事件又被触发，则重新计时。
+  - 这可以使用在一些点击请求的事件上，避免因为用户的多次点击向后端发送多次请求。
+- 函数节流
+  - 函数节流是指规定一个单位时间，在这个单位时间内，只能有一次触发事件的回调函数执行，如果在同一个单位时间内某事件被触发多次，只有一次能生效。
+  - 节流可以使用在 scroll 函数的事件监听上，通过事件节流来降低事件调用的频率。
+```js
+// 函数防抖的实现
+function debounce(fn, wait) {
+  var timer = null;
+
+  return function() {
+    var context = this,
+      args = arguments;
+
+    // 如果此时存在定时器的话，则取消之前的定时器重新记时
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+
+    // 设置定时器，使事件间隔指定事件后执行
+    timer = setTimeout(() => {
+      fn.apply(context, args);
+    }, wait);
+  };
+}
+
+// 函数节流的实现;
+function throttle(fn, delay) {
+  var preTime = Date.now();
+
+  return function() {
+    var context = this,
+      args = arguments,
+      nowTime = Date.now();
+
+    // 如果两次时间间隔超过了指定时间，则执行函数。
+    if (nowTime - preTime >= delay) {
+      preTime = Date.now();
+      return fn.apply(context, args);
+    }
+  };
+}
+```
