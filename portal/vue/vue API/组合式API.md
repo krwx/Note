@@ -1,20 +1,23 @@
-- [ref()](#ref)
-- [shallowRef()](#shallowref)
-- [reactive()](#reactive)
-- [shallowReactive()](#shallowreactive)
-- [computed()](#computed)
-- [watch()](#watch)
-- [watchEffect()](#watcheffect)
-- [watchPostEffect()](#watchposteffect)
-- [watchSyncEffect()](#watchsynceffect)
+- [核心](#核心)
+  - [ref()](#ref)
+  - [shallowRef()](#shallowref)
+  - [reactive()](#reactive)
+  - [shallowReactive()](#shallowreactive)
+  - [computed()](#computed)
+  - [watch()](#watch)
+  - [watchEffect()](#watcheffect)
+  - [watchPostEffect()](#watchposteffect)
+  - [watchSyncEffect()](#watchsynceffect)
+- [工具](#工具)
+  - [toValue()](#tovalue)
 
-
-# ref()
+# 核心
+## ref()
 接受一个内部值，返回一个响应式的、可更改的 ref 对象，此对象只有一个指向其内部值的属性 .value。
 
 如果将一个对象赋值给 ref，那么这个对象将通过 reactive() 转为具有深层次响应式的对象。这也意味着如果对象中包含了嵌套的 ref，它们将被深层地解包。
 
-# shallowRef()
+## shallowRef()
 ref() 的浅层作用形式。
 
 和 ref() 不同，浅层 ref 的内部值将会原样存储和暴露，并且不会被深层递归地转为响应式。只有对 .value 的访问是响应式的。
@@ -28,7 +31,7 @@ state.value.count = 2
 state.value = { count: 2 }
 ```
 
-# reactive()
+## reactive()
 返回一个对象的响应式代理。
 
 - 响应式转换是“深层”的：它会影响到所有嵌套的属性。一个响应式对象也将深层地解包任何 ref 属性，同时保持响应性。
@@ -41,15 +44,15 @@ const obj = reactive({ count: 0 })
 obj.count++
 ```
 
-# shallowReactive()
+## shallowReactive()
 reactive() 的浅层作用形式。
 
 一个浅层响应式对象里只有根级别的属性是响应式的。属性的值会被原样存储和暴露，这也意味着值为 ref 的属性不会被自动解包了。
 
-# computed()
+## computed()
 接受一个 getter 函数，返回一个只读的响应式 ref 对象。该 ref 通过 .value 暴露 getter 函数的返回值。它也可以接受一个带有 get 和 set 函数的对象来创建一个可写的 ref 对象。
 
-# watch()
+## watch()
 侦听一个或多个响应式数据源，并在数据源变化时调用所给的回调函数。
 
 watch() 默认是懒侦听的，即仅在侦听源发生变化时才执行回调函数。
@@ -91,7 +94,7 @@ const stop = watch(source, callback)
 stop()
 ```
 
-# watchEffect()
+## watchEffect()
 立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行。
 
 第一个参数就是**要运行的副作用函数**。这个副作用函数的参数也是一个函数，用来注册清理回调。清理回调会在该副作用下一次执行前被调用，可以用来清理无效的副作用，例如等待中的异步请求 (参见下面的示例)。
@@ -107,8 +110,19 @@ const count = ref(0)
 watchEffect(() => console.log(count.value))
 ```
 
-# watchPostEffect()
+## watchPostEffect()
 watchEffect() 使用 `flush: 'post'` 选项时的别名。
 
-# watchSyncEffect()
+## watchSyncEffect()
 watchEffect() 使用 `flush: 'sync'` 选项时的别名。
+
+# 工具
+## toValue() 
+将值、refs 或 getters 规范化为值。这与 unref() 类似，不同的是此函数也会规范化 getter 函数。如果参数是一个 getter，它将会被调用并且返回它的返回值。
+
+这可以在组合式函数中使用，用来规范化一个可以是值、ref 或 getter 的参数。
+```js
+toValue(1) //       --> 1
+toValue(ref(1)) //  --> 1
+toValue(() => 1) // --> 1
+```
