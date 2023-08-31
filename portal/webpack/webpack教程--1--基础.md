@@ -579,6 +579,8 @@ Css 文件目前被打包到 js 文件中，当 js 文件加载时，会创建�
 通过 `MiniCssExtractPlugin` 插件实现
 本插件会将 CSS 提取到单独的文件中，为每个包含 CSS 的 JS 文件创建一个 CSS 文件，并且支持 CSS 和 SourceMaps 的按需加载。
 
+**注意：这里使用 `MiniCssExtractPlugin` 提取 css 成单独文件是在生产环境下做的工作。开发环境不需要做，还是用 style-loader 就好了，style-loader 有热替换功能，`MiniCssExtractPlugin.loader` 没有热替换功能**
+
 webpack.config.js
 ```js
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
