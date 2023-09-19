@@ -35,6 +35,7 @@
     - [基本概念](#基本概念)
     - [容器属性](#容器属性)
     - [项目属性](#项目属性)
+- [px、em、rem](#pxemrem)
 
 
 # 选择器
@@ -690,7 +691,15 @@ space-evenly - 项目与项目的间隔相等，项目与容器边框之间也�
 * align-self 属性：设置**单个单元格**内容的垂直位置
 * place-self 属性：align-self属性和justify-self属性的合并简写形式
 
+# px、em、rem
+px (pixel) is an absolute unit and is not scalable. It always stays the same size, regardless of the screen size or the user's preferences. This makes it a good choice for small, fixed-size elements like borders, but it can cause problems with accessibility and responsiveness.
 
+em (em) is a relative unit that is based on the font size of the parent element. It can be useful for creating scalable typography, but it can also be unpredictable when nested inside multiple elements with varying font sizes.
 
+rem (root em) is a relative unit that is based on the font size of the root element (which is typically the html element). Unlike em, it is not affected by the font size of the parent element. This makes it a good choice for creating scalable typography and responsive layouts.
 
+So, which one is better to use? It depends on the specific use case. Here are a few general guidelines:
+* Use px for small, fixed-size elements like borders or shadows.
+* Use em for typography and other scalable elements that need to change size relative to their parent element.
+* Use rem for scalable typography and responsive layouts that need to change size relative to the root element.
 

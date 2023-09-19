@@ -9,7 +9,7 @@
 - [9. 更倾向于使用 Promise 还是 async、await，为什么](#9-更倾向于使用-promise-还是-asyncawait为什么)
 - [10. async、await怎么适配移动端](#10-asyncawait怎么适配移动端)
 - [11. 说一下做过什么优化网页性能](#11-说一下做过什么优化网页性能)
-- [12. 有做过哪些兼容处理](#12-有做过哪些兼容处理)
+- [12. 有做过哪些兼容处理/有解决过兼容性问题吗？](#12-有做过哪些兼容处理有解决过兼容性问题吗)
 - [13. 判断浏览器类型](#13-判断浏览器类型)
 - [15. let 和 const 的区别](#15-let-和-const-的区别)
 - [16. eventBus 和 redux 的区别](#16-eventbus-和-redux-的区别)
@@ -24,6 +24,22 @@
 - [25. 了解 js 的垃圾回收吗](#25-了解-js-的垃圾回收吗)
 - [26. 了解节流和防抖吗？在项目中有使用过吗？（应该是设置在1s内的）](#26-了解节流和防抖吗在项目中有使用过吗应该是设置在1s内的)
 - [27. 讲一下 Babel 是干什么的，在 React 中做了哪些工作](#27-讲一下-babel-是干什么的在-react-中做了哪些工作)
+- [28. 讲一下哪些场景会导致内存泄漏](#28-讲一下哪些场景会导致内存泄漏)
+- [29. 讲一下闭包导致内存泄漏的例子](#29-讲一下闭包导致内存泄漏的例子)
+- [30. A类返回的闭包，B类一直在使用，A类进行垃圾回收时，一定回收不成功吗](#30-a类返回的闭包b类一直在使用a类进行垃圾回收时一定回收不成功吗)
+- [31. 讲一下 js 怎么实现二分查找，讲一下思路](#31-讲一下-js-怎么实现二分查找讲一下思路)
+- [32. 基本类型有哪些](#32-基本类型有哪些)
+- [33. typeof 的输出结果有哪些](#33-typeof-的输出结果有哪些)
+- [34. 你了解原型吗](#34-你了解原型吗)
+- [35. 构造函数/类通过哪个属性获取原型，实例通过哪个属性获取原型](#35-构造函数类通过哪个属性获取原型实例通过哪个属性获取原型)
+- [36. 类是怎么和原型链有关系的](#36-类是怎么和原型链有关系的)
+- [37. 类的静态方法在原型链上吗](#37-类的静态方法在原型链上吗)
+- [38. 类的静态方法和实例方法有什么区别](#38-类的静态方法和实例方法有什么区别)
+- [39. 数组常用的方法有哪些](#39-数组常用的方法有哪些)
+- [40. 循环数据的方式有哪些](#40-循环数据的方式有哪些)
+- [41. 数组有自身循环的方法吗](#41-数组有自身循环的方法吗)
+- [42. 讲一下 splice 怎么使用](#42-讲一下-splice-怎么使用)
+- [43. 有了解 es6 的数组新增的方法吗](#43-有了解-es6-的数组新增的方法吗)
 
 
 ## 1. 函数柯里化
@@ -146,7 +162,7 @@ var声明的变量存在变量提升，let和const不存在变量提升，即它
     3. 重构不合理的代码
     ps：图片使用base64编码，使用雪碧图
 
-## 12. 有做过哪些兼容处理
+## 12. 有做过哪些兼容处理/有解决过兼容性问题吗？
 1. event.x与event.y问题说明:  
    - IE下,event对象有x,y属性,但是没有pageX,pageY属性;  
    - Firefox下,event对象有pageX,pageY属性,但是没有x,y属性.  
@@ -286,3 +302,238 @@ Babel 是一个工具链，主要用于在旧的浏览器或环境中将 ECMAScr
 Babel 默认只转换新的 JavaScript 句法（syntax），而不转换新的 API。
 
 Polyfill的准确意思为，用于实现浏览器并不支持的原生API的代码。
+
+## 28. 讲一下哪些场景会导致内存泄漏
+
+## 29. 讲一下闭包导致内存泄漏的例子
+
+## 30. A类返回的闭包，B类一直在使用，A类进行垃圾回收时，一定回收不成功吗
+
+## 31. 讲一下 js 怎么实现二分查找，讲一下思路
+
+## 32. 基本类型有哪些
+js 一共有五种基本数据类型，分别是 `Undefined、Null、Boolean、Number、String`，还有在 ES6 中新增的 `Symbol` 和 ES10 中新增的 `BigInt` 类型。
+
+`Symbol` 代表创建后独一无二且不可变的数据类型，它的出现我认为主要是为了解决可能出现的全局变量冲突的问题。
+
+`BigInt` 是一种数字类型的数据，它可以表示任意精度格式的整数，使用 BigInt 可以安全地存储和操作大整数，即使这个数已经超出了 Number 能够表示的安全整数范围。
+
+## 33. typeof 的输出结果有哪些
+typeof 检测返回 6 种： `undefined、boolean、string、number、object、function`
+
+> 注： null 是一个只有一个值的特殊类型，表示一个空对象引用，用 typeof 检测返回是 object。
+
+## 34. 你了解原型吗
+## 35. 构造函数/类通过哪个属性获取原型，实例通过哪个属性获取原型
+构造函数通过 prototype 属性获取原型。  
+实例通过 Object.getPrototype() 方法获取，对应的是 `[[Prototype]]` 属性
+
+## 36. 类是怎么和原型链有关系的
+类也有 prototype 属性，prototype 属性保存分配给所有对象实例的 `[[Prototype]]`
+
+## 37. 类的静态方法在原型链上吗
+静态方法会保存在类的 `prototype` 属性的 `constructor` 属性。
+
+继承会继承静态属性，但是也是通过类去获取静态属性，不能通过实例对象获取静态属性。
+
+## 38. 类的静态方法和实例方法有什么区别
+* 静态属性：定义在构造函数上的属性，只能由构造函数来进行调用
+* 实例属性：定义在构造函数内部的属性，使用绑定在this上面。只能实例去访
+问，构造函数访问不到
+* 原型属性：定义在构造函数原型上的方法。实例可以访问到。构造函数可以
+通过prototype属性来访问
+
+## 39. 数组常用的方法有哪些
+- join()：用指定的分隔符将数组每一项拼接为字符串
+- push() ：向数组的末尾添加新元素
+- pop()：删除数组的最后一项
+- shift()：删除数组的第一项
+- unshift()：向数组首位添加新元素
+- slice()：按照条件查找出其中的部分元素
+- splice()：对数组进行增删改
+- fill(): 方法能使用特定值填充数组中的一个或多个元素
+- filter():“过滤”功能
+- concat()：用于连接两个或多个数组
+- indexOf()：检测当前值在数组中第一次出现的位置索引
+- lastIndexOf()：检测当前值在数组中最后一次出现的位置索引
+- every()：判断数组中每一项都是否满足条件
+- some()：判断数组中是否存在满足条件的项
+- includes()：判断一个数组是否包含一个指定的值
+- sort()：对数组的元素进行排序
+- reverse()：对数组进行倒序
+- forEach()：ES5 及以下循环遍历数组每一项
+- map()：ES6 循环遍历数组每一项
+- copyWithin():用于从数组的指定位置拷贝元素到数组的另一个指定位置中
+- find():返回匹配的值
+- findIndex():返回匹配位置的索引
+- toLocaleString()、toString():将数组转换为字符串
+- flat()、flatMap()：扁平化数组
+- entries() 、keys() 、values():遍历数组
+
+## 40. 循环数据的方式有哪些
+JavaScript 中的12种循环遍历方法
+
+1、for 循环
+```js
+let arr = [1,2,3];
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i]);
+}
+```
+for 循环是 Js 中最常用的一个循环工具，经常用于数组的循环遍历。
+
+2、for in 循环
+```js
+let obj = { a: 1, b: 2 };
+for (let i in obj) {
+  console.log(obj[i]);
+}
+```
+for in 循环主要用于遍历普通对象，i 代表对象的 key 值，`obj[i]` 代表对应的 `value`,当用它来遍历数组时候，多数情况下也能达到同样的效果，但是你不要这么做，这是有风险的，因为 i 输出为字符串形式，而不是数组需要的数字下标，这意味着在某些情况下，会发生字符串运算，导致数据错误，比如：'52'+1 = '521' 而不是我们需要的 53。
+
+另外 for in 循环的时候，不仅遍历自身的属性，还会找到 `prototype` 上去，所以最好在循环体内加一个判断，就用 `obj[i].hasOwnProperty(i)`，这样就避免遍历出太多不需要的属性。
+
+3、while 循环、do while 循环
+
+4、Array forEach 循环
+```js
+let arr = [1,2,3];
+arr.forEach((item,index)=>{
+    console.log(index)  // 0 1 2
+    console.log(item.name) // 1 2 3
+})
+```
+forEach循环，循环数组中每一个元素并采取操作， 没有返回值， 可以不用知道数组长度,他有三个参数，只有第一个是必需的，代表当前下标下的 value。
+
+另外请注意，forEach 循环在所有元素调用完毕之前是不能停止的，它没有 break 语句，如果你必须要停止，可以尝试 try catch 语句，就是在要强制退出的时候，抛出一个 error 给 catch 捕捉到，然后在 catch 里面 return，这样就能中止循环了，如果你经常用这个方法，最好自定义一个这样的 forEach 函数在你的库里。
+
+6、Array map()方法
+```js
+let arr = [1,2,3,4,5]
+let arr2 = arr.map((n)=>{
+      return n+1
+})
+console.log(arr2) // [2,3,4,5,6]
+console.log(arr) // [1,2,3,4,5]
+```
+map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
+注意：map 和 forEach 方法都是只能用来遍历数组，不能用来遍历普通对象。
+
+7、Array filter() 方法
+```js
+let arr2 = arrObj.filter((item,index)=>{
+    return (item.name === 'xiaohua')
+})
+```
+filter 方法是 Array 对象内置方法，它会返回通过过滤的元素，不改变原来的数组。
+
+8、Array some() 方法
+```js
+let arr = [1,2,3]
+let result = arr.some((item) => {
+  return item > 1;
+})
+// true
+```
+some() 方法用于检测数组中的元素是否满足指定条件（函数提供）,返回 boolean 值，不改变原数组。
+
+9、Array every() 方法
+```js
+let arr = [1,2,3]
+let result = arr.some((item) => {
+  return item > 1;
+})
+// false
+```
+every() 方法用于检测数组所有元素是否都符合指定条件（通过函数提供），返回 boolean 值，不改变原数组。
+
+10、Array reduce()方法
+```js
+let arr = [1,2,3]
+let result = arr.reduce((i, j) => {
+  return i + j;
+})
+// 6
+```
+reduce() 方法接收一个函数作为累加器，数组中的每个值（从左到右）开始缩减，最终计算为一个值。
+
+11、Array reduceRight()方法
+```js
+let arr = [1,2,3]
+let result = arr.reduce((i, j) => {
+  return i + j;
+})
+// 6
+```
+reduceRight()方法,和 reduce() 功能是一样的，它是**从数组的末尾处向前开始计算**。
+
+12、for of 循环
+```js
+let arr = [1,2,3];
+for (let obj of arr) {
+  console.log(obj);
+}
+```
+for of 循环是 Es6 中新增的语句，用来替代 for in 和 forEach，它允许你遍历 Arrays（数组）, Strings（字符串）, Maps（映射）, Sets（集合）等可迭代(Iterable data)的数据结构,注意它的兼容性。
+
+## 41. 数组有自身循环的方法吗
+forEach、some、every、filter、reduce、reduceRight
+
+## 42. 讲一下 splice 怎么使用
+`splice()` 方法通过移除或者替换已存在的元素和/或添加新元素就地改变一个数组的内容。语法如下：
+```
+splice(start)
+splice(start, deleteCount)
+splice(start, deleteCount, item1)
+splice(start, deleteCount, item1, item2, itemN)
+```
+参数：
+* start
+  * 从 0 开始计算的索引，表示要开始改变数组的位置，它会被转换成整数。
+    * 负索引从数组末尾开始计算——如果 start < 0，使用 start + array.length。
+    * 如果 start < -array.length，使用 0。
+    * 如果 start >= array.length，则不会删除任何元素，但是该方法会表现为添加元素的函数，添加所提供的那些元素。
+    * 如果 start 被省略了（即调用 splice() 时不传递参数），则不会删除任何元素。这与传递 undefined 不同，后者会被转换为 0。
+* deleteCount （可选）
+  * 一个整数，表示数组中要从 start 开始删除的元素数量。
+  * 如果省略了 deleteCount，或者其值大于或等于由 start 指定的位置到数组末尾的元素数量，那么从 start 到数组末尾的所有元素将被删除。但是，如果你想要传递任何 itemN 参数，则应向 deleteCount 传递 Infinity 值，以删除 start 之后的所有元素，因为显式的 undefined 会转换为 0。
+  * 如果 deleteCount 是 0 或者负数，则不会移除任何元素。在这种情况下，你应该至少指定一个新元素（请参见下文）。
+* item1, …, itemN  （可选）
+  * 从 start 开始要加入到数组中的元素。
+  * 如果不指定任何元素，splice() 将只从数组中删除元素。
+
+返回值： 
+* 一个包含了删除的元素的数组。
+* 如果只移除一个元素，则返回一个元素的数组。
+* 如果没有删除任何元素，则返回一个空数组。
+  
+示例：  
+移除索引 2 之前的 0（零）个元素，并插入“drum”和“guitar”
+```js
+const myFish = ["angel", "clown", "mandarin", "sturgeon"];
+const removed = myFish.splice(2, 0, "drum", "guitar");
+
+// 运算后的 myFish 是 ["angel", "clown", "drum", "guitar", "mandarin", "sturgeon"]
+// removed 是 []，没有元素被删除
+```
+
+在索引 2 处移除 1 个元素，并插入“trumpet”
+```js
+const myFish = ["angel", "clown", "drum", "mandarin", "sturgeon"];
+const removed = myFish.splice(3, 1);
+
+// 运算后的 myFish 是 ["angel", "clown", "drum", "sturgeon"]
+// removed 是 ["mandarin"]
+```
+
+从索引 2 处开始移除 2 个元素
+```js
+const myFish = ["parrot", "anemone", "blue", "trumpet", "sturgeon"];
+const removed = myFish.splice(2, 2);
+
+// 运算后的 myFish 是 ["parrot", "anemone", "sturgeon"]
+// removed 是 ["blue", "trumpet"]
+```
+
+## 43. 有了解 es6 的数组新增的方法吗
+map、filter、some、every、fill、copyWithin、find、findIndex、flat、flatMap、reduce

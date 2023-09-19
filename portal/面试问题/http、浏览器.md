@@ -150,3 +150,10 @@ XMLHttpRequest（XHR）对象用于与服务器交互。通过 XMLHttpRequest �
 比较少用到。angular 有一个 http 库，引用之后，调用相关的 get、post 还有其他方法发送 http 请求。
 
 ## 15. 浏览器怎么找到对应的 js 文件
+
+## 16. 讲一下浏览器的存储/缓存, 还有其他存储技术吗？
+
+## 17. 讲一下 sessionStorage、localStroage 的区别
+## 18. localStorage 在关闭浏览器后还会存在吗？
+## 19. sessionStorage 的会话是指什么含义
+## 20. 同一个域名，两个不同的标签页可以共享 sessionStorage 吗？
