@@ -1,6 +1,6 @@
 // "use strict"
 
-let obj = {
+/* let obj = {
     a: function() {
         console.log("a: ", this);
     },
@@ -30,4 +30,14 @@ console.log("end");
 
 var f = () => { 'use strict'; return this; };
 console.log(f());
-console.log(f() === global);
+console.log(f() === global); */
+
+console.log(typeof a);
+
+console.log(typeof newLetVariable); // ReferenceError
+console.log(typeof newConstVariable); // ReferenceError
+console.log(typeof newClass); // ReferenceError
+
+let newLetVariable;
+const newConstVariable = "hello";
+class newClass {}

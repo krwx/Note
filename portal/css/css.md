@@ -36,6 +36,8 @@
     - [容器属性](#容器属性)
     - [项目属性](#项目属性)
 - [px、em、rem](#pxemrem)
+- [模块](#模块)
+  - [全局作用域](#全局作用域)
 
 
 # 选择器
@@ -703,3 +705,31 @@ So, which one is better to use? It depends on the specific use case. Here are a 
 * Use em for typography and other scalable elements that need to change size relative to their parent element.
 * Use rem for scalable typography and responsive layouts that need to change size relative to the root element.
 
+# 模块
+## 全局作用域
+CSS Modules 允许使用 `:global(.className)` 的语法，声明一个全局规则。凡是这样声明的class，都不会被编译成哈希字符串。
+
+App.css加入一个全局class。
+
+```css
+.title {
+  color: red;
+}
+
+:global(.title) {
+  color: green;
+}
+```
+App.js使用普通的class的写法，就会引用全局class。
+```js
+import React from 'react';
+import styles from './App.css';
+
+export default () => {
+  return (
+    <h1 className="title">
+      Hello World
+    </h1>
+  );
+};
+```
