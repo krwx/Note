@@ -41,3 +41,5 @@ console.log(typeof newClass); // ReferenceError
 let newLetVariable;
 const newConstVariable = "hello";
 class newClass {}
+
+Object.toString()
