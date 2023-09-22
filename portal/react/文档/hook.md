@@ -1,3 +1,16 @@
+- [useState](#usestate)
+- [useEffect](#useeffect)
+  - [使用](#使用)
+  - [原理](#原理)
+  - [`useLayoutEffect` 与 `useEffect` 的区别:](#uselayouteffect-与-useeffect-的区别)
+  - [是否传递依赖](#是否传递依赖)
+- [useLayoutEffect](#uselayouteffect)
+- [useReducer](#usereducer)
+- [useRef](#useref)
+- [useDeferredValue](#usedeferredvalue)
+- [useMemo](#usememo)
+
+
 # useState
 
 # useEffect
@@ -25,6 +38,14 @@
 总结：
 - `useEffect`是异步触发，适用于大多数副作用操作。
 - `useLayoutEffect`是同步触发，适用于需要在DOM更新之前立即执行操作的情况，但需要注意潜在的性能问题。
+
+## 是否传递依赖
+* 传递依赖项数组
+  * 如果指定了依赖项，则 Effect 在 **初始渲染后以及依赖项变更的重新渲染后** 运行。
+* 传递空依赖项数组 
+  * 如果你的 Effect 确实没有使用任何响应式值，则它仅在 **初始渲染后** 运行。
+* 不传递依赖项数组 
+  * 如果完全不传递依赖数组，则 Effect 会在组件的 **每次单独渲染（和重新渲染）之后** 运行。
 
 # useLayoutEffect
 

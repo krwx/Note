@@ -45,6 +45,8 @@ package-lock.json 是自动生成的，就是相当于我们的缓存文件，�
   - npm cache clean
 - 强制重新build 
   - npm rebuild
+- 查看配置列表
+  - npm config list
 
 ## yarn
 yarn是有Facebook、Google、Exponent和Tilde联合推出了一个新的JS包管理工具
