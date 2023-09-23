@@ -14,6 +14,9 @@
     - [语法](#语法-1)
     - [描述](#描述)
     - [重写自定义对象的 valueOf](#重写自定义对象的-valueof)
+  - [Object.is()](#objectis)
+    - [描述](#描述-1)
+    - [Object.is() 与 == 与 === 的区别](#objectis-与--与--的区别)
 
 # 方法
 ## Object.prototype.toString()
@@ -189,3 +192,55 @@ const box = new Box(123);
 console.log(box + 456); // 579
 console.log(box == 123); // true
 ```
+
+## Object.is()
+`Object.is()` **静态方法**确定两个值是否为相同值。  
+返回一个布尔值，指示两个参数是否为相同的值。
+```js
+console.log(Object.is('1', 1));
+// Expected output: false
+
+console.log(Object.is(NaN, NaN));
+// Expected output: true
+
+console.log(Object.is(-0, 0));
+// Expected output: false
+
+console.log(Object.is({}, {}));
+// Expected output: false
+
+Object.is(null, null); // true
+Object.is(undefined, undefined); // true
+Object.is(window, window); // true，因为 window 是全局对象，只有一个
+Object.is([], []); // false，这里是因为是两个不同的数组
+
+const foo = { a: 1 };
+const bar = { a: 1 };
+const sameFoo = foo;
+Object.is(foo, foo); // true
+Object.is(foo, bar); // false
+Object.is(foo, sameFoo); // true
+```
+
+### 描述
+`Object.is()` 确定两个值是否为相同值。如果以下其中一项成立，则两个值相同：
+* 都是 undefined
+* 都是 null
+* 都是 true 或者都是 false
+* 都是长度相同、字符相同、顺序相同的字符串
+* 都是相同的对象（意味着两个值都引用了内存中的同一对象）（如果两个对象内的属性相同，但是不是引用同一个对象，是不相同的）
+* 都是 BigInt 且具有相同的数值
+* 都是 symbol 且引用相同的 symbol 值
+* 都是数字且
+  * 都是 +0
+  * 都是 -0
+  * 都是 NaN
+  * 都有相同的值，非零且都不是 NaN
+
+### Object.is() 与 == 与 === 的区别
+* Object.is() 与 == 运算符并不等价。
+  * == 运算符会对两个操作数进行类型转换（如果它们不是相同的类型）
+  * 但是 `Object.is()` 不会对其操作数进行类型转换。
+* Object.is() 也不等价于 === 运算符。唯一区别在于它们处理带符号的 0 和 NaN 值的时候，刚好处理相反。
+  * === 运算符（和 == 运算符）将数值 -0 和 +0 视为相等，但是会将 NaN 视为彼此不相等。
+  * Object.is() 将数值 -0 和 +0 视为不相等，但是会将 NaN 视为彼此相等。

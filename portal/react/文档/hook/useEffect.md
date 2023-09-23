@@ -1,17 +1,9 @@
-- [useState](#usestate)
 - [useEffect](#useeffect)
   - [使用](#使用)
   - [原理](#原理)
   - [`useLayoutEffect` 与 `useEffect` 的区别:](#uselayouteffect-与-useeffect-的区别)
   - [是否传递依赖](#是否传递依赖)
-- [useLayoutEffect](#uselayouteffect)
-- [useReducer](#usereducer)
-- [useRef](#useref)
-- [useDeferredValue](#usedeferredvalue)
-- [useMemo](#usememo)
 
-
-# useState
 
 # useEffect
 ## 使用
@@ -46,13 +38,3 @@
   * 如果你的 Effect 确实没有使用任何响应式值，则它仅在 **初始渲染后** 运行。
 * 不传递依赖项数组 
   * 如果完全不传递依赖数组，则 Effect 会在组件的 **每次单独渲染（和重新渲染）之后** 运行。
-
-# useLayoutEffect
-
-
-# useReducer
-# useRef
-在页面渲染后运行
-# useDeferredValue
-
-# useMemo
