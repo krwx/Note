@@ -17,6 +17,8 @@
   - [Object.is()](#objectis)
     - [描述](#描述-1)
     - [Object.is() 与 == 与 === 的区别](#objectis-与--与--的区别)
+  - [Object.defineProperty()](#objectdefineproperty)
+    - [语法](#语法-2)
 
 # 方法
 ## Object.prototype.toString()
@@ -228,7 +230,7 @@ Object.is(foo, sameFoo); // true
 * 都是 null
 * 都是 true 或者都是 false
 * 都是长度相同、字符相同、顺序相同的字符串
-* 都是相同的对象（意味着两个值都引用了内存中的同一对象）（如果两个对象内的属性相同，但是不是引用同一个对象，是不相同的）
+* 都是相同的对象（**意味着两个值都引用了内存中的同一对象**）（***如果两个对象内的属性相同，但是不是引用同一个对象，是不相同的***）
 * 都是 BigInt 且具有相同的数值
 * 都是 symbol 且引用相同的 symbol 值
 * 都是数字且
@@ -244,3 +246,23 @@ Object.is(foo, sameFoo); // true
 * Object.is() 也不等价于 === 运算符。唯一区别在于它们处理带符号的 0 和 NaN 值的时候，刚好处理相反。
   * === 运算符（和 == 运算符）将数值 -0 和 +0 视为相等，但是会将 NaN 视为彼此不相等。
   * Object.is() 将数值 -0 和 +0 视为不相等，但是会将 NaN 视为彼此相等。
+
+## Object.defineProperty()
+`Object.defineProperty()` **静态方法**会直接在一个对象上定义一个新属性，或修改其现有属性，并返回此对象。
+
+### 语法
+`Object.defineProperty(obj, prop, descriptor)`  
+
+参数
+* `obj`：要定义属性的对象。
+* `prop`：一个字符串或 `Symbol`，指定了要定义或修改的属性键。
+* `descriptor`：要定义或修改的属性的描述符。
+
+返回值
+* 传入函数的对象，其指定的属性已被添加或修改。
+
+
+
+
+
+

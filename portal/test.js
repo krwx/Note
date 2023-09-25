@@ -32,7 +32,7 @@ var f = () => { 'use strict'; return this; };
 console.log(f());
 console.log(f() === global); */
 
-console.log(typeof a);
+/* console.log(typeof a);
 
 console.log(typeof newLetVariable); // ReferenceError
 console.log(typeof newConstVariable); // ReferenceError
@@ -42,4 +42,11 @@ let newLetVariable;
 const newConstVariable = "hello";
 class newClass {}
 
-Object.toString()
+Object.toString() */
+
+console.log(a)
+console.log(b)
+var a = 1;
+let b = 2
+
+// 1 && 2
