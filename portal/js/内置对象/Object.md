@@ -19,6 +19,20 @@
     - [Object.is() 与 == 与 === 的区别](#objectis-与--与--的区别)
   - [Object.defineProperty()](#objectdefineproperty)
     - [语法](#语法-2)
+    - [描述](#描述-2)
+      - [属性描述符](#属性描述符)
+    - [使用经验](#使用经验)
+    - [示例](#示例)
+      - [创建属性](#创建属性)
+      - [修改属性](#修改属性)
+        - [Writable 特性](#writable-特性)
+        - [Enumerable 特性](#enumerable-特性)
+      - [自定义 setter 和 getter](#自定义-setter-和-getter)
+      - [继承属性](#继承属性)
+  - [Object.defineProperties()](#objectdefineproperties)
+    - [语法](#语法-3)
+    - [示例](#示例-1)
+    - [`Object.defineProperties()` 与 `Object.defineProperty()` 的区别](#objectdefineproperties-与-objectdefineproperty-的区别)
 
 # 方法
 ## Object.prototype.toString()
@@ -261,8 +275,309 @@ Object.is(foo, sameFoo); // true
 返回值
 * 传入函数的对象，其指定的属性已被添加或修改。
 
+### 描述
+* `Object.defineProperty()` 允许精确地添加或修改对象上的属性。  
+* 默认情况下，使用 `Object.defineProperty()` 添加的属性是不可写、不可枚举和不可配置的。  
+* 但是通过描述符可以使属性被更改，也可以被删除
+* 通过赋值添加的普通属性会在枚举属性时（例如 for...in、Object.keys() 等）出现
+
+#### 属性描述符
+属性描述符有两种主要类型：**数据描述符**和**访问器描述符**。
+* 数据描述符是一个具有可写或不可写值的属性。
+* 访问器描述符是由 getter/setter 函数对描述的属性。
+
+**数据描述符**和**访问器描述符**共享的键：
+* `configurable`--是否配置
+  * 当设置为 `false` 时，
+    * 该属性的类型不能在数据属性和访问器属性之间更改
+    * 该属性不可被删除
+    * 其描述符的其他属性也不能被更改（但是，如果它是一个可写的数据描述符，则 value 可以被更改，writable 可以更改为 false）。
+  * 默认值为 `false`。
+* `enumerable`--是否参与枚举
+  * 当且仅当该属性在对应对象的属性枚举中出现时，值为 `true`。**默认值为 `false`**。
+
+**数据描述符**的键：
+* value
+  * 与属性相关联的值。可以是任何有效的 JavaScript 值（数字、对象、函数等）。**默认值为 `undefined`** 。
+* writable
+  * 如果与属性相关联的值可以使用赋值运算符更改，则为 true。默认值为 false。
+
+**访问器描述符**的键：
+* get
+  * 用作属性 getter 的函数，如果没有 getter 则为 undefined。
+  * 当访问该属性时，将不带参地调用此函数，并将 this 设置为通过该属性访问的对象（因为可能存在继承关系，这可能不是定义该属性的对象）。
+  * 返回值将被用作该属性的值。**默认值为 `undefined`**。
+* set
+  * 用作属性 setter 的函数，如果没有 setter 则为 undefined。
+  * 当该属性被赋值时，将调用此函数，并带有一个参数（要赋给该属性的值），并将 this 设置为通过该属性分配的对象。
+  * **默认值为 `undefined`**。
+
+如果描述符同时具有 `[value` 或 `writable]` 和 `[get` 或 `set]` 键，则会抛出异常。
+
+当属性已经存在时，`Object.defineProperty()` 会尝试根据描述符和属性的当前配置修改属性。
+
+如果旧描述符的 `configurable` 特性被设置为 `false`，则该属性被称为**不可配置**的。无法更改不可配置的访问器属性的任何特性，也不能将其在数据类型和访问器类型之间切换。
+
+对于具有 `writable: true` 的数据属性，可以修改其值并将 `writable` 特性从 `true` 改为 `false`。
+
+当当前属性是可配置的时，将特性设置为 `undefined` 可以有效地删除它。例如，如果 `o.k` 是一个访问器属性，下面的语句将删除 `setter`：
+```js
+Object.defineProperty(o, "k", { set: undefined })
+```
+
+### 使用经验
+1. configurable 为 false 或者 true
+   1. writable 为 true，可以修改值
+   2. writable 为 false，不可以修改值
+2. configurable 为 false
+   1. 再使用 `Object.defineProperty()` 定义该属性会报错
+3. writable 为 false，即使修改值也不会生效
+   1. configurable 为 true，可以通过 `Object.defineProperty()` 定义 value 来改写值，或者定义 writable 为 true 再改写值
+
+### 示例
+#### 创建属性
+```js
+// 例子1
+const obj = {};
+// 1. 使用 null 原型：没有继承的属性
+const descriptor = Object.create(null);
+descriptor.value = "static";
+
+// 默认情况下，它们不可枚举、不可配置、不可写
+Object.defineProperty(obj, "key", descriptor);  
+// obj 的值为 {key: 'static'}
+
+// 2. 使用一个包含所有属性的临时对象字面量来明确其属性
+Object.defineProperty(obj, "key2", {
+  enumerable: false,
+  configurable: false,
+  writable: false,
+  value: "static",
+});
+// obj 的值为 {key: 'static', key2: 'static'}
 
 
+// 例子2
+const o = {}; // 创建一个新对象
 
+// 通过 defineProperty 使用数据描述符添加对象属性的示例
+Object.defineProperty(o, "a", {
+  value: 37,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});
+// 'a' 属性存在于对象 o 中，其值为 37
 
+// 通过 defineProperty 使用访问器属性描述符添加对象属性的示例
+let bValue = 38;
+Object.defineProperty(o, "b", {
+  get() {
+    return bValue;
+  },
+  set(newValue) {
+    bValue = newValue;
+  },
+  enumerable: true,
+  configurable: true,
+});
+o.b; // 38
+// 'b' 属性存在于对象 o 中，其值为 38。
+// o.b 的值现在始终与 bValue 相同，除非重新定义了 o.b。
 
+// 数据描述符和访问器描述符不能混合使用
+Object.defineProperty(o, "conflict", {
+  value: 0x9f91102,
+  get() {
+    return 0xdeadbeef;
+  },
+});
+// 抛出错误 TypeError: value appears only in data descriptors, get appears only in accessor descriptors
+```
+
+#### 修改属性
+##### Writable 特性
+当 `writable` 特性设置为 `false` 时，该属性被称为“不可写的”。它不能被重新赋值。尝试对一个不可写的属性进行写入不会改变它，在严格模式下还会导致错误。
+```js
+const o = {}; // 创建一个新对象
+
+Object.defineProperty(o, "a", {
+  value: 37,
+  writable: false,
+});
+
+console.log(o.a); // 37
+o.a = 25; // 不会抛出错误
+// （在严格模式下，即使值相同，它也会抛出异常）
+console.log(o.a); // 37；赋值不会成功
+```
+
+##### Enumerable 特性
+`enumerable` 特性定义了属性是否可以被 `Object.assign()` 或展开运算符所考虑.
+```js
+const o = {};
+Object.defineProperty(o, "a", {
+  value: 1,
+  enumerable: true,
+});
+Object.defineProperty(o, "b", {
+  value: 2,
+  enumerable: false,
+});
+Object.defineProperty(o, "c", {
+  value: 3,
+}); // enumerable 默认为 false
+o.d = 4; // 通过赋值创建属性时 enumerable 默认为 true
+Object.defineProperty(o, Symbol.for("e"), {
+  value: 5,
+  enumerable: true,
+});
+Object.defineProperty(o, Symbol.for("f"), {
+  value: 6,
+  enumerable: false,
+});
+
+for (const i in o) {
+  console.log(i);
+}
+// 打印 'a' 和 'd'（总是按这个顺序）
+
+Object.keys(o); // ['a', 'd']
+
+o.propertyIsEnumerable("a"); // true
+o.propertyIsEnumerable("b"); // false
+o.propertyIsEnumerable("c"); // false
+o.propertyIsEnumerable("d"); // true
+o.propertyIsEnumerable(Symbol.for("e")); // true
+o.propertyIsEnumerable(Symbol.for("f")); // false
+
+const p = { ...o };
+p.a; // 1
+p.b; // undefined
+p.c; // undefined
+p.d; // 4
+p[Symbol.for("e")]; // 5
+p[Symbol.for("f")]; // undefined
+```
+
+#### 自定义 setter 和 getter
+```js
+function Archiver() {
+  let temperature = null;
+  const archive = [];
+
+  Object.defineProperty(this, "temperature", {
+    get() {
+      console.log("get!");
+      return temperature;
+    },
+    set(value) {
+      temperature = value;
+      archive.push({ val: temperature });
+    },
+  });
+
+  this.getArchive = () => archive;
+}
+
+const arc = new Archiver();
+arc.temperature; // 'get!'
+arc.temperature = 11;
+arc.temperature = 13;
+arc.getArchive(); // [{ val: 11 }, { val: 13 }]
+```
+
+#### 继承属性
+如果访问器属性被继承，它的 get 和 set 方法会在派生对象的属性被访问或者修改时被调用。如果这些方法**用一个变量存值，该值会被所有对象共享**。
+```js
+function MyClass() {}
+
+let value;
+Object.defineProperty(MyClass.prototype, "x", {
+  get() {
+    return value;
+  },
+  set(x) {
+    value = x;
+  },
+});
+
+const a = new MyClass();
+const b = new MyClass();
+a.x = 1;
+console.log(b.x); // 1。x 这个变量被共享了
+```
+解决方法：通过 this 指针。this 指向某个被访问和修改属性的对象。
+```js
+function MyClass() {}
+
+Object.defineProperty(MyClass.prototype, "x", {
+  get() {
+    return this.storedX;
+  },
+  set(x) {
+    this.storedX = x;
+  },
+});
+
+const a = new MyClass();
+const b = new MyClass();
+a.x = 1;
+console.log(b.x); // undefined
+```
+与访问器属性不同，数据属性始终在对象自身上设置，而不是一个原型。所以不用考虑上面的问题。
+
+一个不可写的属性被继承，它仍然可以防止修改对象的属性。
+```js
+function MyClass() {}
+
+MyClass.prototype.x = 1;
+Object.defineProperty(MyClass.prototype, "y", {
+  writable: false,
+  value: 1,
+});
+
+const a = new MyClass();
+a.x = 2;
+console.log(a.x); // 2
+console.log(MyClass.prototype.x); // 1
+a.y = 2; // 没有作用；严格模式下会报错
+console.log(a.y); // 1
+console.log(MyClass.prototype.y); // 1
+```
+
+## Object.defineProperties()
+`Object.defineProperties()` 静态方法直接在一个对象上定义新的属性或修改现有属性，并返回该对象。
+
+### 语法
+`Object.defineProperties(obj, props)`
+
+参数：
+* obj
+  * 在其上定义或修改属性的对象。
+* props
+  * 一个对象，**其中每个键表示要定义或修改的属性的名称，每个值是描述该属性的对象**。在 props 中的每个值必须是且只能是数据描述符或访问器描述符之一；不能同时为两者（更多详细信息，请参见Object.defineProperty()）。
+
+### 示例
+```js
+const obj = {};
+Object.defineProperties(obj, {
+  property1: {
+    value: true,
+    writable: true,
+  },
+  property2: {
+    value: "Hello",
+    writable: false,
+  },
+});
+// obj 的值为 {property1: true, property2: 'Hello'}
+```
+
+### `Object.defineProperties()` 与 `Object.defineProperty()` 的区别
+* 定义的属性数量
+  * `Object.defineProperties()` 可以定义多个属性
+  * `Object.defineProperty()` 只能定义一个属性
+* 入参不同
+  * `Object.defineProperties()` 的第二个参数为对象，对象的键定义名称，值为描述该属性的对象。
+  * `Object.defineProperty()` 的第二个参数为属性名，第三个参数为描述该属性的对象

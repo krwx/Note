@@ -402,6 +402,7 @@ min-height| 最小高度
 min-width| 属性为给定元素设置最小宽度。
 min-monochrome| 每个像素的最小单色原件个数
 min-resolution| 最小分辨率
+prefers-color-scheme | 检测用户倾向于选择亮色还是暗色的配色方案。于媒体查询第 5 版中被添加。
 
 ## 逻辑运算符
 逻辑运算符（logical operator）`not、and、only 和 or` 可用于联合构造复杂的媒体查询，你还可以通过用逗号分隔多个媒体查询，将它们组合为一个规则。

@@ -44,9 +44,14 @@ class newClass {}
 
 Object.toString() */
 
-console.log(a)
-console.log(b)
-var a = 1;
-let b = 2
+const handler = {
+    get: (obj, prop) => {
+        return prop in obj ? obj[prop] : 10;
+    }
+}
 
-// 1 && 2
+const p = new Proxy({}, handler);
+p.a = 20;
+
+console.log(p.a);
+console.log(p.c);

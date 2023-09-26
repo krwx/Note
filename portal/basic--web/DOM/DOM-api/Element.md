@@ -1,5 +1,7 @@
 - [方法](#方法)
   - [scrollIntoView()](#scrollintoview)
+  - [setAttribute()](#setattribute)
+  - [getAttribute()](#getattribute)
 
 # 方法
 ## scrollIntoView()
@@ -42,3 +44,7 @@ element.scrollIntoView(false);
 element.scrollIntoView({ block: "end" });
 element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
 ```
+
+## setAttribute()
+
+## getAttribute()

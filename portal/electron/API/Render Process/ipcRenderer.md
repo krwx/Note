@@ -20,3 +20,5 @@
 * `transfer` MessagePort[] (optional)
 
 发送消息到主进程，同时可以选择性发送零到多个 `MessagePort` 对象
+
+### once
