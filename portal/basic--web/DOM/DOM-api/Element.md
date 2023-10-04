@@ -1,7 +1,24 @@
+- [属性](#属性)
+  - [tagName](#tagname)
 - [方法](#方法)
   - [scrollIntoView()](#scrollintoview)
   - [setAttribute()](#setattribute)
   - [getAttribute()](#getattribute)
+  - [getAttributeNames()](#getattributenames)
+  - [removeAttribute()](#removeattribute)
+
+# 属性
+## tagName
+返回当前元素的标签名
+
+在 `XHTML` 中 (或者其他的 XML 格式文件中), 会弹出小写的标签名。而在 `HTML` 中，会弹出大写的标签名.
+
+```js
+<span id="born">When I was born...</span>
+
+var span = document.getElementById("born");
+console.log(span.tagName) // "SPAN"
+```
 
 # 方法
 ## scrollIntoView()
@@ -46,5 +63,66 @@ element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
 ```
 
 ## setAttribute()
+设置指定元素上的某个属性值。如果属性已经存在，则更新该值；否则，使用指定的名称和值添加一个新的属性。
+
+**布尔属性的处理**：   
+* 要设置布尔属性的值（例如禁用），可以指定任何值。建议使用**空字符串或属性名称**。
+* 该属性的**缺失**表示其值是 `false`。
+
+语法：  
+`element.setAttribute(name, value);`
+
+例子：    
+```js
+var b = document.querySelector("button");
+
+b.setAttribute("name", "helloButton");
+b.setAttribute("disabled", ""); // 这里禁用了按钮
+```
 
 ## getAttribute()
+`getAttribute()` 返回元素上一个指定的属性值。如果指定的属性不存在，则返回 `null` 或 `""` （空字符串）
+
+语法：  
+```js
+let attribute = element.getAttribute(attributeName);
+```
+* `attribute` 是一个包含 `attributeName` 属性值的字符串。
+* `attributeName` 是你想要获取的属性值的属性名称。
+
+例子：
+```js
+let div1 = document.getElementById("div1");
+let align = div1.getAttribute("align");
+```
+
+## getAttributeNames()
+`Element.getAttributeNames()` 返回一个 `Array` ，该数组包含指定元素（`Element`）的**所有属性名称**，如果该元素不包含任何属性，则返回一个**空数组**。
+
+语法：   
+`let attributeNames = element.getAttributeNames();`
+
+例子：
+```js
+// 遍历 elements 的元素
+for (let name of element.getAttributeNames()) {
+  let value = element.getAttribute(name);
+  console.log(name, value);
+}
+```
+
+## removeAttribute()
+元素方法 `removeAttribute()` 从指定的元素中删除一个属性。
+
+语法：   
+`element.removeAttribute(attrName);`
+
+参数
+* `attrName`： 指定要从元素中移除的属性的名称。如果指定的属性不存在，则 `removeAttribute()` 返回，但不会生成错误。
+
+例子：   
+```js
+// Given: <div id="div1" align="left" width="200px">
+document.getElementById("div1").removeAttribute("align");
+// Now: <div id="div1" width="200px">
+```

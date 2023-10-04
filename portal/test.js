@@ -44,7 +44,7 @@ class newClass {}
 
 Object.toString() */
 
-const handler = {
+/* const handler = {
     get: (obj, prop) => {
         return prop in obj ? obj[prop] : 10;
     }
@@ -54,4 +54,44 @@ const p = new Proxy({}, handler);
 p.a = 20;
 
 console.log(p.a);
-console.log(p.c);
+console.log(p.c); */
+
+/* function person (age) {
+    this.age = age;
+}
+
+const handler = {
+    construct(target, args, newTarget) {
+        console.log(target);
+        console.log(newTarget);
+        let obj = new target(...args);
+        return {
+            ...obj,
+            value: 'abc'
+        }
+    }
+};
+const p = new Proxy(person, handler);
+let obj = new p(20);
+console.log(obj); */
+
+function sum(a,b) {
+    this.a = a;
+    this.b = b
+}
+
+const p = new Proxy(sum, {
+    construct(target,args,newTarget) {
+        console.log(this);
+        return target(...arguments);
+    },
+    apply(target, thisArg, args) {
+        console.log(this);
+        target.apply(thisArg, args);
+    },
+    set(target, prop, value) {
+        
+    }
+})
+
+console.log(p(10,5));

@@ -3,6 +3,8 @@
 - [handler 对象的方法](#handler-对象的方法)
   - [handler.get()](#handlerget)
   - [handler.set()](#handlerset)
+  - [handler.apply()](#handlerapply)
+  - [handler.construct()](#handlerconstruct)
 - [示例](#示例)
   - [基础](#基础)
   - [验证](#验证)
@@ -51,9 +53,9 @@
   * delete 操作符的捕捉器。
 * handler.ownKeys()
   * Object.getOwnPropertyNames 方法和 Object.getOwnPropertySymbols 方法的捕捉器。
-* handler.apply()
+* [handler.apply()](#handlerapply)
   * 函数调用操作的捕捉器。
-* handler.construct()
+* [handler.construct()](#handlerconstruct)
   * new 操作符的捕捉器。
 
 ## handler.get()
@@ -94,6 +96,89 @@ const p = new Proxy(target, {
   * 返回 true 代表属性设置成功
   * 在严格模式下，如果 set() 方法返回 false，那么会抛出一个 TypeError 异常。
 
+## handler.apply()
+`handler.apply()` 方法用于拦截函数的调用。
+
+语法：
+```js
+var p = new Proxy(target, {
+  apply: function (target, thisArg, argumentsList) {},
+});
+```
+
+参数：
+* `this` 上下文绑定在 `handler` 对象上。（可以通过 `this` 调用 `handler` 设置的其他方法）
+* target：目标对象（**函数**）。· 必须是可被调用的。也就是说，**它必须是一个函数对象**。
+* thisArg：**被调用时的上下文对象**。
+* argumentsList：被调用时的参数数组。
+
+返回值
+* apply 方法可以返回任何值。
+
+***拦截***  
+该方法会拦截目标对象的以下操作：
+* `proxy(...args)`
+* `Function.prototype.apply()` 和 `Function.prototype.call()`
+* `Reflect.apply()`
+
+例子：  
+```js
+var p = new Proxy(function () {}, {
+  apply: function (target, thisArg, argumentsList) {
+    console.log("called: " + argumentsList.join(", "));
+    return argumentsList[0] + argumentsList[1] + argumentsList[2];
+  },
+});
+
+console.log(p(1, 2, 3)); // "called: 1, 2, 3"; outputs 6
+```
+
+## handler.construct()
+`handler.construct()` 方法用于拦截 `new` 操作符。为了使 `new` 操作符在生成的 `Proxy` 对象上生效，用于初始化代理的目标对象自身必须具有 `[[Construct]]` 内部方法（即 `new target` 必须是有效的）。
+
+语法：
+```js
+var p = new Proxy(target, {
+  construct: function (target, argumentsList, newTarget) {},
+});
+```
+
+参数：
+* 下面的参数将会传递给 `construct` 方法，`this` 绑定在 `handler` 上。（可以通过 `this` 调用 `handler` 设置的其他方法）
+* `target`：目标对象。 `target` 必须具有一个有效的 `constructor` 供 `new` 操作符调用。例如 `function() {}`
+* `argumentsList`：`constructor` 的参数列表。
+* `newTarget`：最初被调用的构造函数，就上面的例子而言是 p。
+
+返回值：
+* `construct`：方法必须返回一个对象。（**这个对象就是通过构造函数生成的对象**）
+
+示例：
+```js
+// 例子1
+var p = new Proxy(function () {}, {
+  construct: function (target, argumentsList, newTarget) {
+    console.log("called: " + argumentsList.join(", "));
+    return { value: argumentsList[0] * 10 };
+  },
+});
+console.log(new p(1).value); // "called: 1"; outputs 10
+
+// 例子2
+function monster1(disposition) {
+  this.disposition = disposition;
+}
+const handler1 = {
+  construct(target, args) {
+    console.log(`Creating a ${target.name}`);
+    // Expected output: "Creating a monster1"
+    return new target(...args);
+  },
+};
+
+const proxy1 = new Proxy(monster1, handler1);
+console.log(new proxy1('fierce').disposition);
+// Expected output: "fierce"
+```
 
 # 示例
 **每个捕捉的方法的入参都有可能不太一样，需要参考方法的语法**
@@ -126,6 +211,7 @@ console.log(target.a); // 37. 操作已经被正确地转发
 ## 验证
 通过代理，你可以轻松地验证向一个对象的传值。使用 `handler.set()` 实现
 ```js
+// 例子1
 let validator = {
   set: function (obj, prop, value) {
     if (prop === "age") {
@@ -153,7 +239,68 @@ person.age = "young";
 
 person.age = 300;
 // 抛出异常：Uncaught RangeError: The age seems invalid
+
+//例子2
+const monster1 = { eyeCount: 4 };
+const handler1 = {
+  set(obj, prop, value) {
+    if (prop === 'eyeCount' && value % 2 !== 0) {
+      console.log('Monsters must have an even number of eyes');
+    } else {
+      // 使用了 Reflect.set() 设置属性
+      return Reflect.set(...arguments);
+    }
+  },
+};
+
+const proxy1 = new Proxy(monster1, handler1);
 ```
 
 ## 扩展构造函数
 TODO：先去看 Object.getOwnPropertyDescriptor() 、Object.create()
+
+方法代理可以轻松地通过一个新构造函数来**扩展**一个已有的构造函数。（这里是扩展，而不是继承，所以设置 `base.prototype` 不需要设置 `constructor` 属性）
+```js
+function extend(sup, base) {
+  // 从构造函数的原型获取 构造函数 的属性描述符
+  var descriptor = Object.getOwnPropertyDescriptor(
+    base.prototype,
+    "constructor",
+  );
+  // 扩展原型
+  base.prototype = Object.create(sup.prototype);
+  var handler = {
+    construct: function (target, args) {
+      // 创建对象
+      var obj = Object.create(base.prototype);
+      // 调用下面的 apply 方法，设置初始属性
+      this.apply(target, obj, args);
+      return obj;
+    },
+    apply: function (target, that, args) {
+      sup.apply(that, args);
+      base.apply(that, args);
+    },
+  };
+  var proxy = new Proxy(base, handler);
+  // 给构造函数的属性描述符设置值，即设置构造函数
+  descriptor.value = proxy;
+  Object.defineProperty(base.prototype, "constructor", descriptor);
+  return proxy;
+}
+
+var Person = function (name) {
+  this.name = name;
+};
+
+var Boy = extend(Person, function (name, age) {
+  this.age = age;
+});
+
+Boy.prototype.sex = "M";
+
+var Peter = new Boy("Peter", 13);
+console.log(Peter.sex); // "M"
+console.log(Peter.name); // "Peter"
+console.log(Peter.age); // 13
+```

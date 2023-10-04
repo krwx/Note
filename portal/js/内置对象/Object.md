@@ -33,6 +33,14 @@
     - [语法](#语法-3)
     - [示例](#示例-1)
     - [`Object.defineProperties()` 与 `Object.defineProperty()` 的区别](#objectdefineproperties-与-objectdefineproperty-的区别)
+  - [Object.getOwnPropertyDescriptor()](#objectgetownpropertydescriptor)
+    - [语法](#语法-4)
+    - [示例](#示例-2)
+  - [Object.create()](#objectcreate)
+    - [语法](#语法-5)
+    - [示例](#示例-3)
+      - [用 `Object.create()` 实现类式继承](#用-objectcreate-实现类式继承)
+      - [其他](#其他)
 
 # 方法
 ## Object.prototype.toString()
@@ -581,3 +589,145 @@ Object.defineProperties(obj, {
 * 入参不同
   * `Object.defineProperties()` 的第二个参数为对象，对象的键定义名称，值为描述该属性的对象。
   * `Object.defineProperty()` 的第二个参数为属性名，第三个参数为描述该属性的对象
+
+## Object.getOwnPropertyDescriptor()
+`Object.getOwnPropertyDescriptor()` 静态方法返回一个对象，该对象描述给定对象上特定属性的配置。  
+返回的对象是可变的，但对**其进行更改不会影响原始属性的配置**。
+
+### 语法
+`Object.getOwnPropertyDescriptor(obj, prop)`
+
+参数
+* obj：要查找其属性的对象
+* prop：要检索其描述的属性的名称或 Symbol。
+
+返回值
+* 如果指定的属性存在于对象上，则返回其**属性描述符**，否则返回 undefined。
+
+如果第一个参数为非对象会强制转换为对象。例如，字符串会转换成 String 对象。
+
+### 示例
+```js
+let o, d;
+o = {
+  get foo() {
+    return 17;
+  },
+};
+d = Object.getOwnPropertyDescriptor(o, "foo");
+console.log(d);
+// {
+//   configurable: true,
+//   enumerable: true,
+//   get: [Function: get foo],
+//   set: undefined
+// }
+
+o = { bar: 42 };
+d = Object.getOwnPropertyDescriptor(o, "bar");
+console.log(d);
+// {
+//   configurable: true,
+//   enumerable: true,
+//   value: 42,
+//   writable: true
+// }
+
+o = { [Symbol.for("baz")]: 73 };
+d = Object.getOwnPropertyDescriptor(o, Symbol.for("baz"));
+console.log(d);
+// {
+//   configurable: true,
+//   enumerable: true,
+//   value: 73,
+//   writable: true
+// }
+
+o = {};
+Object.defineProperty(o, "qux", {
+  value: 8675309,
+  writable: false,
+  enumerable: false,
+});
+d = Object.getOwnPropertyDescriptor(o, "qux");
+console.log(d);
+// {
+//   value: 8675309,
+//   writable: false,
+//   enumerable: false,
+//   configurable: false
+// }
+```
+
+## Object.create()
+`Object.create()` **静态方法以一个现有对象作为原型，创建一个新对象**。
+
+### 语法
+```js
+Object.create(proto)
+Object.create(proto, propertiesObject)
+```
+参数
+* `proto`
+  * 新创建对象的**原型对象**（注意是**原型对象**，不是普通的对象）。
+* `propertiesObject` (可选)
+  * 如果该参数被指定且不为 `undefined`，则该传入对象可枚举的自有属性将为新创建的对象添加具有对应属性名称的**属性描述符**。这些属性对应于 `Object.defineProperties()` 的第二个参数。
+
+返回值
+* 根据指定的原型对象和属性创建的**新对象**。
+
+### 示例
+#### 用 `Object.create()` 实现类式继承
+```js
+// Shape——父类
+function Shape() {
+  this.x = 0;
+  this.y = 0;
+}
+
+// 父类方法
+Shape.prototype.move = function (x, y) {
+  this.x += x;
+  this.y += y;
+  console.info("Shape moved.");
+};
+
+// Rectangle——子类
+function Rectangle() {
+  Shape.call(this); // 调用父类构造函数。
+}
+
+// 子类继承父类
+Rectangle.prototype = Object.create(Shape.prototype, {
+  // 如果不将 Rectangle.prototype.constructor 设置为 Rectangle，
+  // 它将采用 Shape（父类）的 prototype.constructor。
+  // 为避免这种情况，我们将 prototype.constructor 设置为 Rectangle（子类）。
+  constructor: {
+    value: Rectangle,
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  },
+});
+
+const rect = new Rectangle();
+
+console.log("rect 是 Rectangle 类的实例吗？", rect instanceof Rectangle); // true
+console.log("rect 是 Shape 类的实例吗？", rect instanceof Shape); // true
+rect.move(1, 1); // 打印 'Shape moved.'
+```
+
+#### 其他
+使用 `Object.create()`，我们可以创建一个原型为 null 的对象。
+```js
+o = Object.create(null);
+// 等价于：
+o = { __proto__: null };
+```
+使用 `Object.create()` 来模仿 `new` 运算符的行为（即创建对象）。
+```js
+function Constructor() {}
+o = new Constructor();
+// 等价于：
+o = Object.create(Constructor.prototype);
+```
