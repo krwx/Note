@@ -47,6 +47,14 @@ package-lock.json 是自动生成的，就是相当于我们的缓存文件，�
   - npm rebuild
 - 查看配置列表
   - npm config list
+- 设置国内镜像
+  - `npm config set registry https://registry.npmmirror.com`
+- 设置官网镜像
+  - `npm config set registry https://registry.npmjs.org`
+- 登录
+  - npm login
+- 发布
+  - npm publish
 
 ## yarn
 yarn是有Facebook、Google、Exponent和Tilde联合推出了一个新的JS包管理工具
