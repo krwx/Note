@@ -160,10 +160,55 @@ BFC指的是块级格式化上下文，一个元素形成了BFC之后，那么�
    ```
 
 ## 11. 讲一下 em、rem、px 的区别
+px（像素）是一个绝对单位，不可缩放。无论屏幕大小或用户偏好如何，它始终保持相同的大小。
+
+em 和 rem 的区别：
+* em：
+  * 子元素字体大小单位如果使用em是相对于父元素字体大小
+  * 而元素的 `width/height/padding/margin` 属性用em的话则是相对于**该元素**的 `font-size` 大小。
+* rem：
+  * 相对于根元素 html。元素的字体大小和 `width/height/padding/margin` 都是相对于根元素 html
+
 ## 12. 在项目中有用过 em、rem、px 吗
+
 ## 13. flex 布局在什么时候会用
+1. 在输入框旁边添加按钮会用到，用于调整水平高度
+
 ## 14. flex 布局设置换行通过哪个属性设置
+* flex-warp
+  * 指定 flex 元素单行显示还是多行显示。如果允许换行，这个属性允许你控制行的堆叠方向。
+  * nowrap：默认值。flex 的元素被摆放到到一行，这可能导致 flex 容器溢出。
+  * wrap：flex 元素 被打断到多个行中。cross-start 会根据 flex-direction 的值等价于 start 或before。cross-end 为确定的 cross-start 的另一端。
+  * wrap-reverse：和 wrap 的行为一样，但是 cross-start 和 cross-end 互换。
+
 ## 15. display有哪些取值
+| 值	| 描述 |
+| ---- | ---- |
+|none|	此元素不会被显示。
+|block|	此元素将显示为块级元素，此元素前后会带有换行符。
+|inline|	默认。此元素会被显示为内联元素，元素前后没有换行符。
+|inline-block|	行内块元素。（CSS2.1 新增的值）
+|inline-flex| 
+|inline-grid|
+|list-item|	此元素会作为列表显示。
+|run-in|	此元素会根据上下文作为块级元素或内联元素显示。
+|table|	此元素会作为块级表格来显示（类似 `<table>`），表格前后带有换行符。
+|inline-table|	此元素会作为内联表格来显示（类似 `<table>`），表格前后没有换行符。
+|table-row-group|	此元素会作为一个或多个行的分组来显示（类似 `<tbody>`）。
+|table-header-group|	此元素会作为一个或多个行的分组来显示（类似 `<thead>`）。
+|table-footer-group|	此元素会作为一个或多个行的分组来显示（类似 `<tfoot>`）。
+|flow-root|	生成一个块级元素盒，其会建立一个新的块级格式化上下文，定义格式化上下文的根元素。
+|table-row|	此元素会作为一个表格行显示（类似 `<tr>`）。
+|table-column-group|	此元素会作为一个或多个列的分组来显示（类似 `<colgroup>`）。
+|table-column|	此元素会作为一个单元格列显示（类似 `<col>`）
+|table-cell|	此元素会作为一个表格单元格显示（类似 `<td>` 和 `<th>`）
+|table-caption|	此元素会作为一个表格标题显示（类似 `<caption>`）
+|inherit|	规定应该从父元素继承 display 属性的值。
+|flex|  flex布局
+|grid|  grid布局
+
 ## 16. display 为 absolute 的 div，假如它的父 div 的 display 不是 absolute、relative，那么这个 div 以谁为基准
+绝对定位的元素的位置相对于最近的已定位父元素（即非 static 的父元素），如果元素没有已定位的父元素，那么它的位置相对于`<html>`。  
+
 ## 17. display 的默认取值是什么
 inline

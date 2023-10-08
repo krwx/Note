@@ -2,10 +2,11 @@
   - [tagName](#tagname)
 - [方法](#方法)
   - [scrollIntoView()](#scrollintoview)
-  - [setAttribute()](#setattribute)
-  - [getAttribute()](#getattribute)
+  - [setAttribute(name, value)](#setattributename-value)
+  - [getAttribute(attrName)](#getattributeattrname)
   - [getAttributeNames()](#getattributenames)
-  - [removeAttribute()](#removeattribute)
+  - [removeAttribute(attrName)](#removeattributeattrname)
+  - [getBoundingClientRect()](#getboundingclientrect)
 
 # 属性
 ## tagName
@@ -62,7 +63,7 @@ element.scrollIntoView({ block: "end" });
 element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
 ```
 
-## setAttribute()
+## setAttribute(name, value)
 设置指定元素上的某个属性值。如果属性已经存在，则更新该值；否则，使用指定的名称和值添加一个新的属性。
 
 **布尔属性的处理**：   
@@ -80,7 +81,7 @@ b.setAttribute("name", "helloButton");
 b.setAttribute("disabled", ""); // 这里禁用了按钮
 ```
 
-## getAttribute()
+## getAttribute(attrName)
 `getAttribute()` 返回元素上一个指定的属性值。如果指定的属性不存在，则返回 `null` 或 `""` （空字符串）
 
 语法：  
@@ -111,7 +112,7 @@ for (let name of element.getAttributeNames()) {
 }
 ```
 
-## removeAttribute()
+## removeAttribute(attrName)
 元素方法 `removeAttribute()` 从指定的元素中删除一个属性。
 
 语法：   
@@ -126,3 +127,12 @@ for (let name of element.getAttributeNames()) {
 document.getElementById("div1").removeAttribute("align");
 // Now: <div id="div1" width="200px">
 ```
+
+## getBoundingClientRect()
+`Element.getBoundingClientRect()` 方法返回一个 `DOMRect` 对象，**其提供了元素的大小及其相对于视口的位置**。
+
+返回值
+- 返回值是一个 `DOMRect` 对象，是包含整个元素的最小矩形（包括 `padding` 和 `border-width`）。
+- 该对象使用 `left、top、right、bottom、x、y、width 和 height` 这几个以像素为单位的只读属性描述整个矩形的位置和大小。
+- 除了 `width` 和 `height` 以外的属性是相对于**视图窗口的左上角**来计算的。(**`right` 也是相对于左上角计算**)
+- `DOMRect` 对象的 width 和 height 属性是包含了 padding 和 border-width 的

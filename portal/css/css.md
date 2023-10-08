@@ -705,6 +705,18 @@ So, which one is better to use? It depends on the specific use case. Here are a 
 * Use px for small, fixed-size elements like borders or shadows.
 * Use em for typography and other scalable elements that need to change size relative to their parent element.
 * Use rem for scalable typography and responsive layouts that need to change size relative to the root element.
+- 将px用于固定大小的小元素，如边框或阴影。
+* 将em用于排版和其他需要相对于其父元素更改大小的可缩放元素。
+* 对于需要相对于根元素更改大小的可伸缩排版和响应布局，请使用rem。
+
+px（像素）是一个绝对单位，不可缩放。无论屏幕大小或用户偏好如何，它始终保持相同的大小。
+
+em 和 rem 的区别：
+* em：
+  * 子元素字体大小单位如果使用em是相对于父元素字体大小
+  * 而元素的 `width/height/padding/margin` 属性用em的话则是相对于**该元素**的 `font-size` 大小。
+* rem：
+  * 相对于根元素 html。元素的字体大小和 `width/height/padding/margin` 都是相对于根元素 html
 
 # 模块
 ## 全局作用域
