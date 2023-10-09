@@ -75,7 +75,7 @@ const p = new Proxy(person, handler);
 let obj = new p(20);
 console.log(obj); */
 
-function sum(a,b) {
+/* function sum(a,b) {
     this.a = a;
     this.b = b
 }
@@ -94,4 +94,23 @@ const p = new Proxy(sum, {
     }
 })
 
-console.log(p(10,5));
+console.log(p(10,5)); */
+
+function loadWithCondition(Component) {
+    return function EnhancedComponent({ isLoading, ...props }) {
+      if (!isLoading) {
+        return <Component {...props} />;
+      }
+      return (
+        <div>
+          <p>Loading</p>
+        </div>
+      );
+    };
+}
+const ListLoadWithCondition = loadWithCondition(List);
+function App({ listData, isLoading }) {
+    return (
+        <ListLoadWithCondition isLoading={isLoading} listData={listData} />
+    );
+}

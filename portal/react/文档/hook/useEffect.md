@@ -3,6 +3,10 @@
   - [`useLayoutEffect` 与 `useEffect` 的区别:](#uselayouteffect-与-useeffect-的区别)
   - [传递依赖数组、空数组和不传递依赖项之间的区别](#传递依赖数组空数组和不传递依赖项之间的区别)
   - [语法](#语法)
+  - [useEffect 的执行顺序](#useeffect-的执行顺序)
+    - [useEffect 和组件内代码的执行顺序](#useeffect-和组件内代码的执行顺序)
+    - [同个组件内多个 useEffect 的执行顺序](#同个组件内多个-useeffect-的执行顺序)
+    - [父组件有多个子组件，子组件间的 useEffect 的执行顺序](#父组件有多个子组件子组件间的-useeffect-的执行顺序)
   - [用法](#用法)
     - [连接到外部系统](#连接到外部系统)
     - [在自定义 Hook 中封装 Effect](#在自定义-hook-中封装-effect)
@@ -71,6 +75,31 @@
    - 首先，使用**旧的** props 和 state 运行 `cleanup` 代码。
    - 然后，使用**新的** props 和 state 运行 `setup` 代码。
 3. 当组件从页面卸载后， `cleanup` 代码 将运行最后一次。
+
+## useEffect 的执行顺序
+
+### useEffect 和组件内代码的执行顺序
+useEffect 是在浏览器渲染完后再执行，所以是先执行组件内进行渲染的代码，再执行 useEffect 的代码
+
+### 同个组件内多个 useEffect 的执行顺序
+执行顺序就是 `useEffect` **在函数体里声明的顺序**
+
+### 父组件有多个子组件，子组件间的 useEffect 的执行顺序
+如果有一个这样的component：
+```
+<A>
+    <A1>
+        <A1_1/>
+        <A1_2/>
+    </A1>
+    <A2>
+        <A2_1/>
+        <A2_2/>
+    </A2>
+</A>
+```
+mount 时 effect 的执行顺序：类似于二叉树的后序遍历，先遍历孩子，再遍历根，即：`[A1_1, A1_2, A1, A2_1, A2_2, A2, A]`。
+
 
 ## 用法
 ### 连接到外部系统 
