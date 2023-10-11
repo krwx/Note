@@ -1,9 +1,11 @@
 - [display](#display)
   - [inline值](#inline值)
 - [position](#position)
+- [box-shadow](#box-shadow)
+  - [语法](#语法)
 
 
-## display
+# display
 display 属性设置元素是否被视为块或者内联元素以及用于子元素的布局，例如流式布局、网格布局或弹性布局。  
 
 默认值为 **inline**。不能继承
@@ -33,7 +35,7 @@ display 属性设置元素是否被视为块或者内联元素以及用于子元
 |flex|  flex布局
 |grid|  grid布局
 
-### inline值
+## inline值
 display: inline：元素为内联，不代表元素内的元素是内联的。该值只针对当前元素。
 
 **inline、block、inline-block的区别**：  
@@ -54,7 +56,7 @@ display: inline：元素为内联，不代表元素内的元素是内联的。�
   * 可以设置width,height。可以设置padding,margin。
 
 
-## position
+# position
 定位 (positioning) 能够让我们把一个元素从它原本在正常布局流 (normal flow) 中应该在的位置移动到另一个位置。  
 position 属性指定了元素的定位类型。  
 position 属性的五个值：static、relative、fixed、absolute、sticky。  
@@ -87,3 +89,58 @@ z-index属性：
 * 一个元素可以有正数或负数的堆叠顺序
 * 具有更高堆叠顺序的元素总是在较低的堆叠顺序元素的前面。
 * 注意： 如果两个定位元素重叠，没有指定z - index，最后定位在HTML代码中的元素将被显示在最前面。
+
+# box-shadow
+- CSS box-shadow 属性用于在元素的框架上添加阴影效果。
+- 你可以在同一个元素上设置多个阴影效果，并用逗号将他们分隔开。
+- 该属性可设置的值包括阴影的 X 轴偏移量、Y 轴偏移量、模糊半径、扩散半径和颜色。
+
+## 语法
+```css
+/* x 偏移量 | y 偏移量 | 阴影颜色 */
+box-shadow: 60px -16px teal;
+
+/* x 偏移量 | y 偏移量 | 阴影模糊半径 | 阴影颜色 */
+box-shadow: 10px 5px 5px black;
+
+/* x 偏移量 | y 偏移量 | 阴影模糊半径 | 阴影扩散半径 | 阴影颜色 */
+box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+
+/* 插页 (阴影向内) | x 偏移量 | y 偏移量 | 阴影颜色 */
+box-shadow: inset 5em 1em gold;
+
+/* 任意数量的阴影，以逗号分隔 */
+box-shadow:
+  3px 3px red,
+  -1em 0 0.4em olive;
+
+/* 全局关键字 */
+box-shadow: inherit;
+box-shadow: initial;
+box-shadow: unset;
+```
+
+向元素添加单个 box-shadow 效果时使用以下规则：
+
+- 当给出两个、三个或四个 `<length>`值时。
+  - 如果只给出两个值，那么这两个值将会被当作 `<offset-x><offset-y>` 来解释。
+  - 如果给出了第三个值，那么第三个值将会被当作`<blur-radius>`解释。
+  - 如果给出了第四个值，那么第四个值将会被当作`<spread-radius>`来解释。
+- 可选，inset关键字。
+- 可选，`<color>`值。
+
+取值：
+
+- `inset`
+  - 如果没有指定inset，默认阴影在边框外，即阴影向外扩散。 使用 inset 关键字会使得阴影落在盒子内部，这样看起来就像是内容被压低了。此时阴影会在边框之内 (即使是透明边框）、背景之上、内容之下。
+- `<offset-x> <offset-y>`
+  - 这是头两个 `<length>` 值，用来设置阴影偏移量。x,y 是按照数学二维坐标系来计算的，只不过 y 垂直方向向下。 `<offset-x>` 设置水平偏移量，正值阴影则位于元素右边，负值阴影则位于元素左边。 `<offset-y>` 设置垂直偏移量，正值阴影则位于元素下方，负值阴影则位于元素上方。可用单位请查看 `<length>` 。 如果两者都是 0，那么阴影位于元素后面。这时如果设置了`<blur-radius>` 或`<spread-radius>` 则有模糊效果。需要考虑 inset
+- `<blur-radius>` 
+  - 这是第三个 `<length>` 值。值越大，模糊面积越大，阴影就越大越淡。不能为负值。默认为 0，此时阴影边缘锐利。本规范不包括如何计算模糊半径的精确算法，但是，它详细说明如下：
+  - 对于长而直的阴影边缘，它会创建一个过渡颜色用于模糊 以阴影边缘为中心、模糊半径为半径的局域，过渡颜色的范围在完整的阴影颜色到它最外面的终点的透明之间。 （译者注：对此有兴趣的可以了解下数字图像处理的模糊算法。）
+- `<spread-radius>`
+  - 这是第四个 `<length>` 值。取正值时，阴影扩大；取负值时，阴影收缩。默认为 0，此时阴影与元素同样大。需要考虑 inset
+
+- `<color>`
+  - 相关事项查看 `<color>` 。如果没有指定，则由浏览器决定——通常是color的值，不过目前 Safari 取透明。
+
