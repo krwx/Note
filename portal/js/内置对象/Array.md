@@ -8,6 +8,7 @@
   - [Array.prototype.slice()](#arrayprototypeslice)
     - [在类数组对象上调用 slice()](#在类数组对象上调用-slice)
   - [Array.prototype.splice()](#arrayprototypesplice)
+  - [Array.prototype.sort()](#arrayprototypesort)
 
 
 # 数组
@@ -180,16 +181,16 @@ console.log(fruits[0]); // "Apple"
 * Array.prototype.shift()
   * 从数组中移除第一个元素并返回该元素。
 
-* Array.prototype.slice() [详情](#arrayprototypeslice)
+* [Array.prototype.slice()](#arrayprototypeslice)
   * 提取调用数组的一部分并返回一个新数组。
 
 * Array.prototype.some()
   * 如果调用数组中至少有一个元素满足提供的测试函数，则返回 true。
 
-* Array.prototype.sort()
+* [Array.prototype.sort()](#arrayprototypesort)
   * 对数组的元素进行排序并返回该数组。
 
-* Array.prototype.splice() [详情](#arrayprototypesplice)
+* [Array.prototype.splice()](#arrayprototypesplice)
   * 从数组中添加和/或删除元素。
 
 * Array.prototype.toLocaleString()
@@ -349,4 +350,119 @@ const removed = myFish.splice();
 
 // 运算后的 myFish 不变
 // removed 是 []
+```
+
+## Array.prototype.sort()
+`sort()` 方法 **就地** 对数组的元素进行排序，**并返回对相同数组的引用**。
+
+默认排序是将元素**转换为字符串**，然后按照它们的 `UTF-16` 码元值**升序**排序。
+
+所有的 `undefined` 元素都会被排序到数组的末尾。
+
+**误区**：
+```js
+const array1 = [1, 30, 4, 21, 100000];
+array1.sort();
+console.log(array1);
+// Expected output: Array [1, 100000, 21, 30, 4]
+```
+对有数字的数字使用 sort() ，是根据 Unicode 排序的，不是根据数字大小排，要手写比较函数才能按数字大小排。
+
+**语法**：  
+```js
+sort()
+sort(compareFn)
+```
+
+**参数**：
+- compareFn 可选
+  - 定义排序顺序的函数。返回值应该是一个数字，其正负性表示两个元素的相对顺序。该函数使用以下参数调用：
+    - a：第一个用于比较的元素。不会是 undefined。
+    - b：第二个用于比较的元素。不会是 undefined。
+  - 如果省略该函数，数组元素会被转换为字符串，然后根据每个字符的 Unicode 码位值进行排序。
+
+compareFn(a, b) 返回值 |	排序顺序
+|--|--|
+`> 0` |	a 在 b 后，如 [b, a]
+`< 0` |	a 在 b 前，如 [a, b]
+`=== 0` |	保持 a 和 b 原来的顺序
+
+比较函数形式如下：
+```js
+function compareFn(a, b) {
+  if (根据排序标准，a 小于 b) {
+    return -1;
+  }
+  if (根据排序标准，a 大于 b) {
+    return 1;
+  }
+  // a 一定等于 b
+  return 0;
+}
+```
+
+如果比较函数只返回 1 和 0，或者只返回 0 和 -1，它将无法可靠地排序，因为反对称性被破坏了。  
+一个总是返回 0 的比较函数将不会改变数组，但仍然是可靠的。
+
+**返回值**：相同数组的引用。如果更改返回值，原来的数组也会发生变化
+
+**示例**：
+- 创建、显示及排序数组
+```js
+const stringArray = ["Blue", "Humpback", "Beluga"];
+const numberArray = [40, 1, 5, 200];
+const numericStringArray = ["80", "9", "700"];
+const mixedNumericArray = ["80", "9", "700", 40, 1, 5, 200];
+
+function compareNumbers(a, b) {
+  return a - b;
+}
+
+stringArray.join(); // 'Blue,Humpback,Beluga'
+stringArray.sort(); // ['Beluga', 'Blue', 'Humpback']
+
+numberArray.join(); // '40,1,5,200'
+numberArray.sort(); // [1, 200, 40, 5]
+numberArray.sort(compareNumbers); // [1, 5, 40, 200]
+
+numericStringArray.join(); // '80,9,700'
+numericStringArray.sort(); // ['700', '80', '9']
+numericStringArray.sort(compareNumbers); // ['9', '80', '700']
+
+mixedNumericArray.join(); // '80,9,700,40,1,5,200'
+mixedNumericArray.sort(); // [1, 200, 40, 5, '700', '80', '9']
+mixedNumericArray.sort(compareNumbers); // [1, 5, '9', 40, '80', 200, '700']
+```
+
+- 使用 `map` 改善排序  
+  - `compareFn` 可能会在数组中的每个元素上调用多次，如果 `compareFn` 执行的工作更多，需要排序的元素更多，性能损耗会很严重。
+  - 解决：先遍历数组一次，将用于排序的实际值提取到一个临时数组中（通过 `map` 实现），对临时数组进行排序，然后遍历临时数组以获得正确的顺序。
+```js
+// 需要被排序的数组
+const data = ["delta", "alpha", "charlie", "bravo"];
+
+// 用于存放位置和排序值的对象数组
+const mapped = data.map((v, i) => {
+  return { i, value: someSlowOperation(v) }; // 这里先对需要排序的值做处理，然后再在下面进行比较
+});
+
+// 按照多个值排序数组
+mapped.sort((a, b) => {
+  if (a.value > b.value) {
+    return 1;
+  }
+  if (a.value < b.value) {
+    return -1;
+  }
+  return 0;
+});
+
+const result = mapped.map((v) => data[v.i]);
+```
+
+- 在稀疏数组上使用 `sort()`   
+  空槽会被移动到数组的末尾。
+```js
+console.log(["a", "c", , "b"].sort()); // ['a', 'b', 'c', empty]
+console.log([, undefined, "a", "b"].sort()); // ["a", "b", undefined, empty]
 ```

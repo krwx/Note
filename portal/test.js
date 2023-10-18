@@ -96,21 +96,3 @@ const p = new Proxy(sum, {
 
 console.log(p(10,5)); */
 
-function loadWithCondition(Component) {
-    return function EnhancedComponent({ isLoading, ...props }) {
-      if (!isLoading) {
-        return <Component {...props} />;
-      }
-      return (
-        <div>
-          <p>Loading</p>
-        </div>
-      );
-    };
-}
-const ListLoadWithCondition = loadWithCondition(List);
-function App({ listData, isLoading }) {
-    return (
-        <ListLoadWithCondition isLoading={isLoading} listData={listData} />
-    );
-}

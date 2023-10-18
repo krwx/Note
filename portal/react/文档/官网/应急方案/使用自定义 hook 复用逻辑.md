@@ -2,7 +2,8 @@
 - [自定义 Hook：组件间共享逻辑](#自定义-hook组件间共享逻辑)
   - [例子](#例子)
   - [Hook 的名称必须永远以 use 开头](#hook-的名称必须永远以-use-开头)
-  - [自定义 Hook 共享的是状态逻辑，而不是状态本身](#自定义-hook-共享的是状态逻辑而不是状态本身)
+  - [自定义 Hook 共享的是状态逻辑，而不是状态本身 （注意，这点非常重要，是写自定义 hook 的核心）](#自定义-hook-共享的是状态逻辑而不是状态本身-注意这点非常重要是写自定义-hook-的核心)
+    - [错误理解](#错误理解)
 - [在 Hook 之间传递响应值](#在-hook-之间传递响应值)
   - [把事件处理函数传到自定义 Hook 中](#把事件处理函数传到自定义-hook-中)
 - [例子](#例子-1)
@@ -71,10 +72,22 @@ export default StatusBar;
 1. **React 组件名称必须以大写字母开头**，比如 StatusBar 和 SaveButton。React 组件还需要返回一些 React 能够显示的内容，比如一段 JSX。
 2. **Hook 的名称必须以 use 开头，然后紧跟一个大写字母**，就像内置的 useState 或者本文早前的自定义 useOnlineStatus 一样。Hook 可以返回任意值。
 
-## 自定义 Hook 共享的是状态逻辑，而不是状态本身 
+## 自定义 Hook 共享的是状态逻辑，而不是状态本身 （注意，这点非常重要，是写自定义 hook 的核心）
 自定义 Hook 共享的只是状态逻辑而不是状态本身。对 Hook 的每个调用完全独立于对同一个 Hook 的其他调用。
 
 以上面的例子为例，如果有两个组件通过 useOnlineStatus() 获取网络状态。这两个组件获取的 state 是不一样的，对应的 useEffect 过程也是不一样的
+
+### 错误理解
+使用自定义 hook 保存是否展示这个状态
+```js
+export function useVisble() {
+    const [visible, setVisible] = useState(true);
+    return [visible, setVisible];
+}
+```
+但是当其他组件使用这个 hook 时，当使用 `setVisible` 设置是否展示时，只有当前组件有反应。因为 **自定义 Hook 共享的是状态逻辑，而不是状态本身** 每个组件获取到的 `visible` 是不一样的，不是共享的状态。
+
+所以实现是否展示这个功能需要通过 `context、provider` 保存共享的状态，而不是自定义 hook 实现
 
 # 在 Hook 之间传递响应值 
 **每当组件重新渲染，自定义 Hook 中的代码就会重新运行**。这就是组件和自定义 Hook 都 需要是纯函数 的原因。我们应该把自定义 Hook 的代码看作组件主体的一部分。

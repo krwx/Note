@@ -7,6 +7,7 @@
     - [5. 更改 package.json，指定electron主进程文件路径，添加启动指令](#5-更改-packagejson指定electron主进程文件路径添加启动指令)
     - [6. 启动 electron，执行 npm start](#6-启动-electron执行-npm-start)
     - [6. electron 打包](#6-electron-打包)
+  - [遇到的问题](#遇到的问题)
 
 # 创建项目
 ## vue 项目（js）
@@ -254,3 +255,16 @@ export default defineConfig({
 ```
 
 执行 `npm run electron:build` 指令，打包内容会输出到 `out` 文件夹中 
+
+## 遇到的问题
+1. vue 项目，electron 打包后，路由展示为空白  
+   路由问题，把 `history` 模式改为 `hash` 模式：
+将 `createWebHistory` 改为 `createWebHashHistory`
+```js
+const router = createRouter({
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  routes: [
+    // ...路由
+  ]
+})
+```

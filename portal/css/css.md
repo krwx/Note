@@ -21,6 +21,7 @@
 - [CSS3 过渡](#css3-过渡)
   - [过渡属性](#过渡属性)
 - [响应式布局](#响应式布局)
+  - [实现响应式布局](#实现响应式布局)
 - [布局](#布局)
 - [@Media](#media)
   - [媒体类型](#媒体类型)
@@ -124,7 +125,7 @@ li[class^="a" i] {
 .box::after {
     content: " ➥";
 }   
-/* 这里插入了一个方块，注意 content 为 "" */
+/* 这里插入了一个方块，注意 content 为 ""。注意要设置 display，不然显示不出来 */
 .box::before {
     content: "";
     display: block;
@@ -336,6 +337,55 @@ div:hover
     它们是相对视口的尺寸计算：1vw = 1/100视口宽度，1vh = 1/100视口高度。（固定分为100份）  
     例如：当前视口宽度是520px，则1vw=5.2px。  
     vw/vh布局和百分比布局的区别：百分比是相对于父元素来说的，而vw/vh是相对于当前视口来说的。
+
+## 实现响应式布局
+Bootstrap 的 响应式布局或 element-ui 的 row、col 布局 **都是使用 `flex` 布局实现的**。
+
+**原理**：
+1. Bootstrap 的 `row` 代表：设置样式 `display: flex; flex-wrap: wrap`
+2. 类似 `col-3、col-5` 代表：设置 `flex-grow: 0;flex-shrink: 0;flex-basic：`
+   1. `flex-basic` 根据 col 后的数字设置，例如 `col-6` 是 25%，`col-4` 是16.6666666667% 。通常使用简写 `flex: 0 0 25%`。
+   2. **注意**：`flex-basic` 设置的是**百分比，而不是具体的数值**，例如 100px，这样就可以让物体的初始宽度根据布局的宽度设置
+3. Bootstrap 预设了五个响应尺寸：`xs、sm、md、lg 和 xl`。这是使用 `@media` 实现的，五个响应尺寸分别对应不同的屏幕的最小宽度
+
+**实现**:  
+
+html
+```html
+<div class="paramList">
+  <div class="paramBox"></div>
+  <div class="paramBox"></div>
+</div>
+```
+
+css
+```css
+.paramList {
+  display: flex; 
+  flex-wrap: wrap;
+}
+
+.paramBox {
+    width: 200px;
+    height: 200px;
+    background-color:rgb(243, 243, 243);
+    /* 这里 22% 为初始的大小 */
+    flex: 0 0 22%;
+}
+
+/* 通过 @media 指定不同的屏幕宽度，物品的初始宽度为多少。对应 sm、lg 等尺寸 */
+@media only screen and (max-width: 1200px) {
+    .paramBox {
+        flex: 0 0 30%;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .paramBox {
+        flex: 0 0 40%;
+    }
+}
+```
 
 # 布局
 1. 自适应布局  
