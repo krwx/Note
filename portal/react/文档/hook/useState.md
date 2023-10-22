@@ -8,6 +8,10 @@
   - [注意点](#注意点)
     - [我已经更新了状态，但日志仍显示旧值](#我已经更新了状态但日志仍显示旧值)
     - [setState 存储函数](#setstate-存储函数)
+- [`useState` 的 `set` 函数的异步、同步问题](#usestate-的-set-函数的异步同步问题)
+  - [setState 后发生了什么](#setstate-后发生了什么)
+  - [setState 为什么是异步的，这里的异步是什么意思](#setstate-为什么是异步的这里的异步是什么意思)
+  - [使用 `useState` 的 `set` 函数后，如何同步获取最新的数据](#使用-usestate-的-set-函数后如何同步获取最新的数据)
 
 # useState
 useState 是一个 React Hook，它允许你向组件添加一个 状态变量。
@@ -211,4 +215,64 @@ function handleClick() {
   setFn(() => someOtherFunction);
 }
 ```
+
+# `useState` 的 `set` 函数的异步、同步问题
+`setState` 是类组件的 `api` ，通常讨论的 `setState` 应该是 `useState` 的 `set` 函数。
+
+## setState 后发生了什么
+在代码中调用 `setState` 函数之后，`React` 会将传入的参数对象与组件当前的状态合并，然后触发**调和过程**( `Reconciliation` )。经过调和过程，React 会以相对高效的方式根据新的状态**构建 React 元素树**并且着手重新渲染整个 UI 界面。
+
+在 React 得到元素树之后，React 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。在差异计算算法中，React 能够相对精确地知道哪些位置发生了改变以及应该如何改变，这就保证了按需更新，而不是全部重新渲染。
+
+如果在短时间内频繁 `setState`。`React` 会将 `state` 的改变压入栈中，在合适的时机，**批量更新 `state` 和视图，达到提高性能的效果**
+
+## setState 为什么是异步的，这里的异步是什么意思
+假如所有 `setState` 是同步的，意味着每执行一次 `setState` 时（有可能一个同步代码中，多次 setState），都重新 `vnode diff + dom` 修改，这对性能来说是极为不好的。如果是异步，则可以把一个同步代码中的多个 `setState` 合并成一次组件更新。所以默认是异步的，但是在一些情况下是同步的。
+
+一般认为，**做异步设计是为了性能优化、减少渲染次数**：`setState` 设计为异步，可以显著的提升性能。如果每次调用 `setState` 都进行一次更新，那么意味着 `render` 函数会被频繁调用，界面重新渲染，这样效率是很低的；最好的办法应该是获取到多个更新，之后进行批量更新；
+
+## 使用 `useState` 的 `set` 函数后，如何同步获取最新的数据
+1. 直接传递 `setState` 的数据
+```js
+function click() {
+  const nextCount = count + 1;
+  setCount(nextCount);
+
+  console.log(count);     // 0
+  console.log(nextCount); // 1
+  logValue(nextCount);
+}
+
+function logValue(value) {
+  console.log(value);
+}
+```
+
+2. 通过 `useEffect` 监听值，在 `useEffect` 使用最新值
+```js
+const [num, setNum] = useState(0);
+
+useEffect(() => {
+  onsole.log("useEffect num: ", num);
+}, [num])
+```
+
+3. 通过 `useRef()` 保存最新值。然后使用 `ref` 的值
+```js
+const [num, setNum] = useState(0);
+const numRef = useRef(num);
+
+function click() {
+  setNum(num + 1);
+  // 使用 setState 后，要更新 ref 的值
+  numRef.current = num + 1;
+
+  otherFunction();
+}
+
+function otherFunction() {
+  console.log(numRef.current)
+}
+```
+
 
