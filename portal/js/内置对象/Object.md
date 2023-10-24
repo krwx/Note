@@ -41,8 +41,21 @@
     - [示例](#示例-3)
       - [用 `Object.create()` 实现类式继承](#用-objectcreate-实现类式继承)
       - [其他](#其他)
+  - [Object.entries()](#objectentries)
+    - [语法](#语法-6)
+    - [描述](#描述-3)
+    - [例子](#例子)
 
 # 方法
+- [Object.prototype.toString()](#objectprototypetostring)
+- [Object.prototype.valueOf()](#objectprototypevalueof)
+- [Object.is()](#objectis)
+- [Object.defineProperty()](#objectdefineproperty)
+- [Object.defineProperties()](#objectdefineproperties)
+- [Object.getOwnPropertyDescriptor()](#objectgetownpropertydescriptor)
+- [Object.create()](#objectcreate)
+- [Object.entries()](#objectentries)
+
 ## Object.prototype.toString()
 `toString()` 方法返回一个表示该对象的字符串。该方法旨在重写（自定义）派生类对象的**类型转换**的逻辑。
 
@@ -305,17 +318,17 @@ Object.is(foo, sameFoo); // true
   * 当且仅当该属性在对应对象的属性枚举中出现时，值为 `true`。**默认值为 `false`**。
 
 **数据描述符**的键：
-* value
+* `value`
   * 与属性相关联的值。可以是任何有效的 JavaScript 值（数字、对象、函数等）。**默认值为 `undefined`** 。
-* writable
+* `writable`
   * 如果与属性相关联的值可以使用赋值运算符更改，则为 true。默认值为 false。
 
 **访问器描述符**的键：
-* get
+* `get`
   * 用作属性 getter 的函数，如果没有 getter 则为 undefined。
   * 当访问该属性时，将不带参地调用此函数，并将 this 设置为通过该属性访问的对象（因为可能存在继承关系，这可能不是定义该属性的对象）。
   * 返回值将被用作该属性的值。**默认值为 `undefined`**。
-* set
+* `set`
   * 用作属性 setter 的函数，如果没有 setter 则为 undefined。
   * 当该属性被赋值时，将调用此函数，并带有一个参数（要赋给该属性的值），并将 this 设置为通过该属性分配的对象。
   * **默认值为 `undefined`**。
@@ -731,3 +744,71 @@ o = new Constructor();
 // 等价于：
 o = Object.create(Constructor.prototype);
 ```
+
+## Object.entries()
+`Object.entries()` 静态方法返回一个数组，包含给定对象自有的可枚举字符串键属性的键值对。
+
+### 语法
+`Object.entries(obj)`
+
+**返回值**:  
+- 一个由给定对象**自有的可枚举**字符串键属性的键值对组成的数组。
+- 每个键值对都是**一个包含两个元素的数组**：
+  - 第一个元素是属性的键（始终是字符串）
+  - 第二个元素是属性值。
+
+### 描述
+`Object.entries()` 返回一个数组，其元素是直接在 `object` 上找到相应的可枚举字符串键属性的键值对数组。
+
+与 `for...in` 循环的区别是：**`for...in` 会遍历原型链的属性，`Object.entries()`不会遍历原型链的属性，只会遍历当前对象的属性**
+
+`Object.entries()` 返回的数组顺序和 `for...in` 循环提供的顺序相同。
+
+如果只需要属性的键，请使用 `Object.keys()`。如果只需要属性的值，请使用 `Object.values()`。
+
+
+### 例子
+```js
+// 类数组对象
+const obj = { 0: "a", 1: "b", 2: "c" };
+console.log(Object.entries(obj)); // [ ['0', 'a'], ['1', 'b'], ['2', 'c'] ]
+
+// 具有随机键排序的类数组对象
+const anObj = { 100: "a", 2: "b", 7: "c" };
+console.log(Object.entries(anObj)); // [ ['2', 'b'], ['7', 'c'], ['100', 'a'] ]
+```
+
+- 在**基本类型**中使用 `Object.entries()`  
+非对象参数会强制转换成对象。只有**字符串**可以有自己的可枚举属性，所有其他基本类型均返回一个**空数组**。
+```js
+// 字符串具有索引作为可枚举的自有属性
+console.log(Object.entries("foo")); // [ ['0', 'f'], ['1', 'o'], ['2', 'o'] ]
+
+// 其他基本类型没有自有属性
+console.log(Object.entries(100)); // []
+```
+
+- 将 `Object` 转换成 `Map`
+`Map()` 构造函数接受一个 `entries` 可迭代对象
+```js
+const obj = { foo: "bar", baz: 42 };
+const map = new Map(Object.entries(obj));
+console.log(map); // Map(2) {"foo" => "bar", "baz" => 42}
+```
+
+- 遍历对象
+```js
+// 使用 for...of 循环
+const obj = { a: 5, b: 7, c: 9 };
+for (const [key, value] of Object.entries(obj)) {
+  console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
+}
+
+// 使用数组方法
+Object.entries(obj).forEach(([key, value]) => {
+  console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
+});
+```
+
+
+
