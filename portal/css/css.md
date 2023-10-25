@@ -342,11 +342,17 @@ div:hover
 Bootstrap 的 响应式布局或 element-ui 的 row、col 布局 **都是使用 `flex` 布局实现的**。
 
 **原理**：
-1. Bootstrap 的 `row` 代表：设置样式 `display: flex; flex-wrap: wrap`
-2. 类似 `col-3、col-5` 代表：设置 `flex-grow: 0;flex-shrink: 0;flex-basic：`
-   1. `flex-basic` 根据 col 后的数字设置，例如 `col-6` 是 25%，`col-4` 是16.6666666667% 。通常使用简写 `flex: 0 0 25%`。
-   2. **注意**：`flex-basic` 设置的是**百分比，而不是具体的数值**，例如 100px，这样就可以让物体的初始宽度根据布局的宽度设置
-3. Bootstrap 预设了五个响应尺寸：`xs、sm、md、lg 和 xl`。这是使用 `@media` 实现的，五个响应尺寸分别对应不同的屏幕的最小宽度
+1. `row`
+   1. Bootstrap 的 `row` 代表：设置样式 `display: flex; flex-wrap: wrap`
+2. `col-3、col-5`
+   1. 类似 `col-3、col-5` 代表：设置 `flex-grow: 0;flex-shrink: 0;flex-basic：`
+   2. `flex-basic` 根据 col 后的数字设置，例如 `col-6` 是 25%，`col-4` 是16.6666666667% 。通常使用简写 `flex: 0 0 25%`。
+   3. **注意**：`flex-basic` 设置的是**百分比，而不是具体的数值**，例如 100px，这样就可以让物体的初始宽度根据布局的宽度设置
+3. `xs、sm、md、lg 和 xl`
+   1. Bootstrap 预设了五个响应尺寸：`xs、sm、md、lg 和 xl`。这是使用 `@media` 实现的，五个响应尺寸分别对应不同的屏幕的最小宽度
+4. `col-offset-6`
+   1. `offet` 指定列偏移量，对应的 css 样式为 `margin-right: 25%`。通过设置 `margin-right` 实现偏移，偏移的值为 `offset` 对应的数字对应的百分比。
+   2. 例如：24栏，偏移6栏，即偏移 25%
 
 **实现**:  
 
