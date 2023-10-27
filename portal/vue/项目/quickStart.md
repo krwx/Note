@@ -10,6 +10,7 @@
 vue create [项目名字]
 ```
 2. **创建 ts 项目**（用这个创建，能集成 vite、ts、pinia、vue-router）  
+   使用 create-vue 指令创建项目  
    [指令参考](https://github.com/vuejs/create-vue)
 ```
 npm create vue@latest

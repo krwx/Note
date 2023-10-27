@@ -2,6 +2,7 @@
 - [待窗口加载页面完成后显示窗口](#待窗口加载页面完成后显示窗口)
 - [父子窗口](#父子窗口)
 - [模态窗口](#模态窗口)
+- [无边框窗口的可拖拽区​](#无边框窗口的可拖拽区)
 - [构造函数](#构造函数)
 - [实例事件](#实例事件)
   - [事件: 'ready-to-show'](#事件-ready-to-show)
@@ -18,6 +19,7 @@
   - [win.show()](#winshow)
   - [win.hide()](#winhide)
   - [win.maximize()](#winmaximize)
+  - [win.unmaximize()](#winunmaximize)
   - [win.minimize()](#winminimize)
   - [win.center()](#wincenter)
   - [win.setTitle(title)](#winsettitletitle)
@@ -67,6 +69,24 @@ child.once('ready-to-show', () => {
   child.show()
 })
 ```
+
+# 无边框窗口的可拖拽区​
+- 默认情况下, 无边框窗口是不可拖拽的。 应用程序需要在 `CSS` 中指定 `-webkit-app-region: drag` 来告诉 `Electron` 哪些区域是可拖拽的（如操作系统的标准标题栏），
+- 在可拖拽区域内部使用 `-webkit-app-region: no-drag` 则可以将其中部分区域排除。 请注意, 当前只支持矩形形状。
+
+要使整个窗口可拖拽, 您可以添加 `-webkit-app-region: drag` 作为 `body` 的样式:
+```css
+body {
+  -webkit-app-region: drag;
+}
+```
+**请注意，如果您使整个窗口都可拖拽，则必须将其中的按钮标记为不可拖拽，否则用户将无法点击它们**：
+```css
+button {
+  -webkit-app-region: no-drag;
+}
+```
+如果只将自定义标题栏设置为可拖拽，还需要使标题栏中的所有按钮都不可拖拽。
 
 # 构造函数
 `new BrowserWindow([options])`  
@@ -137,6 +157,9 @@ Electron 默认的窗口标题是工程 `index.html` 中的 `title` 名称。
 
 ## win.maximize()
 最大化窗口。 如果窗口尚未显示，该方法也会将其显示 (但不会聚焦)。
+
+## win.unmaximize()
+取消窗口最大化
 
 ## win.minimize()
 最小化窗口。 在某些平台上, 最小化的窗口将显示在Dock中。

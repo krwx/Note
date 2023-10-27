@@ -3,6 +3,9 @@
 - [position](#position)
 - [box-shadow](#box-shadow)
   - [语法](#语法)
+- [white-space](#white-space)
+- [text-overflow](#text-overflow)
+  - [语法](#语法-1)
 
 
 # display
@@ -141,3 +144,59 @@ box-shadow:
 - `<color>`
   - 相关事项查看 `<color>` 。如果没有指定，则由浏览器决定——通常是color的值，不过目前 Safari 取透明。
 
+# white-space
+CSS white-space 属性用于设置如何处理元素内的**空白字符**。
+```css
+/* 单个关键字值 */
+white-space: normal;
+white-space: nowrap;
+white-space: pre;
+white-space: pre-wrap;
+white-space: pre-line;
+white-space: break-spaces;
+
+/* white-space-collapse 和 text-wrap 简写值 */
+white-space: collapse balance;
+white-space: preserve nowrap;
+```
+取值：
+- normal
+  - 连续的空白符会被**合并**。源码中的换行符会被当作空白符来处理。并根据填充行框盒子的需要来换行。
+- nowrap
+  - 和 normal 一样合并空白符，但**阻止源码中的文本换行**。
+- pre
+  - 连续的空白符会被**保留**。仅在遇到换行符或 `<br>` 元素时才会换行。
+- pre-wrap
+  - 连续的空白符会被**保留**。在遇到换行符或 `<br>` 元素时，或者根据填充行框盒子的需要换行。
+- pre-line
+  - 连续的空白符会被**合并**。在遇到换行符或 `<br>` 元素时，或者根据填充行框盒子的需要换行。
+
+# text-overflow
+`text-overflow CSS` 属性用于确定如何提示用户**存在隐藏的溢出内容**。其形式可以是裁剪、显示一个省略号（`“…”`）或显示一个自定义字符串。
+
+`text-overflow` 属性并不会强制“溢出”事件的发生，因此为了能让文本能够溢出容器，你需要在元素上添加几个额外的属性：`overflow` 和 `white-space`
+```css
+overflow: hidden;
+white-space: nowrap;
+```
+
+`text-overflow` 属性只对那些在**块级元素**溢出的内容有效
+
+简单理解：
+- 文本有溢出，本属性才会起作用。  
+- 要让文本溢出通过 `overflow` 和 `white-space` 实现
+
+## 语法
+`text-overflow` 属性可能被赋予一个或者两个值。
+- 如果赋一个值，指的行末溢出行为（从左至右的文本右末端，从右至左的文本左末端）。
+- 如果赋两个值，第一个值指定行左端溢出行为，第二个值指定行右端溢出行为。
+
+```css
+text-overflow: clip;
+text-overflow: ellipsis ellipsis;
+```
+取值：
+- clip
+  - **默认值**。这个关键字会在内容区域的极限处截断文本，因此可能会在单词的中间发生截断。
+- ellipsis
+  - 这个关键字会用一个省略号（`'…'`）来表示被截断的文本。这个省略号被添加在内容区域中，因此会减少显示的文本。如果空间太小以至于连省略号都容纳不下，那么这个省略号也会被截断。
