@@ -4,8 +4,18 @@
 - [box-shadow](#box-shadow)
   - [语法](#语法)
 - [white-space](#white-space)
-- [text-overflow](#text-overflow)
-  - [语法](#语法-1)
+- [text](#text)
+  - [text-overflow](#text-overflow)
+    - [语法](#语法-1)
+- [background](#background)
+  - [background-image](#background-image)
+  - [background-position](#background-position)
+  - [background-size](#background-size)
+- [font](#font)
+  - [font-family](#font-family)
+  - [font-style](#font-style)
+  - [font-weight](#font-weight)
+- [filter](#filter)
 
 
 # display
@@ -69,7 +79,7 @@ position 属性的五个值：static、relative、fixed、absolute、sticky。
 HTML 元素的默认值，即没有定位，遵循正常的文档流对象。  
 静态定位的元素不会受到 top, bottom, left, right影响。
 * fixed 定位  
-元素的位置相对于浏览器窗口是固定位置。  
+元素的位置**相对于浏览器窗口**是固定位置。  
 即使窗口是滚动的它也不会移动  
 **Fixed定位使元素的位置与文档流无关，因此不占据空间。**
 Fixed定位的元素和其他元素重叠。
@@ -171,7 +181,8 @@ white-space: preserve nowrap;
 - pre-line
   - 连续的空白符会被**合并**。在遇到换行符或 `<br>` 元素时，或者根据填充行框盒子的需要换行。
 
-# text-overflow
+# text
+## text-overflow
 `text-overflow CSS` 属性用于确定如何提示用户**存在隐藏的溢出内容**。其形式可以是裁剪、显示一个省略号（`“…”`）或显示一个自定义字符串。
 
 `text-overflow` 属性并不会强制“溢出”事件的发生，因此为了能让文本能够溢出容器，你需要在元素上添加几个额外的属性：`overflow` 和 `white-space`
@@ -186,7 +197,7 @@ white-space: nowrap;
 - 文本有溢出，本属性才会起作用。  
 - 要让文本溢出通过 `overflow` 和 `white-space` 实现
 
-## 语法
+### 语法
 `text-overflow` 属性可能被赋予一个或者两个值。
 - 如果赋一个值，指的行末溢出行为（从左至右的文本右末端，从右至左的文本左末端）。
 - 如果赋两个值，第一个值指定行左端溢出行为，第二个值指定行右端溢出行为。
@@ -200,3 +211,250 @@ text-overflow: ellipsis ellipsis;
   - **默认值**。这个关键字会在内容区域的极限处截断文本，因此可能会在单词的中间发生截断。
 - ellipsis
   - 这个关键字会用一个省略号（`'…'`）来表示被截断的文本。这个省略号被添加在内容区域中，因此会减少显示的文本。如果空间太小以至于连省略号都容纳不下，那么这个省略号也会被截断。
+
+# background
+## background-image
+CSS `background-image` 属性用于为一个元素设置一个或者多个背景图像。
+
+可以提供由**逗号**分隔的多个值来指定多个背景图像。
+
+在绘制时，图像以 z 方向堆叠的方式进行。先指定的图像会在之后指定的图像上面绘制。因此指定的第一个图像“最接近用户”。  （**即有多个图像，先声明的图像会在最上方**）
+
+然后元素的边框 `border` 会在它们之上被绘制，而 `background-color` 会在它们之下绘制。
+
+语法：  
+`<image>`、`<gradient>` 是数据类型
+```
+background-image = 
+  <bg-image>#  
+
+<bg-image> = 
+  <image>  |
+  none     
+
+<image> = 
+  <url>       |
+  <gradient>  
+
+<url> = 
+  url( <string> <url-modifier>* )  |
+  src( <string> <url-modifier>* )  
+```
+
+例子：
+```css
+background-image: linear-gradient(to bottom, red, blue),
+                  url("../../media/examples/lizard.png");
+
+background-image: url("startransparent.gif"), url("catfront.png");
+```
+
+## background-position
+`background-position` CSS 属性为每一个背景图片**设置初始位置**。这个位置是相对于由 `background-origin` 定义的位置图层的。
+
+取值：
+- `<position>`
+
+  - : 一个 `<position>` 定义一组 x/y 坐标（相对于一个元素盒子模型的边界），来放置项目。它可以使用一到四个值进行定义。
+
+    **一个值的语法：** 值可能是：
+
+    - 关键字 `center`，用来居中背景图片。
+    - 关键字 `top`、`left`、`bottom`、`right` 中的一个。用来指定把这个项目（原文为 item）放在哪一个边界。另一个维度被设置成 50%，所以这个项目（原文为 item）被放在指定边界的中间位置。
+    - `<length>` 或 `<percentage>`。指定相对于左边界的 x 坐标，y 坐标被设置成 50%。
+
+    **两个值的语法：** 一个定义 x 坐标，另一个定义 y 坐标。每个值可以是：
+
+    - 关键字 `top`、`left`、`bottom`、`right` 中的一个。如果这里给出 `left` 或 `right`，那么这个值定义 x 轴位置，另一个值定义 y 轴位置。如果这里给出 `top` 或 `bottom`，那么这个值定义 y 轴位置，另一个值定义 x 轴位置。
+    - `<length>` 或 `<percentage>`。如果另一个值是 `left` 或 `right`，则该值定义相对于顶部边界的 Y。如果另一个值是 `top` 或 `bottom`，则该值定义相对于左边界的 X。如果两个值都是 `<length>` 或 `<percentage>` 值，则第一个定义 X，第二个定义 Y。
+    - 注意：如果一个值是 `top` 或 `bottom`，那么另一个值不可能是 `top` 或 `bottom`。如果一个值是 `left` 或 `right`，那么另一个值不可能是 `left` 或 `right`。也就是说，例如，`top top` 和 `left right` 是无效的。
+    - 排序：配对关键字时，位置并不重要，因为浏览器可以重新排序，写成 `top left` 或 `left top` 其产生的效果是相同的。使用 `<length>` 或 `<percentage>` 与关键字配对时顺序非常重要，定义 X 的值放在前面，然后是定义 Y 的值， `right 20px` 和 `20px right` 的效果是不相同的，前者有效但后者无效。`left 20%` 或 `20% bottom` 是有效的，因为 X 和 Y 值已明确定义且位置正确。
+    - 默认值是 `left top` 或者 `0% 0%`。
+
+    **三个值的语法：** 两个值是关键字值，第三个是前面值的偏移量：
+
+    - 第一个值是关键字 `top`、`left`、`bottom`、`right`，或者 `center`。如果设置为 `left` 或 `right`，则定义了 X。如果设置为 `top` 或 `bottom`，则定义了 Y，另一个关键字值定义了 X。
+    - `<length>` 或 `<percentage>`，如果是第二个值，则是第一个值的偏移量。如果是第三个值，则是第二个值的偏移量。
+    - 单个长度或百分比值是其前面的关键字值的偏移量。一个关键字与两个 `<length>` 或 `<percentage>` 值的组合无效。
+
+    **四个值的语法：** 第一个和第三个值是定义 X 和 Y 的关键字值。第二个和第四个值是前面 X 和 Y 关键字值的偏移量：
+
+    - 第一个值和第三个值是关键字值 `top`、`left`、`bottom`、 `right` 之一。如果设置为 `left` 或 `right`，则定义了 X。如果设置为 `top` 或 `bottom`，则定义了 Y，另一个关键字值定义了 X。
+    - 第二个和第四个值是 `<length>` 或 `<percentage>`。第二个值是第一个关键字的偏移量。第四个值是第二个关键字的偏移量。
+
+例子：
+```css
+/* Keyword values */
+background-position: top;
+background-position: bottom;
+background-position: left;
+background-position: right;
+background-position: center;
+
+/* <percentage> values */
+background-position: 25% 75%;
+
+/* <length> values */
+background-position: 1cm 2cm;
+background-position: 10ch 8em;
+
+/* Multiple images */
+background-position:
+  0 0,
+  center;
+
+/* Edge offsets values */
+background-position: bottom 10px right 20px;
+background-position: right 3em bottom 10px;
+```
+
+## background-size
+`background-size` 设置背景图片大小。图片可以保有其原有的尺寸，或者拉伸到新的尺寸，或者在保持其原有比例的同时缩放到元素的可用空间的尺寸。
+
+初始值：	`auto auto`
+
+属性值：
+- `<length>`
+  - `<length>` 值，指定背景图片大小，不能为负值。
+- `<percentage>`
+  - `<percentage>` 值，指定背景图片相对背景区（background positioning area）的百分比。
+- auto
+  - 以背景图片的比例缩放背景图片。
+- cover
+  - 缩放背景图片以完全覆盖背景区，可能背景图片部分看不见。和 contain 值相反，cover 值尽可能大的缩放背景图像并保持图像的宽高比例（图像不会被压扁）。该背景图以它的全部宽或者高覆盖所在容器。当容器和背景图大小不同时，背景图的 左/右 或者 上/下 部分会被裁剪。
+- contain
+  - 缩放背景图片以完全装入背景区，可能背景区部分空白。contain 尽可能的缩放背景并保持图像的宽高比例（图像不会被压缩）。该背景图会填充所在的容器。当背景图和容器的大小的不同时，容器的空白区域（上/下或者左/右）会显示由 background-color 设置的背景颜色。
+
+```css
+/* 关键字 */
+background-size: cover
+background-size: contain
+
+/* 一个值：这个值指定图片的宽度，图片的高度隐式的为 auto */
+background-size: 50%
+background-size: 12px
+background-size: auto
+
+/* 两个值 */
+/* 第一个值指定图片的宽度，第二个值指定图片的高度 */
+background-size: 50% auto
+background-size: 3em 25%
+background-size: auto auto
+
+/* 逗号分隔的多个值：设置多重背景 */
+background-size: auto, auto     /* 不同于 background-size: auto auto */
+background-size: 50%, 25%, 25%
+background-size: 6px, auto, contain
+```
+
+# font
+## font-family
+CSS 属性 `font-family` 允许你通过给定一个有先后顺序的，由字体名或者字体族名组成的列表来为选定的元素**设置字体**。
+
+属性值用**逗号**隔开。浏览器会选择列表中第一个该计算机上有安装的字体，或者是通过 `@font-face` 指定的可以直接下载的字体。
+
+属性 `font-family` 列举一个或多个由逗号隔开的字体族。每个字体族由 `<family-name>` 或 `<generic-name>` 值指定。
+- `<family-name>`
+一个字体族的名字。例如"Times" 和 "Helvetica" 都是字体族名。字体族名可以包含空格，但包含空格时应该用引号。
+- `<generic-name>`
+通用字体族名是一种备选机制，用于在指定的字体不可用时给出较好的字体。通用字体族名都是关键字，所以不可以加引号。在列表的末尾应该至少有一个通用字体族名。以下是该属性可能的取值以及他们的定义。
+  - serif、sans-serif、monospace、cursive、fantasy、system-ui、ui-serif、fangsong 等等
+
+例子：
+```css
+/* 一个字体族名和一个通用字体族名 */
+font-family: "Gill Sans Extrabold", sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+
+/* 仅有一个通用字体族名 */
+font-family: serif;
+font-family: sans-serif;
+font-family: monospace;
+```
+
+## font-style
+`font-style` CSS 属性允许你选择 `font-family` 字体下的 `italic` 或 `oblique` 样式。
+- `Italic` 字体一般是现实生活中的草书，相比无样式的字体，通常会占用较少的水平空间，
+- `oblique` 字体一般只是常规字形的倾斜版本。
+
+取值：
+- normal
+  - 选择 font-family 的常规字体。
+- italic
+  - 选择 **斜体**，如果当前字体没有可用的斜体版本，会选用倾斜体（oblique ）替代。
+- oblique
+  - 选择 **倾斜体**，如果当前字体没有可用的倾斜体版本，会选用斜体（italic ）替代。
+
+```css
+font-style: normal;
+font-style: italic;
+font-style: oblique;
+```
+
+## font-weight
+`font-weight` CSS 属性指定了字体的**粗细程度**。一些字体只提供 `normal` 和 `bold` 两种值。
+
+值
+- normal
+  - 正常粗细。**与 400 等值**。
+- bold
+  - 加粗。**与 700 等值**。
+- lighter
+  - 比从父元素继承来的值更细 (处在字体可行的粗细值范围内)。
+- bolder
+  - 比从父元素继承来的值更粗 (处在字体可行的粗细值范围内)。
+- `<number>`
+  - 一个介于 **1 和 1000 (包含)** 之间的 <number> 类型值。更大的数值代表字体重量粗于更小的数值 (或一样粗)。\
+
+例子：
+```css
+/* Keyword values */
+font-weight: normal;
+font-weight: bold;
+
+/* Keyword values relative to the parent */
+font-weight: lighter;
+font-weight: bolder;
+
+/* Numeric keyword values */
+font-weight: 100;
+font-weight: 200;
+font-weight: 800;
+```
+
+# filter
+CSS `filter` 属性将**模糊或颜色偏移**等图形效果应用于元素。滤镜通常用于调整图像、背景和边框的渲染。
+
+当单个 `filter` 属性具有多个函数时，滤镜将**按顺序依次应用**。
+
+`filter` 属性可设置为 `none` 或下面列出的一个或多个函数。
+- blur()
+  - 将高斯模糊应用于输入图像。
+  - filter: blur(5px);
+- brightness()
+  - 将线性乘法器应用于输入图像，以调整其亮度。值为 0% 将创建全黑图像；值为 100% 会使输入保持不变，其他值是该效果的线性乘数。如果值大于 100% 将使图像更加明亮。
+  - filter: brightness(2);
+- contrast()
+  - 调整输入图像的对比度。值是 0% 将使图像变灰；值是 100%，则无影响；若值超过 100% 将增强对比度。
+  - filter: contrast(200%);
+- drop-shadow()
+  - 使用 `<shadow>` 参数沿图像的轮廓生成阴影效果。阴影语法类似于 `<box-shadow>`（在 CSS 背景和边框模块中定义），但不允许使用 inset 关键字以及 spread 参数。与所有 filter 属性值一样，任何在 drop-shadow() 后的滤镜同样会应用在阴影上。
+  - filter: drop-shadow(16px 16px 10px black);
+- grayscale()
+  - 将图像转换为灰度图。值为 100% 则完全转为灰度图像，若为初始值 0% 则图像无变化。值在 0% 到 100% 之间，则是该效果的线性乘数。
+  - filter: grayscale(100%);
+- hue-rotate() 
+  - 应用色相旋转。`<angle>` 值设定图像会被调整的色环角度值。值为 0deg，则图像无变化。
+  - filter: hue-rotate(90deg);
+- invert() 
+  - 反转输入图像。值为 100% 则图像完全反转，值为 0% 则图像无变化。值在 0% 和 100% 之间，则是该效果的线性乘数。
+  - filter: invert(100%);
+- opacity()
+  - 应用透明度。值为 0% 则使图像完全透明，值为 100% 则图像无变化。
+  - filter: opacity(50%);
+- saturate()
+  - 改变图像饱和度。值为 0% 则是完全不饱和，值为 100% 则图像无变化。超过 100% 则增加饱和度。
+  - filter: saturate(200%);
+- sepia()
+  - 将图像转换为深褐色。值为 100% 则完全是深褐色的，值为 0% 图像无变化。
+  - filter: sepia(100%);

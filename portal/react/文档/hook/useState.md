@@ -1,6 +1,6 @@
 - [useState](#usestate)
+  - [语法](#语法)
   - [用法](#用法)
-  - [用法](#用法-1)
     - [根据先前的 state 更新 state （传递更新函数）](#根据先前的-state-更新-state-传递更新函数)
     - [更新状态中的对象和数组](#更新状态中的对象和数组)
     - [避免重复创建初始状态](#避免重复创建初始状态)
@@ -16,7 +16,7 @@
 # useState
 useState 是一个 React Hook，它允许你向组件添加一个 状态变量。
 
-## 用法
+## 语法
 `const [state, setState] = useState(initialState);`
 
 参数 

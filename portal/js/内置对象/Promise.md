@@ -509,6 +509,10 @@ Promise.any(promises).then((value) => console.log(value));
 ## Promise.race()
 `Promise.race()` 静态方法接受一个 promise 可迭代对象作为输入，并返回一个 Promise。**这个返回的 promise 会随着第一个 promise 的敲定而敲定**。
 
+个人理解：
+- 敲定代表状态为 `fulfilled` 或 `rejected`，即 `Promise resolve` 或 `reject` 都代表 `Promise` 敲定了。
+- 所有 `Promise.race()` 里面的 `Promise` 只要其中一个 `Promise resolve` 或 `reject` 就会返回值
+
 **例子**：
 ```js
 const promise1 = new Promise((resolve, reject) => {
