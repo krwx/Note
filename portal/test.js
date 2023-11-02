@@ -96,3 +96,14 @@ const p = new Proxy(sum, {
 
 console.log(p(10,5)); */
 
+class TestHello {
+    
+    constructor(name, label) {
+        this.name = name;
+        this.label = label;
+    }
+
+    hello(params) {
+        
+    }
+}

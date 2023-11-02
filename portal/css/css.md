@@ -39,6 +39,10 @@
 - [px、em、rem](#pxemrem)
 - [模块](#模块)
   - [全局作用域](#全局作用域)
+- [浮动](#浮动)
+  - [介绍](#介绍)
+  - [清除浮动](#清除浮动)
+  - [清除浮动元素周围的盒子](#清除浮动元素周围的盒子)
 
 
 # 选择器
@@ -802,3 +806,78 @@ export default () => {
   );
 };
 ```
+
+# 浮动
+## 介绍
+CSS 的 Float（浮动），会使元素向左或向右移动，其周围的元素也会重新排列。
+
+- 元素的水平方向浮动，意味着元素只能左右移动而不能上下移动。
+- 一个浮动元素会尽量向左或向右移动，直到它的外边缘碰到包含框或另一个浮动框的边框为止。
+- 浮动元素**之后**的元素将围绕它。
+- 浮动元素**之前**的元素将**不会受到影响**。
+
+以 `float:left` 为例：
+- **浮动元素会脱离正常的文档布局流**，并吸附到其父容器的左边。
+- 在正常布局中位于该浮动元素之下的内容，此时会围绕着浮动元素，填满其**右侧**的空间。
+
+
+我们可以在浮动元素上应用 `margin`，将文字推开，但不能在文字上应用 margin 将浮动元素推走。
+```html
+<div class="outer">
+	<div class="left">123</div>
+	<div class="right">456</div>
+</div>
+```
+```css
+.left {
+  float: left;
+  margin-right: 20px; /* 这里的 margin 会推开文字，但是如果给 class 为 right 的 div 设置背景色会发现不会推开class 为 right 的 div */
+}
+```
+注意：**文字会排布在浮动元素周围，但是浮动元素从正常文档流移出，故段落的盒子仍然保持全部宽度。**
+
+## 清除浮动
+不让元素受到浮动元素的影响，通过 `clear` 属性实现的。 `clear` 属性接受下列值：
+- left：停止任何活动的左浮动
+- right：停止任何活动的右浮动
+- both：停止任何活动的左右浮动
+
+## 清除浮动元素周围的盒子
+假设一个盒子同时包含了很高的浮动元素和一个很短的段落。盒子会只包含段落，浮动元素溢出盒子。
+```html
+<div class="wrapper">
+  <div class="box">Float</div>
+
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla luctus
+    aliquam dolor, eu lacinia lorem placerat vulputate.
+  </p>
+</div>
+```
+实现目的：**让盒子联合包住浮动的项目以及第一段文字，同时让紧随其后的内容从盒子中清除浮动**
+
+实现方法：
+1. 使用 `clear` 属性  
+   先向包含浮动内容及其本身的盒子后方插入一些生成的内容，并将生成的内容清除浮动。
+    ```css
+    .wrapper::after {
+      content: "";
+      clear: both;
+      display: block;
+    }
+    ```
+   这与在浮动盒子后手动添加诸如 div 的 HTML 元素，并设置其样式为 clear:both 是等效的。
+2. 使用 `overflow`  
+   将包裹元素的 `overflow` 属性设置为除 `visible` 外的其他值。
+    ```css
+    .wrapper {
+      overflow: auto
+    }
+    ```
+3. 使用 `display: flow-root`  
+   使用 `display` 属性的 `flow-root` 值来创建块格式化上下文（BFC），在使用上没有副作用。
+    ```css
+    .wrapper {
+      display: flow-root;
+    }
+    ```
