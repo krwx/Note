@@ -2,7 +2,7 @@
 仅 vue 3 项目生效
 
 # 基础配置
-> 必须引用 '@dcloudio/vite-plugin-uni' 并且添加到 plugins 中
+> 必须引用 `'@dcloudio/vite-plugin-uni'` 并且添加到 `plugins` 中
 
 ```js
 import { defineConfig } from 'vite';
