@@ -25,3 +25,5 @@ navigationBarTitleText|	String|		|导航栏标题文字内容
         	}
         },
 ```
+
+在 pages.json 里面给新建的页面配置 navigationStyle 为 custom 来使用自定义头
