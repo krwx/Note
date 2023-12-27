@@ -8,6 +8,9 @@
     - [substring() 和 substr() 之间的区别](#substring-和-substr-之间的区别)
     - [substring() 和 slice() 之间的区别](#substring-和-slice-之间的区别)
     - [替换字符串的方法](#替换字符串的方法)
+  - [String.prototype.replace()](#stringprototypereplace)
+    - [语法](#语法-3)
+    - [指定函数为替换项](#指定函数为替换项)
 
 # 方法
 
@@ -154,3 +157,53 @@ function replaceString(oldS, newS, fullS) {
 // 2. 使用 String.prototype.replace() 函数
 ```
 
+## String.prototype.replace()
+- `replace()` 方法返回一个新字符串，其中一个、多个或所有匹配的 `pattern` 被替换为 `replacement`。
+- `pattern` 可以是字符串或 `RegExp`，`replacement` 可以是字符串或一个在每次匹配时调用的**函数**。
+- 如果 `pattern` 是字符串，则只会替换第一个匹配项。原始的字符串不会改变。
+- 该方法并不改变调用它的字符串本身，而是返回一个新的字符串。
+- **字符串模式只会被替换一次。要执行全局搜索和替换，请使用带有 g 标志的正则表达式或使用 `replaceAll()`**。
+
+### 语法
+参数：  
+
+`pattern`
+- 可以是字符串或者一个带有 Symbol.replace 方法的对象，典型的例子就是正则表达式。任何没有 Symbol.replace 方法的值都会被强制转换为字符串。
+
+`replacement`
+- 可以是字符串或函数。
+  - 如果是字符串，它将替换由 pattern 匹配的子字符串。支持一些特殊的替换模式，请参阅下面的指定字符串作为替换项部分。
+  - 如果是函数，**将为每个匹配调用该函数，并将其返回值用作替换文本**。下面的指定函数作为替换项部分描述了提供给此函数的参数。
+
+如果 pattern 是一个空字符串，则替换项将被插入到字符串的开头。
+```js
+"xxx".replace("", "_"); // "_xxx"
+```
+
+### 指定函数为替换项
+```js
+function replacer(match, p1, p2, /* …, */ pN, offset, string, groups) {
+  return replacement;
+}
+```
+该函数的参数如下所示：
+- match
+  - 匹配的子字符串。（对应于上面的 $&。）
+- p1, p2, …, pN
+  - 如果 replace() 的第一个参数是 RegExp 对象，则为捕获组（包括命名捕获组）找到的第 n 个字符串。（对应于上面的 $1、$2 等。）例如，如果 pattern 是 /(\d+)(\w+)/，则 p1 是 \a+ 的匹配项，p2 是 \b+ 的匹配项。如果该组是分支的一部分（例如 "abc".replace(/(a)|(b)/, Replacer)），则不匹配的替代项将为 undefined。
+- offset
+  - 原始字符串中匹配子字符串的偏移量。例如，如果整个字符串是 'abcd'，而匹配的子字符串是 'bc'，那么这个参数将是 1。
+- string
+  - 正在检查的原始字符串。
+- groups
+  - 一个捕获组命名组成的对象，值是匹配的部分（如果没有匹配，则为 undefined）。仅在 pattern 包含至少一个命名捕获组时才存在。
+
+```js
+function replacer(match, p1, p2, p3, offset, string) {
+  // p1 是非数字，p2 是数字，且 p3 非字母数字
+  return [p1, p2, p3].join(" - ");
+}
+const newString = "abc12345#$*%".replace(/([^\d]*)(\d*)([^\w]*)/, replacer);
+console.log(newString); // abc - 12345 - #$*%
+
+```

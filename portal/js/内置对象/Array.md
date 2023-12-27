@@ -3,12 +3,17 @@
 - [构造函数](#构造函数)
   - [语法](#语法)
   - [示例](#示例)
+- [属性](#属性)
+  - [length](#length)
+    - [截断数组](#截断数组)
 - [静态方法](#静态方法)
 - [实例方法](#实例方法)
   - [Array.prototype.slice()](#arrayprototypeslice)
     - [在类数组对象上调用 slice()](#在类数组对象上调用-slice)
   - [Array.prototype.splice()](#arrayprototypesplice)
   - [Array.prototype.sort()](#arrayprototypesort)
+  - [Array.prototype.shift()](#arrayprototypeshift)
+  - [Array.prototype.unshift()](#arrayprototypeunshift)
 
 
 # 数组
@@ -94,6 +99,29 @@ console.log(fruits.length); // 2
 console.log(fruits[0]); // "Apple"
 ```
 
+# 属性
+## length
+length 是 Array 的实例属性，表示该数组中元素的个数。该值是一个无符号 32 位整数。
+
+是**可写的**
+
+- 设置 length 小于当前长度的值将会截断数组——超过新 length 的元素将被删除。
+- 当 length 被设置为比当前长度更大的值时，数组通过添加空槽来扩展，而不是实际的 `undefined` 值。
+
+### 截断数组
+```js
+const numbers = [1, 2, 3, 4, 5];
+
+if (numbers.length > 3) {
+  numbers.length = 3;
+}
+
+console.log(numbers); // [1, 2, 3]
+console.log(numbers.length); // 3
+console.log(numbers[3]); // undefined；多余的元素会被删除
+```
+
+
 # 静态方法
 * Array.from()
   * : 从数组类对象或可迭代对象创建一个新的 Array 实例。
@@ -178,7 +206,7 @@ console.log(fruits[0]); // "Apple"
 * Array.prototype.reverse()
   * 就地反转数组中元素的顺序。（前面变成后面，后面变成前面。）
 
-* Array.prototype.shift()
+* [Array.prototype.shift()](#arrayprototypeshift)
   * 从数组中移除第一个元素并返回该元素。
 
 * [Array.prototype.slice()](#arrayprototypeslice)
@@ -208,7 +236,7 @@ console.log(fruits[0]); // "Apple"
 * Array.prototype.toString()
   * 返回一个表示调用数组及其元素的字符串。重写 Object.prototype.toString() 方法。
 
-* Array.prototype.unshift()
+* [Array.prototype.unshift()](#arrayprototypeunshift)
   * 在数组的前面添加一个或多个元素，并返回数组新的 length。
 
 * Array.prototype.values()
@@ -465,4 +493,40 @@ const result = mapped.map((v) => data[v.i]);
 ```js
 console.log(["a", "c", , "b"].sort()); // ['a', 'b', 'c', empty]
 console.log([, undefined, "a", "b"].sort()); // ["a", "b", undefined, empty]
+```
+
+## Array.prototype.shift()
+`shift()` 方法从数组中删除`第一个`元素，并`返回该元素的值`。此方法`更改数组的长度`。
+```js
+const array1 = [1, 2, 3];
+
+const firstElement = array1.shift();
+
+console.log(array1);
+// Expected output: Array [2, 3]
+
+console.log(firstElement);
+// Expected output: 1
+```
+
+## Array.prototype.unshift()
+unshift() 方法将指定元素**添加到数组的开头**，并**返回数组的新长度**。
+
+语法：  
+```js
+unshift()
+unshift(element1)
+unshift(element1, element2)
+unshift(element1, element2, /* …, */ elementN)
+```
+
+例子：
+```js
+const array1 = [1, 2, 3];
+
+console.log(array1.unshift(4, 5));
+// Expected output: 5
+
+console.log(array1);
+// Expected output: Array [4, 5, 1, 2, 3]
 ```

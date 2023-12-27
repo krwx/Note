@@ -1,3 +1,9 @@
+- [单行、多行文本显示省略号](#单行多行文本显示省略号)
+- [实现三栏](#实现三栏)
+- [图片居中](#图片居中)
+- [图片旋转](#图片旋转)
+
+
 # 单行、多行文本显示省略号
 1. 单行显示文本，超出显示省略号，很容易实现（需要加宽度 `width` 属来兼容部分浏览）：
 ```css
@@ -104,4 +110,51 @@ overflow: hidden;
 			grid-template-rows: 200px
 		}
 	</style>
+```
+
+# 图片居中
+图片居中：
+```css
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+```
+
+图片左右居中：
+```css
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin: auto;
+```
+
+# 图片旋转
+通过 `animation-play-state` 设置动画的播放状态，通过 添加 class 开始动画
+```css
+	.detail-play image {
+		/* 设置图片暂停旋转 */
+		animation: 10s liner move infinite;
+		animation-play-state: paused;
+	}
+	/* 设置图片旋转 */
+	.detail-play .detail-play-run {
+		animation-play-state: running;
+	}
+	@keyframes move {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+```
+```html
+<div class="detail-play">
+	<image :src="songDetail.al.picUrl" :class="{ 'detail-play-run': isPlayRotate }"></image>
+</div>
+
 ```

@@ -11,3 +11,5 @@
 ```html
 <view class="fixbg" :style="{ 'background-image': 'url(' + playlist.coverImgUrl + ')' }"></view>
 ```
+
+## 生命周期函数内直接使用方法，不需要 `this` 指针

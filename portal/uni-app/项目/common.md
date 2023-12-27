@@ -12,3 +12,7 @@
     <view class="fixbg" :style="{ 'background-image': 'url(' + playlist.coverImgUrl + ')' }"></view>
     ```
 6. 使用一个 boolean 变量和 v-show 指令，当页面查询数据后再展示页面。并且使用 uni.showLoading(options) 显示 loading 提示框，然后用 uni.hideLoading() 关闭提示框
+7. 生命周期函数内直接使用方法，不需要 `this` 指针
+8. uniapp 内置 Pinia，使用 Pinia 进行状态管理
+   1. uniapp的pinia的使用参考[link](https://uniapp.dcloud.net.cn/tutorial/vue3-pinia.html)
+9. 骨架屏：骨架屏一般用于页面在请求远程数据尚未完成时，在内容加载出来前展示与内容布局结构一致的灰白块，提升用户视觉体验。[link](#https://www.uvui.cn/components/skeletons.html)
