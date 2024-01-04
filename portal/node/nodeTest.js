@@ -1,33 +1,43 @@
 const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const mime = require('mime'); 
 
 const server = http.createServer((request, response) => {
-    // 获取请求的方法
-    // console.log(request.method); // GET
+    // 获取请求路径
+    const pathname = new URL(request.url, "http://127.0.0.1:9000").pathname;
+    // 拼接路径
+    const root = __dirname + "/page";
+    const filePath = root + pathname;
+    // 读取文件
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            // 注意：因为响应为中文，所以要设置 utf-8 。其他文件类型设置对应类型的 header
+            response.setHeader("content-type", "text/html;charset=utf-8")
+            // 根据错误展示对应提示
+            switch(err.code){
+                case 'ENOENT':
+                  response.statusCode = 404;
+                  response.end('<h1>404 Not Found</h1>');
+                  break;
+                case 'EPERM':
+                  response.statusCode = 403;
+                  response.end('<h1>403 Forbidden</h1>');
+                  break;
+                default:
+                  response.statusCode = 500;
+                  response.end('<h1>Internal Server Error</h1>');
+                  break;
+            }
+            return;
+        }
+        // 获取文件的后缀名
+        const ext = path.extname(pathname).slice(1);
+        // 设置 content-type 响应头
+        const type = ext == "html" ? mimes[ext] + ";charset=utf-8" : mimes[ext] || "application/octet-stream";
+        response.setHeader("content-type", type);
 
-    // 获取请求的 url，只包含 url 中的路径与查询字符串
-    // console.log(request.url); // /search?keyword=html&num=1
-
-    // 获取 HTTP 协议的版本号
-    // console.log(request.httpVersion);
-
-    // 获取 HTTP 的请求头
-    /* console.log(request.headers);
-    console.log(request.headers.host); */
-
-    // 获取请求体，使用 body 变量保存
-    let body = "";
-    // 绑定 data 事件，每有数据传输过来执行回调函数，chunk 代表传递的数据，为 buffer 类型
-    request.on("data", chunk => {
-        body += chunk; // 这里加运输自动将 buffer 转 string
-        // body += chunk.toString(); // 这样也可以
-    })
-    // 绑定 end 事件
-    request.on("end", () => {
-        console.log(body);
-
-        // 设置响应
-        response.setHeader("content-type", "text/html;charset=utf-8")
-        response.end("你好");
+        response.end(data);
     })
 })
 
