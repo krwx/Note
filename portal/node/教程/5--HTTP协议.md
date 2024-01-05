@@ -443,9 +443,7 @@ server.listen(9000, () => {
 # 九、网页资源的基本加载过程
 网页资源的加载都是循序渐进的，首先获取 HTML 的内容， 然后解析 HTML 再发送其他资源的请求，如 CSS，Javascript，图片等。
 
-TODO：搞清楚请求 css 、js 文件和解析 css、js 文件的顺序和解析 html 文件的详细过程
-
-TODO：看[这里](https://developer.mozilla.org/zh-CN/docs/Web/Performance/How_browsers_work)，重新理解加载过程
+[浏览器加载过程](../../basic--web/浏览器.md/#mdn-浏览器的工作原理)
 
 # 十、静态资源服务
 静态资源是指 **内容长时间不发生改变的资源** ，例如图片，视频，CSS 文件，JS文件，HTML文件，字体文件等

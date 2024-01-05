@@ -1,5 +1,6 @@
 - [Path 模块](#path-模块)
   - [\_\_filename](#__filename)
+  - [将相对路径转换为绝对路径](#将相对路径转换为绝对路径)
 
 
 # Path 模块
@@ -61,3 +62,10 @@ console.log(path.resolve(__dirname, "/hello.txt", './123')); // D:\hello.txt\123
 
 ## __filename
 __filename 保存的是**当前文件的绝对路径**
+
+## 将相对路径转换为绝对路径
+```js
+const path = require("path");
+
+const absolutePath = path.resolve(__dirname, relativePath);
+```
