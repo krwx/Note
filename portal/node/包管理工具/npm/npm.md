@@ -21,6 +21,10 @@ semver版本规范是X.Y.Z ：
 - ^x.y.z：表示x是保持不变的，y和z永远安装最新的版本
 - ~x.y.z：表示x和y保持不变的，z永远安装最新的版本
 
+> 安装包：  
+> 使用 `npm i` 依据 `package.json` 和 `packagelock.json` 的依赖声明安装项目依赖，不会下载最新的包  
+> 使用 `npm i <包名>` 会下载最新的包，并更新 `package.json` 的包的版本号
+
 ## package.json文件
 作用：
 * lists the packages that your project depends on.
