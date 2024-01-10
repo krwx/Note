@@ -3,3 +3,6 @@
 
 # 2. 注释
 多行注释：`Shift + Alt + A`
+
+# 3. 格式化
+`Shift + Alt + F`

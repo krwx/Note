@@ -145,13 +145,13 @@ em{font-style:normal}
 - 500：服务器内部错误
 
 ## 响应头
-```
-Cache-Control:缓存控制 private 私有的，只允许客户端缓存数据
-Connection 链接设置
-Content-Type:text/html;charset=utf-8 设置响应体的数据类型以及字符集,响应体为html，字符集
-utf-8
-Content-Length:响应体的长度，单位为字节
-```
+
+- Cache-Control: 缓存控制 private 私有的，只允许客户端缓存数据
+- Connection:  链接设置
+- Content-Type:text/html;charset=utf-8 设置响应体的数据类型以及字符集,响应体为- html，字符集 utf-8
+- Content-Length: 响应体的长度，单位为字节
+- Location：指定的是需要将页面重新定向至的地址。一般在响应码为 3xx 的响应中才会有意义。
+
 
 ## 响应体
 响应体内容的类型是非常灵活的，常见的类型有 HTML、CSS、JS、图片、JSON

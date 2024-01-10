@@ -102,7 +102,8 @@ try{
 ```
 
 ## 1-3. appendFile / appendFileSync 追加写入
-`appendFile` 作用是在文件尾部追加内容，appendFile 语法与 writeFile 语法完全相同
+`appendFile` 作用是在文件尾部追加内容，appendFile 语法与 writeFile 语法完全相同。  
+如果文件没有创建，使用 `appendFile` 也是会先创建文件再写入
 
 语法:
 ```js
