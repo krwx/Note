@@ -545,6 +545,10 @@ app.js 文件解析：
 ```js
 var createError = require('http-errors');
 
+// 默认设置了处理请求体的中间件
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 // 设置路由
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
