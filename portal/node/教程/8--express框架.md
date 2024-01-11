@@ -19,6 +19,15 @@
   - [5.4 静态资源中间件](#54-静态资源中间件)
   - [5.5 获取请求体数据： body-parser](#55-获取请求体数据-body-parser)
 - [防盗链](#防盗链)
+- [六、Router](#六router)
+  - [6.1 什么是 Router](#61-什么是-router)
+  - [6.2 Router 作用](#62-router-作用)
+  - [6.3 Router 使用](#63-router-使用)
+  - [6.4 路由前缀](#64-路由前缀)
+- [Express 应用程序生成器](#express-应用程序生成器)
+- [文件上传](#文件上传)
+  - [enctype="multipart/form-data"](#enctypemultipartform-data)
+  - [formidable](#formidable)
 
 
 # 一、express 介绍
@@ -442,3 +451,210 @@ app.listen(3000, () => {
   console.log('服务已经启动, 端口 3000 正在监听中....')
 })
 ```
+
+# 六、Router
+## 6.1 什么是 Router
+express 中的 Router 是一个完整的中间件和路由系统，可以看做是一个小型的 app 对象。
+
+## 6.2 Router 作用
+对路由进行**模块化**，更好的管理路由
+
+## 6.3 Router 使用
+创建独立的 JS 文件（homeRouter.js）
+```js
+//1. 导入 express
+const express = require('express');
+
+//2. 创建路由器对象
+const router = express.Router();
+
+//3. 在 router 对象身上添加路由
+router.get('/', (req, res) => {
+  res.send('首页');
+})
+router.get('/cart', (req, res) => {
+  res.send('购物车');
+});
+
+//4. 暴露
+module.exports = router;
+```
+主文件
+```js
+const express = require('express');
+const app = express();
+
+//5.引入子路由文件
+const homeRouter = require('./routes/homeRouter');
+
+//6.设置和使用中间件
+app.use(homeRouter);
+
+app.listen(3000,()=>{
+  console.log('3000 端口启动....');
+})
+```
+
+## 6.4 路由前缀
+```js
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+```
+第一个参数为路由前缀，第二个参数路由模块。  
+上面的例子中，`usersRouter` 的路由前缀为 `/users`，意思是路由前缀为 `/users` 的路由（例如 `/users/` 或 `/users/test` 等等）都会经过 `usersRouter`.
+
+# Express 应用程序生成器
+通过应用生成器工具 `express-generator` 可以快速创建一个应用的骨架。
+
+[链接](https://www.expressjs.com.cn/starter/generator.html)
+
+你可以通过 `npx` （包含在 Node.js 8.2.0 及更高版本中）命令来运行 `Express` 应用程序生成器。
+```
+$ npx express-generator
+```
+对于较老的 `Node` 版本，请通过 `npm` 将 `Express` 应用程序生成器安装到全局环境中并使用：
+```
+$ npm install -g express-generator
+$ express <目录名> //
+```
+在当前目录新建一个指定目录名的新目录，在里面创建 Express 应用
+
+目录结构：
+```
+.
+├── app.js
+├── bin
+│   └── www
+├── package.json
+├── public
+│   ├── images
+│   ├── javascripts
+│   └── stylesheets
+│       └── style.css
+├── routes
+│   ├── index.js
+│   └── users.js
+└── views
+    ├── error.pug
+    ├── index.pug
+    └── layout.pug
+```
+运行 `npm start` 命令启动。
+
+app.js 文件解析：
+```js
+var createError = require('http-errors');
+
+// 设置路由
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+// 当上面的路由不匹配，那么返回404。catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  // 创建一个错误，并传递给下面的错误处理器中间件处理
+  next(createError(404));
+});
+
+// 错误处理器.error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+```
+
+# 文件上传
+ejs 文件
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>文件上传</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>文件上传</h1>
+    <hr>
+    <!-- 文件上传的必需属性：enctype="multipart/form-data" -->
+    <form action="/portrait" method="post" enctype="multipart/form-data">
+        用户名：<input type="text" name="username"/><br>
+        头像：<input type="file" name="portrait"/><br>
+        <hr>
+        <button>提交</button>
+    </form>
+  </body>
+</html>
+```
+路由文件
+```js
+// 浏览器访问 portrait 路由，渲染 portrait 页面
+router.get('/portrait', function(req, res, next) {
+  res.render('portrait');
+});
+
+// 处理上传文件的 post 请求
+router.post('/portrait', function(req, res, next) {
+  // ...
+});
+```
+
+## enctype="multipart/form-data"
+- 文件上传的必需属性：`enctype="multipart/form-data"`，需要在 `form` 元素添加上。
+- 如果没有加上该属性，请求体会是 `queryString` 形式，例如：`name=123&file=123.jpg`。
+- 加上该属性，才会发送文件的数据
+
+## formidable 
+`介绍`：使用 `formidable` 处理上传的文件的数据
+
+[链接](https://www.npmjs.com/package/formidable)
+
+安装
+```
+# v2
+npm install formidable@v2
+
+# v3
+npm install formidable
+npm install formidable@v3
+```
+> `v2` 版本还是 `CommonJs` 的写法，使用 `require` 引入  
+> `v3` 版本使用 `ES6` 的写法，使用 `import` 引入
+
+使用
+```js
+const formidable = require("formidable");
+
+router.post('/portrait', function(req, res, next) {
+  const form = formidable({
+    uploadDir: __dirname + "/../public/images",
+    keepExtensions: true
+  });
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      next(err);
+      return;
+    }
+    // fields 存放请求体不是文件类型的数据，例如：{ username: '123' }
+    console.log(fields);
+    // files 存放文件数据，例如：{ portrait: PersistentFile {文件的数据} }
+    console.log(files);
+    // 获取新文件的文件名。portrait 为表单的字段
+    console.log(files.portrait.newFilename); // 7a90ee2e72154605dfc7e1200.txt
+    res.send("upload success");
+  });
+});
+```
+`formidable(options)` 参数说明：
+- uploadDir：指定上传的文件存放的位置
+- keepExtensions：是否保留文件的后缀名
+
+`PersistentFile` 数据结构：
+- filepath：新文件的存放路径
+- newFilename：新文件的文件名
+- originalFilename：文件原来的文件名
+- mimetype：媒体类型
