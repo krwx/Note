@@ -34,6 +34,8 @@
     - [5.8.1 字段筛选](#581-字段筛选)
     - [5.8.2 数据排序](#582-数据排序)
     - [5.8.3 数据截取](#583-数据截取)
+- [代码模块化](#代码模块化)
+- [六、 图形化管理工具](#六-图形化管理工具)
 
 
 # 一、简介
@@ -160,7 +162,7 @@ Mongodb 中有三个重要概念需要掌握
 
 # 五、Mongoose
 ## 5.1 介绍
-Mongoose 是一个对象文档模型库，官网 http://www.mongoosejs.net/
+Mongoose 是一个对象文档模型库，官网 https://mongoosejs.com/docs/guide.html
 
 ## 5.2 作用
 方便使用代码操作 mongodb 数据库
@@ -454,3 +456,131 @@ let data = await BookModel.find().sort({price: -1});
 let data = await BookModel.find().limit(2);
 let data = await BookModel.find().skip(2).limit(2);
 ```
+
+# 代码模块化
+1. 抽取通用的连接数据库代码，将这块代码封装成一个函数暴露出来，入参为连接成功的回调函数和连接错误的回调函数
+2. 抽取文档集合对象，将文档对象的定义统一放在 `models` 文件夹下，将文档对象暴露出来
+3. 设置默认的连接错误的回调函数。以防有些数据库操作没有传递连接错误的回调函数
+4. 使用 `config.js` 文件存储数据库连接的信息，暴露出来
+
+```
+.
+├── index.js
+├── config
+│   └── config.js
+├── db
+│   └── db.js
+└── models
+    ├── BookModel.js
+    └── MovieModel.js
+```
+- index.js：入口文件，存放数据操作的代码
+- config.js：配置文件。存放数据库配置
+- db.js：数据库连接文件，存放连接数据库的代码
+- BookModel.js：文档对象文件，存放定义文档对象的代码
+
+config.js
+```js
+module.exports = {
+    DBHOST: "127.0.0.1",
+    DBPORT: 27017,
+    DBNAME: "bilibili"
+}
+```
+
+db.js
+```js
+const mongoose = require("mongoose");
+
+// 导入数据库配置
+const {DBHOST, DBPORT, DBNAME} = require("../config/config");
+
+/**
+ * 
+ * @param {连接成功的回调} success 
+ * @param {连接错误的回调} error 
+ */
+module.exports = (success, error) => {
+
+    // 设置默认的连接错误处理函数
+    if (!error || typeof error != "function") {
+        error = () => {
+            console.log("连接错误");
+        }
+    }
+
+    /**
+     * mongodb：协议
+     * 127.0.0.1：IP地址
+     * 27017：默认端口号
+     * bilibili：数据库名称
+     */
+    mongoose.connect(`mongodb://${DBHOST}:${DBPORT}/${DBNAME}`);
+
+
+    mongoose.connection.once('open', async () => {
+        // console.log("连接成功");
+        success();
+    })
+
+    mongoose.connection.on('error', () => {
+        // console.log("连接错误");
+        error();
+    })
+
+    mongoose.connection.on('close', () => {
+        console.log("连接停止");
+    })
+}
+```
+
+BookModel.js
+```js
+const mongoose = require("mongoose");
+
+let BookSchema = new mongoose.Schema({
+    title: String,
+    author: String,
+    price: Number,
+});
+
+let BookModel = mongoose.model('books', BookSchema);
+
+module.exports = BookModel;
+```
+
+index.js
+```js
+
+const mongoose = require("mongoose");
+// 导入数据库连接方法
+const db = require("./db/db");
+// 导入文档对象
+const BookModel = require("./models/BookModel");
+
+const success = async () => {
+    console.log("连接成功");
+
+    try {
+        // 排序。查询数据
+        let data = await BookModel.find().skip(2).limit(2);
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+    mongoose.disconnect();
+}
+
+const error = () => {
+    console.log("连接错误");
+}
+
+// 可以选择是否设置连接错误的回调函数
+// db(success, error);
+db(success);
+```
+
+# 六、 图形化管理工具
+我们可以使用图形化的管理工具来对 Mongodb 进行交互，这里演示两个图形化工具
+- Robo 3T 免费 https://github.com/Studio3T/robomongo/releases
+- Navicat 收费 https://www.navicat.com.cn/

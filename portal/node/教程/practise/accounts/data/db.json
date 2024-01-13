@@ -1,14 +1,6 @@
 {
   "accounts": [
     {
-      "id": "eLwX1rMXR",
-      "title": "123",
-      "time": "2024-01-13",
-      "type": "-1",
-      "account": "13",
-      "remarks": "12"
-    },
-    {
       "id": "0Nut6upHZ",
       "title": "123",
       "time": "2024-01-13",
@@ -30,14 +22,6 @@
       "type": "-1",
       "account": "12",
       "remarks": "1"
-    },
-    {
-      "id": "C6PbXmu8o",
-      "title": "123",
-      "time": "2024-01-13",
-      "type": "-1",
-      "account": "13",
-      "remarks": "12"
     }
   ]
 }
