@@ -4,14 +4,20 @@
 
 
 ## 1. 初始化本地项目
-1. 在要提交的项目的文件夹运行 `git init`
+1. 在要提交的项目的文件夹运行以下命令
+   1. `git init`
+   2. `git add README.md`
 2. 新建 `.gitignore` 文件，配置 git 需要忽略的文件
 3. 进行提交，输入以下命令
    1. `git add ./`
    2. `git commit -m ‘init’`
+   3. `git branch -M main`
 
 ## 2. 在 github 创建仓库
-创建仓库
+1. 在 `Repositories` 界面点击 `New` 按钮
+2. 输入仓库名
+3. 不要勾选 `Add a README file`
+4. 点击 `Create Repository` 按钮
 
 ## 3. 本地项目添加远程，推送项目到远程
 添加远程
