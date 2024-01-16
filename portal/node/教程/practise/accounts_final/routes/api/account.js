@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
-
-// 转换时间格式
-const moment = require("moment");
-
 const AccountModel = require('../../models/AccountModel');
+// 导入检测 token 中间件
+const checkTokenMiddleware = require("../../middlewares/checkTokenMiddleware");
 
 //记账本的列表
-router.get('/account', async function (req, res, next) {
+router.get('/account', checkTokenMiddleware, async function (req, res) {
+    // 获取请求的用户信息
+    console.log(req.user);
+
     try {
         //获取所有的账单信息
         let accounts = await AccountModel.find().sort({ time: -1 });
@@ -31,7 +32,7 @@ router.get('/account', async function (req, res, next) {
 });
 
 //新增记录
-router.post('/account', async (req, res) => {
+router.post('/account', checkTokenMiddleware, async (req, res) => {
     try {
         // 插入数据
         const data = await AccountModel.create({
@@ -54,7 +55,7 @@ router.post('/account', async (req, res) => {
 });
 
 //删除记录
-router.delete('/account/:id', async (req, res) => {
+router.delete('/account/:id', checkTokenMiddleware, async (req, res) => {
     //获取 params 的 id 参数
     let id = req.params.id;
     try {
@@ -75,7 +76,7 @@ router.delete('/account/:id', async (req, res) => {
 });
 
 //获取单个账单信息
-router.get('/account/:id', async (req, res) => {
+router.get('/account/:id', checkTokenMiddleware, async (req, res) => {
     let id = req.params.id;
     try {
         //删除
@@ -95,7 +96,7 @@ router.get('/account/:id', async (req, res) => {
 });
 
 //更新单个账单信息
-router.patch('/account/:id', async (req, res) => {
+router.patch('/account/:id', checkTokenMiddleware, async (req, res) => {
     let id = req.params.id;
     try {
         await AccountModel.updateOne({ _id: id }, req.body);
@@ -112,7 +113,7 @@ router.patch('/account/:id', async (req, res) => {
                 msg: "查询失败",
                 data: null
             })
-        }) 
+        })
     } catch (error) {
         res.json({
             code: '1005',

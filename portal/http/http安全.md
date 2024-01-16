@@ -3,7 +3,7 @@
   - [XSS攻击（Cross-site scripting、跨站点脚本攻击）](#xss攻击cross-site-scripting跨站点脚本攻击)
     - [预防措施](#预防措施)
   - [CSRF攻击（Cross-site request forgery）](#csrf攻击cross-site-request-forgery)
-    - [预防](#预防)
+    - [预防 (看这个)](#预防-看这个)
   - [Man-in-the-middle (MitM)](#man-in-the-middle-mitm)
   - [会话劫持（Session hijacking）](#会话劫持session-hijacking)
     - [会话固定攻击（Session fixation）](#会话固定攻击session-fixation)
@@ -53,7 +53,7 @@ XSS 攻击通过修改原始客户端脚本所使用的 DOM 环境而执行。�
 >* 给用于敏感操作的Cookie（如会话Cookie）的设置较短的生存期，SameSite属性设置为Strict或Lax。这将确保会话cookie不会与跨站点请求一起发送
 >* 应同时部署CSRF令牌和SameSite cookie。
 
-### 预防
+### 预防 (看这个)
 CSRF 可以用下面几种方法来防护：
 1. 同源检测。服务器根据 http 请求头中 origin 或者 referer 信息来判断请求是否为允许访问的站点，从而对请求进行过滤。当 origin 或者 referer 信息都不存在的时候，直接阻止。
 2. 使用 CSRF Token 来进行验证，服务器向用户返回一个随机数 Token ，当网站再次发起请求时，在请求参数中加入服务器端返回的 token ，然后服务器对这个 token 进行验证。这种方法解决了使用 cookie 单一验证方式时，可能会被冒用的问题，但是这种方法存在一个缺点就是，我们需要给网站中的所有请求都添加上这个 token，操作比较繁琐。
