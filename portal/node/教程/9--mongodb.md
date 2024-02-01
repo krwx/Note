@@ -87,6 +87,8 @@ Mongodb 中有三个重要概念需要掌握
 > - 千万不要选中服务端窗口的内容 ，选中会停止服务，可以 敲回车 取消选中
 > - 要用 `cmd/powershell` 启动，不要用 `git bash` 启动，会启动不了
 
+> `mongo` 命令在最新的7.0版本已经不能用了
+
 ## 3.1 启动
 1. 进入 `D:\study\software\mongodb-win32-x86_64-windows-5.0.14\bin` 文件夹
 2. 运行 `mongod --dbpath=..\data\db` 启动服务

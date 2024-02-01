@@ -1,16 +1,21 @@
-- [创建项目](#创建项目)
-- [React Router](#react-router)
-- [Redux](#redux)
+# quick-start
 
+- [quick-start](#quick-start)
+  - [创建项目](#创建项目)
+  - [React Router](#react-router)
+  - [Redux](#redux)
 
 ## 创建项目
+
 安装包：
-```
+
+```shell
 npm install -g create-react-app
 ```
 
 创建项目：
-```
+
+```shell
 // js
 create-react-app [项目名称] 
 
@@ -30,6 +35,7 @@ npx create-react-app my-app --template redux-typescript
 ```
 
 引入 antd：
+
 ```js
 npm install antd --save
 
@@ -38,6 +44,7 @@ import { Button } from 'antd'
 ```
 
 普通js文件：
+
 ```js
 import React from "react";
 
@@ -57,12 +64,15 @@ export default function Upload() {
 ```
 
 ## React Router
+
 安装
-```
+
+```shell
 npm install react-router-dom localforage match-sorter sort-by
 ```
 
 使用
+
 ```js
 // App.js
 import IndexRouter from './router/indexRouter';
@@ -105,14 +115,17 @@ const Home = () => {
   );
 };
 ```
-设置路由输出
+
+设置路由输出：
+
 ```js
 import { Outlet } from "react-router-dom";
 
 <Outlet />
 ```
 
-导航到指定路由
+导航到指定路由：
+
 ```js
 import { useNavigate } from 'react-router-dom';
 
@@ -126,14 +139,18 @@ const onClick = (item) => {
 ```
 
 ## Redux
+
 安装
-```
+
+```shell
 npm install @reduxjs/toolkit -S
 npm install react-redux -S
 ```
+
 使用 `Redux Toolkit` 的写法
 
-创建 slice
+创建 slice：
+
 ```js
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -153,7 +170,8 @@ export const { loadingChange } = loadingSlice.actions;
 export default loadingSlice.reducer;
 ```
 
-配置 store
+配置 store：
+
 ```js
 import { configureStore } from '@reduxjs/toolkit'
 // 导入 slice 的 reducer
@@ -166,7 +184,8 @@ export default configureStore({
 })
 ```
 
-App 导入 store
+App 导入 store：
+
 ```js
 import { Provider } from 'react-redux'
 import store from './redux/store';
@@ -182,7 +201,8 @@ function App() {
 export default App;
 ```
 
-disaptch action
+disaptch action：
+
 ```js
 import React from "react";
 import { Button } from 'antd';
@@ -206,7 +226,8 @@ const User = () => {
 export default User;
 ```
 
-获取数据
+获取数据：
+
 ```js
 import { useSelector } from 'react-redux';
 

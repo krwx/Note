@@ -1,34 +1,38 @@
-- [React](#react)
-  - [给 html 元素设置 class，不能设置 class 属性，要设置 className 属性](#给-html-元素设置-class不能设置-class-属性要设置-classname-属性)
-  - [useEffect 最后返回的是取消副作用的函数或箭头函数。函数内执行取消副作用的代码](#useeffect-最后返回的是取消副作用的函数或箭头函数函数内执行取消副作用的代码)
-  - [在组件 return 的地方使用 {} ， {} 里面的是要渲染的 JSX ，不能在里面声明函数或声明变量， 要确保里面的代码是都与 JSX 有关的](#在组件-return-的地方使用----里面的是要渲染的-jsx-不能在里面声明函数或声明变量-要确保里面的代码是都与-jsx-有关的)
-  - [传递给事件处理函数的函数应直接传递，而非调用](#传递给事件处理函数的函数应直接传递而非调用)
-  - [style 属性接受一个对象](#style-属性接受一个对象)
-  - [父组件使用子组件的方法](#父组件使用子组件的方法)
-- [TypeScript](#typescript)
-  - [使用父组件传递的方法](#使用父组件传递的方法)
-- [antd](#antd)
-  - [模态框](#模态框)
-    - [不需要页脚](#不需要页脚)
+# use-tip
 
-# React
+- [use-tip](#use-tip)
+  - [React](#react)
+    - [给 html 元素设置 class，不能设置 class 属性，要设置 className 属性](#给-html-元素设置-class不能设置-class-属性要设置-classname-属性)
+    - [useEffect 最后返回的是取消副作用的函数或箭头函数。函数内执行取消副作用的代码](#useeffect-最后返回的是取消副作用的函数或箭头函数函数内执行取消副作用的代码)
+    - [在组件 return 的地方使用 {} ， {} 里面的是要渲染的 JSX ，不能在里面声明函数或声明变量， 要确保里面的代码是都与 JSX 有关的](#在组件-return-的地方使用----里面的是要渲染的-jsx-不能在里面声明函数或声明变量-要确保里面的代码是都与-jsx-有关的)
+    - [传递给事件处理函数的函数应直接传递，而非调用](#传递给事件处理函数的函数应直接传递而非调用)
+    - [style 属性接受一个对象](#style-属性接受一个对象)
+    - [父组件使用子组件的方法](#父组件使用子组件的方法)
+  - [TypeScript](#typescript)
+    - [使用父组件传递的方法](#使用父组件传递的方法)
 
-## 给 html 元素设置 class，不能设置 class 属性，要设置 className 属性
+## React
 
-## useEffect 最后返回的是取消副作用的函数或箭头函数。函数内执行取消副作用的代码
+### 给 html 元素设置 class，不能设置 class 属性，要设置 className 属性
 
-## 在组件 return 的地方使用 {} ， {} 里面的是要渲染的 JSX ，不能在里面声明函数或声明变量， 要确保里面的代码是都与 JSX 有关的
+### useEffect 最后返回的是取消副作用的函数或箭头函数。函数内执行取消副作用的代码
 
-## 传递给事件处理函数的函数应直接传递，而非调用
+### 在组件 return 的地方使用 {} ， {} 里面的是要渲染的 JSX ，不能在里面声明函数或声明变量， 要确保里面的代码是都与 JSX 有关的
+
+### 传递给事件处理函数的函数应直接传递，而非调用
+
 正常函数：
-- 正确：`<button onClick={handleClick}>`	
+
+- 正确：`<button onClick={handleClick}>`
 - 错误：`<button onClick={handleClick()}>`
 
 内联函数：
-- 正确：`<button onClick={() => alert('...')}>`	
+
+- 正确：`<button onClick={() => alert('...')}>`
 - 错误：`<button onClick={alert('...')}>`
 
-## style 属性接受一个对象
+### style 属性接受一个对象
+
 ```js
 // 直接写样式
 Button onClick={addUser} style={{marginBottom: "20px"}}>添加用户</Button>
@@ -40,13 +44,15 @@ const obj: React.CSSProperties = {
 <Button onClick={addUser} style={obj}>添加用户</Button>
 ```
 
-## 父组件使用子组件的方法
+### 父组件使用子组件的方法
+
 1. 使用 `ref` 获取子组件 `DOM` 节点的实例
 2. 子组件使用 `useImperativeHandle()` 暴露对应方法给父组件
 
+## TypeScript
 
-# TypeScript
-## 使用父组件传递的方法
+### 使用父组件传递的方法
+
 ```js
 // add 方法是可选参数
 type Props = {
