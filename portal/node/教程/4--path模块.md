@@ -9,6 +9,7 @@ path 模块提供了 操作路径 的功能，我们将介绍如下几个较为�
 |API| 说明|
 |--|--|
 |path.resolve| 拼接规范的绝对路径（统一 `\` 或 `/` ） 常用|
+|path.join| 将指定的路径段连接成一个路径。|
 |path.sep| 获取操作系统的路径分隔符|
 |path.parse| 解析路径并返回对象|
 |path.basename| 获取路径的基础名称|
@@ -44,6 +45,10 @@ console.log(path.dirname(pathname)); // D:/program file/nodejs
 
 //获取路径的扩展名
 console.log(path.extname(pathname)) // .exe
+
+// 将指定的路径段连接成一个路径
+let x = path.join('Users', 'Refsnes', 'demo_path.js');
+console.log(x); // Users\Refsnes\demo_path.js
 ```
 
 拼接路径例子：

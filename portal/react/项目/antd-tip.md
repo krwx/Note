@@ -157,9 +157,38 @@ export default UserForm
 
 ### 上传文件
 
-File 对象存放在 values 对于字段的 file 属性中。
+antd手动上传文件
 
-1. 总结antd上传文件
-2. 解决请求跨域
-3. 处理 imageUrl，去掉 F盘那些前缀
-4. express 能添加多个静态资源的目录吗？
+```tsx
+import { Upload } from 'antd';
+import type { GetProp, UploadFile, UploadProps } from 'antd';
+
+const app = () => {
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const props: UploadProps = {
+        onRemove: (file) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            setFileList(newFileList);
+        },
+        // 设置 beforeUpload 回调，并返回 false 阻止组件自动发请求给服务器
+        beforeUpload: (file) => {
+            setFileList([...fileList, file]);
+
+            return false;
+        },
+        fileList,
+        accept: 'image/*'
+    };
+
+    return (
+        <Upload {...props}>
+            <Button icon={<UploadOutlined />}>请上传封面图片</Button>
+        </Upload>
+    )
+}
+```
+
+File 对象存放在表单的 values 对于字段的 file 属性中。

@@ -412,6 +412,13 @@ app.listen(3000,()=>{
 2. 如果静态资源与路由规则同时匹配，**谁先匹配谁就响应**
 3. 路由响应动态资源，静态资源中间件响应静态资源
 
+可以设置多个静态资源目录：
+
+```js
+app.use(express.static(path.join(__dirname, 'public/bookCover')));
+app.use(express.static(path.join(__dirname, '../client/build')));
+```
+
 ### 5.5 获取请求体数据： body-parser
 
 `express` 可以使用 `body-parse`r 包处理请求体
@@ -743,3 +750,6 @@ router.post('/portrait', function(req, res, next) {
 - newFilename：新文件的文件名
 - originalFilename：文件原来的文件名
 - mimetype：媒体类型
+
+> `files` 属性为一个对象，对象里的属性名为请求中数据类型为文件的属性名。  
+> 例如：请求体中 `image` 和 `photo` 属性是文件类型的数据，那么 `files` 里面会有 `image` 和 `photo` 属性分别对应处理后的文件

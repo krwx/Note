@@ -594,11 +594,13 @@ json: 'application/json'
 
 > 对于未知的资源类型，可以选择 `application/octet-stream` 类型，浏览器在遇到该类型的响应时，会对响应体内容进行独立存储，也就是我们常见的 下载 效果
 
+.
 > 关于响应头设置 `charset=utf-8` 的问题:
-> 
+>
 > - 对于 html 文件，可以通过 `meta` 标签设置 `charset=utf-8` ：`<meta charset="UTF-8">`
 > - 响应头设置 `charset=utf-8` 和 `meta` 标签设置 `charset=utf-8` 的权重比较：响应头设置 `charset=utf-8` 的权重会更大
 
+.
 > css 文件、js 文件的响应头不需要设置 `charset=utf-8`。即使这些文件内部有中文，但是当 html 文件引入它们时，这些文件会根据 html 文件的字符集进行解析
 
 简单设置 mime 类型的例子：

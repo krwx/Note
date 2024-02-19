@@ -1,14 +1,17 @@
-- [HTTP 请求类型](#http-请求类型)
-  - [幂等](#幂等)
-  - [POST 请求与 GET 请求区别：](#post-请求与-get-请求区别)
-- [XMLHttpRequest](#xmlhttprequest)
-  - [构造函数、属性](#构造函数属性)
-  - [使用](#使用)
-- [请求头](#请求头)
-- [响应头](#响应头)
+# http
 
+- [http](#http)
+  - [HTTP 请求类型](#http-请求类型)
+    - [幂等](#幂等)
+    - [POST 请求与 GET 请求区别](#post-请求与-get-请求区别)
+  - [XMLHttpRequest](#xmlhttprequest)
+    - [构造函数、属性](#构造函数属性)
+    - [使用](#使用)
+  - [请求头](#请求头)
+  - [响应头](#响应头)
 
-# HTTP 请求类型
+## HTTP 请求类型
+
 HTTP 请求方式一共有 9 种。其中前三种 POST 、GET 、HEAD 是 HTTP 1.0 定义的，后六种 PUT 、PATCH 、 OPTIONS 、DELETE 、CONNECT 、 TRACE 是 HTTP 1.1 定义的。
 
 1. POST 请求  
@@ -35,7 +38,8 @@ HTTP 请求方式一共有 9 种。其中前三种 POST 、GET 、HEAD 是 HTTP 
     TRACE ：回显服务器收到的请求，主要用于测试和诊断。  
     官方：HTTP TRACE 方法沿着通往目标资源的路径进行信息回环测试，提供一个有用的调试机制。
 
-## 幂等
+### 幂等
+
 “幂等（idempotent）”一词意味着，任何数量的重复、相同的请求都会使资源处于相同的状态。
 
 GET，HEAD，PUT，DELETE，OPTIONS 和 TRACE 方法都是幂等的
@@ -44,12 +48,14 @@ GET，HEAD，PUT，DELETE，OPTIONS 和 TRACE 方法都是幂等的
 但是执行多个相同的 PATCH 或 POST 请求，结果可能不一样，存在副作用。
 
 PATCH 请求为什么不是幂等的：
+
 - PUT 和 PATCH 请求的区别体现在服务器处理封闭实体以修改 Request-URI 标志的资源的方式。在一个 PUT 请求中，封闭实体被认为是存储在源服务器上的资源的修改版本，并且客户端正在请求替换存储的版本。而对于 PATCH 请求，封闭实体中包含了一组描述当前保留在源服务器上的资源应该如何被修改来产生一个新版本的指令。PATCH 方法影响由 Request-URI 标志的资源，而且它也可能对其他资源有副作用；也就是，通过使用 PATCH，新资源可能被创造，或者现有资源被修改。
 - PATCH 请求中的实体保存的是修改资源的指令，该指令指导服务器来对资源做出修改
 - 打个比方：对于存在服务器中的 A 对象有个属性 B 为 1，如果要修改 B 属性为 3，则 PUT 请求是直接将修改过 B 属性的整个新对象发送给服务器查找并替换。而 PATCH 请求是在实体中包含指令 --- 将 A 对象中 B 属性的值加 2，那么如果该请求被执行多次的话，B 属性就可能不为 3 了，而 PUT 请求不论执行多少次，B 属性永远都是 3，所以说 PUT 方法是幂等的，而 PATCH 方法不是幂等的。
 
-## POST 请求与 GET 请求区别：
-```
+### POST 请求与 GET 请求区别
+
+```text
 1. 本质区别  
 POST :向服务器传送数据  
 GET: 向服务器获取数据
@@ -84,7 +90,8 @@ GET: application/x-www-form-urlencoded
 pplication/x-www-form-urlencoded 是浏览器默认的编码格式
 ```
 
-# XMLHttpRequest
+## XMLHttpRequest
+
 XMLHttpRequest（XHR）对象用于与服务器交互。通过 XMLHttpRequest 可以在不刷新页面的情况下请求特定 URL，获取数据。这允许网页在不影响用户操作的情况下，更新页面的局部内容。  
 
 XMLHttpRequest 在 AJAX 编程中被大量使用。
@@ -93,7 +100,8 @@ XMLHttpRequest 可以用于获取任何类型的数据，而不仅仅是 XML。�
 
 >如果您的通信流程需要从服务器端接收事件或消息数据，请考虑通过 EventSource 接口使用服务器发送事件。对于全双工的通信，WebSocket 可能是更好的选择。
 
-## 构造函数、属性
+### 构造函数、属性
+
 - XMLHttpRequest()
   - 该构造函数用于初始化一个 XMLHttpRequest 实例对象。
 - XMLHttpRequest.status （只读）
@@ -112,7 +120,8 @@ XMLHttpRequest 可以用于获取任何类型的数据，而不仅仅是 XML。�
 - XMLHttpRequest.responseXML（只读）
   - 返回一个 Document，其中包含该请求的响应，如果请求未成功、尚未发送或是不能被解析为 XML 或 HTML，则返回 null。
 
-## 使用
+### 使用
+
 ```js
 function reqListener() {
   console.log(this.responseText);
@@ -129,22 +138,25 @@ oReq.send();
 ```
 
 XMLHttpRequest.open()
+
 - XMLHttpRequest.open() 方法初始化一个新创建的请求，或重新初始化一个请求。
 - 语法为 xhrReq.open(method, url); 或 xhrReq.open(method, url, async); 或其他
 - method 为 HTTP 请求方法
 - **async 默认为 true，即默认是异步请求。false 为同步请求**
 
-# 请求头
-- Referer 
+## 请求头
+
+- Referer
   - `Referer` 请求头包含了**当前请求页面的来源页面的地址**，即表示当前页面是通过此来源页面里的链接进入的。
   - 服务端一般使用 `Referer` 请求头识别访问来源，可能会以此进行统计分析、日志记录以及缓存优化等。
 
-# 响应头
+## 响应头
+
 - Cache-Control:
   - 缓存控制 private 私有的，只允许客户端缓存数据
 - Connection
   - 链接设置
-- Content-Type:text/html;charset=utf-8 
+- Content-Type:text/html;charset=utf-8
   - 设置响应体的数据类型以及字符集,响应体为- html，字符集 utf-8
 - Content-Length
   - 响应体的长度，单位为字节
@@ -153,10 +165,15 @@ XMLHttpRequest.open()
 - Content-Disposition
   - 在 HTTP 场景中，第一个参数或者是 `inline`（默认值，表示回复中的消息体会以页面的一部分或者整个页面的形式展示）
   - 或者是 `attachment`（意味着消息体应该被下载到本地；大多数浏览器会呈现一个“保存为”的对话框，将 filename 的值预填为下载后的文件名，假如它存在的话）。
-  ```
+  
+  ```text
   Content-Disposition: inline
   Content-Disposition: attachment
   Content-Disposition: attachment; filename="filename.jpg"
   ```
-- Set-Cookie 
+
+- Set-Cookie
   - Set-Cookie HTTP 响应标头用于将 cookie 由服务器发送到用户代理，以便用户代理在后续的请求中可以将其发送回服务器。要发送多个 cookie，则应在同一响应中发送多个 Set-Cookie 标头。
+- 设置跨域
+  - Access-Control-Allow-Credentials: true
+  - Access-Control-Allow-Origin: *
