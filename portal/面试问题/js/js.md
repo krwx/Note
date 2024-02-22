@@ -303,6 +303,8 @@ JavaScript是单线程，在JavaScript运行时其他的事情不能被浏览器
 
 在用户创建业务，点击应用按钮时有用到防抖，当用户在点击应用按钮后，如果在1s内再点击按钮，则重新计时
 
+监听滚动事件可以用到节流
+
 ## 27. 讲一下 Babel 是干什么的，在 React 中做了哪些工作
 Babel 是一个工具链，主要用于在旧的浏览器或环境中将 ECMAScript 2015+ 代码转换为向后兼容版本的 JavaScript 代码。
 Babel 默认只转换新的 JavaScript 句法（syntax），而不转换新的 API。
