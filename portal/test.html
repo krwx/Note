@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="box">
+      <div class="outCircle"></div>
+      <div class="innerCircle"></div>
+    </div>
+  </body>
+  <style>
+    .box {
+      background-color: pink;
+      height: 200px;
+      width: 200px;
+      position: relative;
+    }
+    .outCircle {
+      background-color: white;
+      height: 0px;
+      width: 0px;
+      border-width: 100px;
+      border-color: orange orange orange white;
+      border-style: solid;
+      border-radius: 50%;
+      transform: rotate(45deg);
+    }
+    .innerCircle {
+      background-color: pink;
+      height: 180px;
+      width: 180px;
+      border-style: solid;
+      border-radius: 50%;
+      border-color: pink;
+      position: absolute;
+      top: 8px;
+      left: 8px;
+    }
+  </style>
+</html>
