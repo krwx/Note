@@ -79,6 +79,11 @@
 
 ## 6. webpack 的 loader 和 plugin 是干什么的
 
+- loader（加载器）  
+  - webpack 本身只能处理 js、json 等资源，其他资源需要借助 loader，Webpack 才能解析
+- plugins（插件）  
+  - 扩展 Webpack 的功能
+
 ## 7. 可以使用 plugin 代替 loader，如果可以，为什么要设置 loader？
 
 不可以代替

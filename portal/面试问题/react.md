@@ -123,11 +123,38 @@ export default withHooksHOC(HooksHOC);
 
 ## 9. 讲一下 react 优化的方法
 
-1. 使用 `React.memo` 存储一些需要复杂计算的值
+1. 使用 `React.memo` 来缓存组件，这样只有在传入组件的状态值发生变化时才会从新渲染。如果传入的值相同，则会返回缓存的组件。
 2. 当组件重新渲染时跳过代价昂贵的重新计算使用 `useMemo`
-3. 使用 `useCallback` 防止以函数为依赖的 `useEffect` 频繁触发
-4. 开发组件时，注意保持DOM结构的稳定；即，尽可能少地动态操作DOM结构，尤其是移动操作。
-5. 对于列表结构，尽量减少类似将最后一个节点移动到列表首部的操作，当节点数量过大或更新操作过于频繁时，在一定程度上会影响 React 的渲染性能。
+3. 避免使用 内联对象
+   1. 使用内联对象时，react会在每次渲染时重新创建对此对象的引用，这会导致接收此对象的组件将其视为不同的对象。
+
+      ```js
+      // Don't do this!
+      function Component(props) {
+        const aProp = { someProp: 'someValue' }
+        return <AComponent style={{ margin: 0 }} aProp={aProp} />  
+      }
+
+      // Do this instead :)
+      const styles = { margin: 0 };
+      function Component(props) {
+        const aProp = { someProp: 'someValue' }
+        return <AComponent style={styles} {...aProp} />  
+      }
+
+      ```
+
+4. 避免使用 匿名函数
+   1. 虽然匿名函数是传递函数的好方法，但它们在每次渲染上都有不同的引用。类似于内联对象。
+5. 延迟加载不是立即需要的组件：路由懒加载
+   1. 使用React.lazy和React.Suspense完成延迟加载不是立即需要的组件。React加载的组件越少，加载组件的速度越快。
+6. 调整CSS而不是强制组件加载和卸载
+   1. 有时保持组件加载的同时，通过CSS隐藏可能是有益的，而不是通过卸载来隐藏。
+   2. 将元素透明度调整为0对浏览器的成本消耗几乎为0（因为它不会导致重排），并且应该尽可能优先更改visibility或display。
+7. 使用 `React.Fragment` 避免添加额外的DOM
+8. 使用 `useCallback` 防止以函数为依赖的 `useEffect` 频繁触发
+9. 开发组件时，注意保持DOM结构的稳定；即，尽可能少地动态操作DOM结构，尤其是移动操作。
+10. 对于列表结构，尽量减少类似将最后一个节点移动到列表首部的操作，当节点数量过大或更新操作过于频繁时，在一定程度上会影响 React 的渲染性能。
 
 ## 10. 讲一下virtual dom
 
