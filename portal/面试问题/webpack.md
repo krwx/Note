@@ -12,9 +12,53 @@
 
 ## 1. 说一下 webpack 的工作流程以及简单分析构建后的 JS 产物怎么处理模块导入和依赖关系
 
+工作流程：
+
+1. 初始化参数  
+    解析 `webpack` 配置参数，合并 `shell` 传入和 `webpack.config.js` 文件配置的参数，形成最后的配置结果。
+
+2. 开始编译  
+    上一步得到的参数初始化 `compiler` 对象，注册所有配置的插件，插件监听 `webpack` 构建生命周期的事件节点，做出相应的反应，执行 `compiler` 对象的 `run` 方法开始执行编译。
+
+    > webpack 的实际入口是 Compiler 中的 run 方法，run 一旦执行后，就开始了编译和构建流程
+    >
+    > compiler.run 后首先会触发 compile(compilation) ，这一步会构建出 Compilation 对象：
+    这个对象有两个作用 :
+    >
+    > - 一是负责组织整个打包过程，包含了每个构建环节及输出环节所对应的方法，可以从图中看到比较关键的步骤，如 `addEntry() , _addModuleChain() ,buildModule() , seal() , createChunkAssets()` (在每一个节点都会触发 webpack 事件去调用各插件)。
+    > - 二是该对象内部存放着所有 `module` ，`chunk`，生成的 `asset` 以及用来生成最后打包文件的 `template` 的信息。
+
+3. 确定入口  
+    根据配置中的 `entry` 找出所有的入口文件。
+
+    可以有多个入口，对应生成多个 `bundle`
+
+    > 在创建 module 之前，Compiler 会触发 make，并调用 Compilation.addEntry 方法，通过 options 对象的 entry 字段找到我们的入口js文件。
+
+4. 编译模块  
+    从入口文件出发，开始解析文件，找出依赖，递归下去。**递归中**根据文件类型和 `loader` 配置，调用所有配置的 `loader` 对文件进行转换，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理。
+
+5. 完成模块编译  
+    递归结束后，得到每个文件结果，包含每个模块以及他们之间的**依赖关系**。
+
+    可以生成 `dependency graaph` （依赖图）
+
+6. 输出资源  
+    根据入口 `entry` 和配置模块之间的依赖关系，组装成一个个包含多个模块的 `chunk` ，再将每个 chunk 转换成一个单独的文件加入输出列表中。
+
+7. 输出完成  
+    输出所有的chunk到文件系统。
+
+***
+
+构建后的 JS 产物怎么处理模块导入和依赖关系：
+
 ## 2. webpack有做过哪些优化/讲一下webpack的优化手段
 
 同3
+
+1. 善用alias。
+   1. resolve里面有一个alias的配置项目，能够让开发者指定一些模块的引用路径。对一些经常要被import或者require的库，如react,我们最好可以直接指定它们的位置，这样webpack可以省下不少搜索硬盘的时间。
 
 ## 3. 代码量过大，使用 webpack 怎么优化
 

@@ -197,21 +197,22 @@ module.exports = {
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+// 动态导入 app.jsx 文件
 import('./app.jsx').then((App) => {
   ReactDOM.render(<App />, root);
 });
-
-/*
-这会创建出一个名为 main 的 initial chunk。其中包含：
-./src/index.jsx、
-react、
-react-dom、
-以及除 ./app.jsx 外的所有依赖。
-然后会为 ./app.jsx 创建 non-initial chunk，这是因为 ./app.jsx 是动态导入的。
-*/
 ```
 
-默认情况下，这些 non-initial chunk 没有名称，因此会使用唯一 ID 来替代名称。
+这会创建出一个名为 `main` 的 `initial chunk`。其中包含：
+
+- `./src/index.jsx`
+- `react`
+- `react-dom`
+
+以及除 `./app.jsx` 外的所有依赖。
+然后会为 `./app.jsx` 创建 `non-initial chunk`，这是因为 `./app.jsx` 是动态导入的。
+
+默认情况下，这些 `non-initial chunk` 没有名称，因此会使用唯一 ID 来替代名称。
 
 ### output(输出)
 
