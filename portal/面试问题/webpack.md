@@ -8,46 +8,24 @@
   - [5. webpack 解析 js 的中间产物是什么](#5-webpack-解析-js-的中间产物是什么)
   - [6. webpack 的 loader 和 plugin 是干什么的](#6-webpack-的-loader-和-plugin-是干什么的)
   - [7. 可以使用 plugin 代替 loader，如果可以，为什么要设置 loader？](#7-可以使用-plugin-代替-loader如果可以为什么要设置-loader)
-  - [8. 有用过 webpack 的 external 字段吗](#8-有用过-webpack-的-external-字段吗)
+  - [8. 有用过 webpack 的 externals 字段吗](#8-有用过-webpack-的-externals-字段吗)
 
 ## 1. 说一下 webpack 的工作流程以及简单分析构建后的 JS 产物怎么处理模块导入和依赖关系
 
 工作流程：
 
-1. 初始化参数  
-    解析 `webpack` 配置参数，合并 `shell` 传入和 `webpack.config.js` 文件配置的参数，形成最后的配置结果。
-
-2. 开始编译  
-    上一步得到的参数初始化 `compiler` 对象，注册所有配置的插件，插件监听 `webpack` 构建生命周期的事件节点，做出相应的反应，执行 `compiler` 对象的 `run` 方法开始执行编译。
-
-    > webpack 的实际入口是 Compiler 中的 run 方法，run 一旦执行后，就开始了编译和构建流程
-    >
-    > compiler.run 后首先会触发 compile(compilation) ，这一步会构建出 Compilation 对象：
-    这个对象有两个作用 :
-    >
-    > - 一是负责组织整个打包过程，包含了每个构建环节及输出环节所对应的方法，可以从图中看到比较关键的步骤，如 `addEntry() , _addModuleChain() ,buildModule() , seal() , createChunkAssets()` (在每一个节点都会触发 webpack 事件去调用各插件)。
-    > - 二是该对象内部存放着所有 `module` ，`chunk`，生成的 `asset` 以及用来生成最后打包文件的 `template` 的信息。
-
-3. 确定入口  
-    根据配置中的 `entry` 找出所有的入口文件。
-
-    可以有多个入口，对应生成多个 `bundle`
-
-    > 在创建 module 之前，Compiler 会触发 make，并调用 Compilation.addEntry 方法，通过 options 对象的 entry 字段找到我们的入口js文件。
-
-4. 编译模块  
-    从入口文件出发，开始解析文件，找出依赖，递归下去。**递归中**根据文件类型和 `loader` 配置，调用所有配置的 `loader` 对文件进行转换，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理。
-
-5. 完成模块编译  
-    递归结束后，得到每个文件结果，包含每个模块以及他们之间的**依赖关系**。
-
-    可以生成 `dependency graaph` （依赖图）
-
-6. 输出资源  
-    根据入口 `entry` 和配置模块之间的依赖关系，组装成一个个包含多个模块的 `chunk` ，再将每个 chunk 转换成一个单独的文件加入输出列表中。
-
-7. 输出完成  
-    输出所有的chunk到文件系统。
+1. 初始化阶段：
+   1. **初始化参数**：从配置文件、 配置对象、Shell 参数中读取，与默认配置结合得出最终的参数
+   2. **创建编译器对象**：用上一步得到的参数创建 `Compiler` 对象
+   3. **初始化编译环境**：包括注入内置插件、注册各种模块工厂、初始化 RuleSet 集合、加载配置的插件等
+   4. **开始编译**：执行 `compiler` 对象的 `run` 方法
+   5. **确定入口**：根据配置中的 `entry` 找出所有的入口文件，调用 `compilition.addEntry` 将入口文件转换为 `dependence` 对象
+2. 构建阶段：
+   1. **编译模块(make)**：根据 `entry` 对应的 `dependence` 创建 `module` 对象，调用 `loader` 将模块转译为标准 `JS` 内容，调用 `JS` 解释器将内容转换为 `AST` 对象，从中找出该模块依赖的模块，再 递归 本步骤直到所有入口依赖的文件都经过了本步骤的处
+   2. **完成模块编译**：上一步递归处理所有能触达到的模块后，得到了每个模块被翻译后的内容以及它们之间的 依赖关系图
+3. 生成阶段：
+   1. **输出资源(seal)**：根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 `Chunk`，再把每个 `Chunk` 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会
+   2. **写入文件系统(emitAssets)**：在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统
 
 ***
 
@@ -119,7 +97,15 @@
 
 ## 4. tree shaking 怎么识别不需要的代码/webpack 的 treeshaking 是怎么抖掉不需要的代码的？
 
+Webpack 中，`Tree-shaking` 的实现一是先`「标记」`出模块导出值中哪些没有被用过，二是使用 `Terser` 删掉这些没被用到的导出语句。标记过程大致可划分为三个步骤：
+
+- `Make` 阶段，收集模块导出变量并记录到模块依赖关系图 `ModuleGraph` 变量中
+- `Seal` 阶段，遍历 `ModuleGraph` 标记模块导出变量有没有被使用
+- 生成产物时，若变量没有被其它模块使用则删除对应的导出语句
+
 ## 5. webpack 解析 js 的中间产物是什么
+
+chunk
 
 ## 6. webpack 的 loader 和 plugin 是干什么的
 
@@ -132,4 +118,6 @@
 
 不可以代替
 
-## 8. 有用过 webpack 的 external 字段吗
+## 8. 有用过 webpack 的 externals 字段吗
+
+`externals` 字段防止将某些 `import` 的包(`package`)打包到 `bundle` 中，而是在运行时(`runtime`)再去从外部获取这些扩展依赖(`external dependencies`)。

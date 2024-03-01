@@ -6,6 +6,9 @@
   - [开发](#开发)
   - [热替换](#热替换)
   - [tree shaking](#tree-shaking)
+    - [概念](#概念)
+    - [将文件标记为无副作用](#将文件标记为无副作用)
+    - [压缩输出结果](#压缩输出结果)
   - [生产环境构建](#生产环境构建)
   - [代码分离](#代码分离)
   - [懒加载](#懒加载)
@@ -126,21 +129,58 @@ node 环境下的全局内置变量。表示当前文件所在文件夹的绝对
 
 ## tree shaking
 
-1. 概念  
-    通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)
-2. 副作用
-    1. 定义  
-      在导入时会执行特殊行为的代码，而不是仅仅暴露一个 export 或多个 export。举例说明，例如 polyfill，它影响全局作用域，并且通常不提供 export。
-    2. 使用  
-      "sideEffects": false。所有的文件都没有副作用，可以删掉未引用的代码
-    3. 定义不需要删除未引用代码的文件  
-      "sideEffects": [
-        "./src/some-side-effectful-file.js",
-        "*.css"
-      ]
-3. 压缩代码  
-    设置生产模式。  mode: "production"  
-    内部使用 uglifyjs 压缩插件来压缩代码
+### 概念
+
+`tree shaking` 是一个术语，通常用于描述移除 `JavaScript` 上下文中的死代码。
+
+> 死代码（dead code）是指程序中一段已经不会被执行的代码，通常是因为重构、优化或者逻辑错误导致的。这些代码可能是之前版本的遗留物，或者某些条件下永远不会被执行的代码。
+
+它依赖于 `ES2015` 模块语法的 **静态结构** 特性，例如 `import` 和 `export`。
+
+生产环境（`mode: 'development'`）下是不会进行 `Tree shaking` 的。  
+输出的文件中会将没有用到的方法添加注释：`/* unused harmony export square */`。
+
+### 将文件标记为无副作用
+
+> **副作用**（effect 或者 side effect）指 **在导入时会执行特殊行为的代码**，而不是仅仅暴露一个或多个导出内容。
+> `polyfill` 就是一个例子，尽管其通常不提供导出，但是会影响全局作用域，因此 polyfill 将被视为一个副作用。
+
+如果所有代码都不包含副作用，我们就可以简单地将该属性标记为 false 以告知 webpack 可以安全地删除未使用的导出内容。
+
+```js
+{
+  "name": "your-project",
+  "sideEffects": false
+}
+```
+
+如果某些代码确实存在一些副作用，可以将 sideEffects 指定为一个数组：
+
+```js
+{
+  "name": "your-project",
+  "sideEffects": ["./src/some-side-effectful-file.js"]
+}
+```
+
+> 注意，所有导入文件都会受到 `tree shaking` 的影响。这意味着，如果在项目中使用类似 `css-loader` 的东西并导入了一个 `CSS` 文件，则需要将其添加到副作用列表中表示其存在副作用，以免在生产模式中无意中将它删除：
+
+```js
+{
+  "name": "your-project",
+  "sideEffects": ["./src/some-side-effectful-file.js", "*.css"]
+}
+```
+
+### 压缩输出结果
+
+通过 `import` 和 `export` 语法，我们已经找出需要删除的死代码，然而，不仅仅是要找出，还应在 `bundle` 中删除它们。为此，我们需要将 `mode` 配置选项设置为 `production`。
+
+```js
+{
+  mode: 'production'
+}
+```
 
 ## 生产环境构建
 
