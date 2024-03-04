@@ -12,7 +12,12 @@
   - [9. 讲一下 react 优化的方法](#9-讲一下-react-优化的方法)
   - [10. 讲一下virtual dom](#10-讲一下virtual-dom)
   - [11. 为什么要使用 virtual dom，说一下他的好处](#11-为什么要使用-virtual-dom说一下他的好处)
-  - [有用过自定义 hook 吗](#有用过自定义-hook-吗)
+  - [12. 有用过自定义 hook 吗](#12-有用过自定义-hook-吗)
+  - [13. React.memo 的作用](#13-reactmemo-的作用)
+  - [14. React.useMemo ，React.useRef 的作用。什么时候用 useMemo或者useRef](#14-reactusememo-reactuseref-的作用什么时候用-usememo或者useref)
+  - [15. setState 怎么同步处理，实现一个hook，实现同步处理state（参考v-model，通过Object.defineProperty实现）](#15-setstate-怎么同步处理实现一个hook实现同步处理state参考v-model通过objectdefineproperty实现)
+  - [16. useEffect 不加依赖，什么时候回调用，组件更新时是否会调用（会，props发生改变时）（写代码测试一下）](#16-useeffect-不加依赖什么时候回调用组件更新时是否会调用会props发生改变时写代码测试一下)
+  - [17. 怎么在自定义 hook 读取之前的 state 或 prop](#17-怎么在自定义-hook-读取之前的-state-或-prop)
 
 ## 1. 你知道Hook是什么吗？有哪些
 
@@ -81,16 +86,26 @@ Fiber包含三层含义：
 
 ```js
 // hook 的定义
-import React from 'react';
-import { useScreenWidth } from '../hooks/useScreenWidth';
+import { useEffect, useState } from 'react';
 
-export const withHooksHOC = (Component: any) => {
-  return (props: any) => {
-    const screenWidth = useScreenWidth();
+export function useScreenWidth(): number {
+  const [width, setWidth] = useState(window.innerWidth);
 
-    return <Component width={screenWidth} {...props} />;
-  };
-};
+  useEffect(() => {
+    const handler = (event: any) => {
+      setWidth(event.target.innerWidth);
+    };
+    // 监听浏览器窗口变化
+    window.addEventListener('resize', handler);
+    // 组件unmount时要解除监听
+    return () => {
+      window.removeEventListener('resize', handler);
+    };
+  }, []);
+
+  return width;
+}
+
 
 // HOC 代码
 import React from 'react';
@@ -169,8 +184,93 @@ export default withHooksHOC(HooksHOC);
    3. 更好的跨平台兼容性  
     Virtual DOM可以用于任何JavaScript运行环境，包括Web浏览器、Node.js等。这使得React可以更容易地在不同的平台上进行开发和部署，从而提高了跨平台兼容性。
 
-## 有用过自定义 hook 吗
+## 12. 有用过自定义 hook 吗
 
 1. 使用自定义 hook 监听网络状态
 2. 使用自定义 hook 封装定时操作逻辑
 3. 使用自定义 hook 封装监听鼠标移动事件，获取鼠标坐标
+
+## 13. React.memo 的作用
+
+`memo` 允许你在 `props` 没有变化的情况下跳过组件的重渲染。
+
+```js
+import { memo } from 'react';
+
+const Greeting = memo(function Greeting({ name }) {
+  return <h1>Hello, {name}!</h1>;
+});
+
+export default Greeting;
+```
+
+## 14. React.useMemo ，React.useRef 的作用。什么时候用 useMemo或者useRef
+
+`useMemo` 在每次重新渲染的时候能够缓存计算的结果。  
+
+什么时候用 `useMemo` ：有昂贵计算代价可以缓存计算结果的值可以使用，优化性能时使用
+
+`useRef` 是一个 React Hook，它能让你引用一个不需要渲染的值。
+
+什么时候用 `useRef` ：清除定时器、通过 ref 操作 DOM
+
+## 15. setState 怎么同步处理，实现一个hook，实现同步处理state（参考v-model，通过Object.defineProperty实现）
+
+同步处理：
+
+1. 直接传递 `setState` 的数据
+
+    ```js
+    function click() {
+      const nextCount = count + 1;
+      setCount(nextCount);
+
+      console.log(count);     // 0
+      console.log(nextCount); // 1
+      logValue(nextCount);
+    }
+
+    function logValue(value) {
+      console.log(value);
+    }
+    ```
+
+2. 通过 `useEffect` 监听值，在 `useEffect` 使用最新值
+
+    ```js
+    const [num, setNum] = useState(0);
+
+    useEffect(() => {
+      onsole.log("useEffect num: ", num);
+    }, [num])
+    ```
+
+3. 通过 `useRef()` 保存最新值。然后使用 `ref` 的值
+
+    ```js
+    const [num, setNum] = useState(0);
+    const numRef = useRef(num);
+
+    function click() {
+      setNum(num + 1);
+      // 使用 setState 后，要更新 ref 的值
+      numRef.current = num + 1;
+
+      otherFunction();
+    }
+
+    function otherFunction() {
+      console.log(numRef.current)
+    }
+    ```
+
+## 16. useEffect 不加依赖，什么时候回调用，组件更新时是否会调用（会，props发生改变时）（写代码测试一下）
+
+- 传递依赖项数组
+  - 如果指定了依赖项，则 Effect 在 **初始渲染后以及依赖项变更的重新渲染后** 运行。
+- 传递空依赖项数组
+  - 如果你的 Effect 确实没有使用任何响应式值，则它仅在 **初始渲染后** 运行。
+- 不传递依赖项数组
+  - 如果完全不传递依赖数组，则 Effect 会在组件的 **每次单独渲染（和重新渲染）之后** 运行。
+
+## 17. 怎么在自定义 hook 读取之前的 state 或 prop

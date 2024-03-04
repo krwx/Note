@@ -1,83 +1,98 @@
-- [描述](#描述)
-- [语法](#语法)
-- [handler 对象的方法](#handler-对象的方法)
-  - [handler.get()](#handlerget)
-  - [handler.set()](#handlerset)
-  - [handler.apply()](#handlerapply)
-  - [handler.construct()](#handlerconstruct)
-- [示例](#示例)
-  - [基础](#基础)
-  - [验证](#验证)
-  - [扩展构造函数](#扩展构造函数)
+# Proxy
 
-# 描述
+- [Proxy](#proxy)
+  - [描述](#描述)
+  - [语法](#语法)
+  - [handler 对象的方法](#handler-对象的方法)
+    - [handler.get()](#handlerget)
+    - [handler.set()](#handlerset)
+    - [handler.apply()](#handlerapply)
+    - [handler.construct()](#handlerconstruct)
+  - [示例](#示例)
+    - [基础](#基础)
+    - [验证](#验证)
+    - [扩展构造函数](#扩展构造函数)
+
+## 描述
+
 `Proxy` 对象用于**创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）**。
 
-术语：  
-* handler
-  * 包含捕捉器（trap）的占位符对象，可译为处理器对象
-  * 即 Proxy() 的第二个参数
-* traps
-  * **提供属性访问的方法**。这类似于操作系统中捕获器的概念。
-* target
-  * 被 Proxy 代理虚拟化的对象。它常被作为代理的存储后端。根据目标验证关于对象不可扩展性或不可配置属性的不变量（保持不变的语义）。
+术语：
 
-# 语法
+- handler
+  - 包含捕捉器（trap）的占位符对象，可译为处理器对象
+  - 即 Proxy() 的第二个参数
+- traps
+  - **提供属性访问的方法**。这类似于操作系统中捕获器的概念。
+- target
+  - 被 Proxy 代理虚拟化的对象。它常被作为代理的存储后端。根据目标验证关于对象不可扩展性或不可配置属性的不变量（保持不变的语义）。
+
+## 语法
+
 `const p = new Proxy(target, handler)`
+
 参数
-* target
-  * 要使用 `Proxy` 包装的目标对象（可以是任何类型的对象，包括原生数组，函数，甚至另一个代理）。
-* handler
-  * 它是一个对象，它的属性提供了某些操作发生时所对应的处理函数。
 
-# handler 对象的方法
-* handler.getPrototypeOf()
-  * Object.getPrototypeOf 方法的捕捉器。
-* handler.setPrototypeOf()
-  * Object.setPrototypeOf 方法的捕捉器。
-* handler.isExtensible()
-  * Object.isExtensible 方法的捕捉器。
-* handler.preventExtensions()
-  * Object.preventExtensions 方法的捕捉器。
-* handler.getOwnPropertyDescriptor()
-  * Object.getOwnPropertyDescriptor 方法的捕捉器。
-* handler.defineProperty()
-  * Object.defineProperty 方法的捕捉器。
-* handler.has()
-  * in 操作符的捕捉器。
-* [handler.get()](#handlerget)
-  * 属性读取操作的捕捉器。
-* [handler.set()](#handlerset)
-  * 属性设置操作的捕捉器。
-* handler.deleteProperty()
-  * delete 操作符的捕捉器。
-* handler.ownKeys()
-  * Object.getOwnPropertyNames 方法和 Object.getOwnPropertySymbols 方法的捕捉器。
-* [handler.apply()](#handlerapply)
-  * 函数调用操作的捕捉器。
-* [handler.construct()](#handlerconstruct)
-  * new 操作符的捕捉器。
+- target
+  - 要使用 `Proxy` 包装的目标对象（可以是任何类型的对象，包括原生数组，函数，甚至另一个代理）。
+- handler
+  - 它是一个对象，它的属性提供了某些操作发生时所对应的处理函数。
 
-## handler.get()
-handler.get() 方法用于拦截对象的读取属性操作。
+## handler 对象的方法
+
+- handler.getPrototypeOf()
+  - Object.getPrototypeOf 方法的捕捉器。
+- handler.setPrototypeOf()
+  - Object.setPrototypeOf 方法的捕捉器。
+- handler.isExtensible()
+  - Object.isExtensible 方法的捕捉器。
+- handler.preventExtensions()
+  - Object.preventExtensions 方法的捕捉器。
+- handler.getOwnPropertyDescriptor()
+  - Object.getOwnPropertyDescriptor 方法的捕捉器。
+- handler.defineProperty()
+  - Object.defineProperty 方法的捕捉器。
+- handler.has()
+  - in 操作符的捕捉器。
+- [handler.get()](#handlerget)
+  - 属性读取操作的捕捉器。
+- [handler.set()](#handlerset)
+  - 属性设置操作的捕捉器。
+- handler.deleteProperty()
+  - delete 操作符的捕捉器。
+- handler.ownKeys()
+  - Object.getOwnPropertyNames 方法和 Object.getOwnPropertySymbols 方法的捕捉器。
+- [handler.apply()](#handlerapply)
+  - 函数调用操作的捕捉器。
+- [handler.construct()](#handlerconstruct)
+  - new 操作符的捕捉器。
+
+### handler.get()
+
+`handler.get()` 方法用于拦截对象的读取属性操作。
 
 语法：
+
 ```js
 var p = new Proxy(target, {
   get: function (target, property, receiver) {},
 });
 ```
-参数：  
-* target：目标对象。
-* property：被获取的属性名。
-* receiver：Proxy 或者继承 Proxy 的对象
 
-## handler.set()
-handler.set() 方法是设置属性值操作的捕获器。
+参数：  
+
+- target：目标对象。
+- property：被获取的属性名。
+- receiver：Proxy 或者继承 Proxy 的对象
+
+### handler.set()
+
+`handler.set()` 方法是设置属性值操作的捕获器。
 
 若目标属性是一个不可写及不可配置的数据属性，则不能改变它的值。
 
 语法：
+
 ```js
 const p = new Proxy(target, {
   set: function(target, property, value, receiver) {
@@ -86,20 +101,24 @@ const p = new Proxy(target, {
 ```
 
 参数：
-* target：目标对象。
-* property：将被设置的属性名或 Symbol。
-* value：新属性值。
-* receiver：最初被调用的对象。通常是 proxy 本身，但 handler 的 set 方法也有可能在原型链上，或以其他方式被间接地调用（因此不一定是 proxy 本身）。
+
+- target：目标对象。
+- property：将被设置的属性名或 Symbol。
+- value：新属性值。
+- receiver：最初被调用的对象。通常是 proxy 本身，但 handler 的 set 方法也有可能在原型链上，或以其他方式被间接地调用（因此不一定是 proxy 本身）。
 
 返回值：
-* **set() 方法应当返回一个布尔值。**
-  * 返回 true 代表属性设置成功
-  * 在严格模式下，如果 set() 方法返回 false，那么会抛出一个 TypeError 异常。
 
-## handler.apply()
+- **set() 方法应当返回一个布尔值。**
+  - 返回 true 代表属性设置成功
+  - 在严格模式下，如果 set() 方法返回 false，那么会抛出一个 TypeError 异常。
+
+### handler.apply()
+
 `handler.apply()` 方法用于拦截函数的调用。
 
 语法：
+
 ```js
 var p = new Proxy(target, {
   apply: function (target, thisArg, argumentsList) {},
@@ -107,21 +126,25 @@ var p = new Proxy(target, {
 ```
 
 参数：
-* `this` 上下文绑定在 `handler` 对象上。（可以通过 `this` 调用 `handler` 设置的其他方法）
-* target：目标对象（**函数**）。· 必须是可被调用的。也就是说，**它必须是一个函数对象**。
-* thisArg：**被调用时的上下文对象**。
-* argumentsList：被调用时的参数数组。
 
-返回值
-* apply 方法可以返回任何值。
+- `this` 上下文绑定在 `handler` 对象上。（可以通过 `this` 调用 `handler` 设置的其他方法）
+- target：目标对象（**函数**）。· 必须是可被调用的。也就是说，**它必须是一个函数对象**。
+- thisArg：**被调用时的上下文对象**。
+- argumentsList：被调用时的参数数组。
+
+返回值：
+
+- apply 方法可以返回任何值。
 
 ***拦截***  
 该方法会拦截目标对象的以下操作：
-* `proxy(...args)`
-* `Function.prototype.apply()` 和 `Function.prototype.call()`
-* `Reflect.apply()`
 
-例子：  
+- `proxy(...args)`
+- `Function.prototype.apply()` 和 `Function.prototype.call()`
+- `Reflect.apply()`
+
+例子：
+
 ```js
 var p = new Proxy(function () {}, {
   apply: function (target, thisArg, argumentsList) {
@@ -133,10 +156,12 @@ var p = new Proxy(function () {}, {
 console.log(p(1, 2, 3)); // "called: 1, 2, 3"; outputs 6
 ```
 
-## handler.construct()
+### handler.construct()
+
 `handler.construct()` 方法用于拦截 `new` 操作符。为了使 `new` 操作符在生成的 `Proxy` 对象上生效，用于初始化代理的目标对象自身必须具有 `[[Construct]]` 内部方法（即 `new target` 必须是有效的）。
 
 语法：
+
 ```js
 var p = new Proxy(target, {
   construct: function (target, argumentsList, newTarget) {},
@@ -144,15 +169,18 @@ var p = new Proxy(target, {
 ```
 
 参数：
-* 下面的参数将会传递给 `construct` 方法，`this` 绑定在 `handler` 上。（可以通过 `this` 调用 `handler` 设置的其他方法）
-* `target`：目标对象。 `target` 必须具有一个有效的 `constructor` 供 `new` 操作符调用。例如 `function() {}`
-* `argumentsList`：`constructor` 的参数列表。
-* `newTarget`：最初被调用的构造函数，就上面的例子而言是 p。
+
+- 下面的参数将会传递给 `construct` 方法，`this` 绑定在 `handler` 上。（可以通过 `this` 调用 `handler` 设置的其他方法）
+- `target`：目标对象。 `target` 必须具有一个有效的 `constructor` 供 `new` 操作符调用。例如 `function() {}`
+- `argumentsList`：`constructor` 的参数列表。
+- `newTarget`：最初被调用的构造函数，就上面的例子而言是 p。
 
 返回值：
-* `construct`：方法必须返回一个对象。（**这个对象就是通过构造函数生成的对象**）
+
+- `construct`：方法必须返回一个对象。（**这个对象就是通过构造函数生成的对象**）
 
 示例：
+
 ```js
 // 例子1
 var p = new Proxy(function () {}, {
@@ -180,11 +208,14 @@ console.log(new proxy1('fierce').disposition);
 // Expected output: "fierce"
 ```
 
-# 示例
-**每个捕捉的方法的入参都有可能不太一样，需要参考方法的语法**
+## 示例
 
-## 基础
+注意：**每个捕捉的方法的入参都有可能不太一样，需要参考方法的语法**
+
+### 基础
+
 当对象中不存在属性名时，默认返回值为 37。使用 `handler.get()` 实现
+
 ```js
 const handler = {
   get: function (obj, prop) {
@@ -198,7 +229,9 @@ p.a = 1;
 console.log(p.a); // 1
 console.log("c" in p, p.c); // false, 37
 ```
+
 代理会将所有应用到它的操作转发到这个对象上。
+
 ```js
 let target = {};
 let p = new Proxy(target, {});
@@ -208,8 +241,10 @@ p.a = 37; // 操作转发到目标
 console.log(target.a); // 37. 操作已经被正确地转发
 ```
 
-## 验证
+### 验证
+
 通过代理，你可以轻松地验证向一个对象的传值。使用 `handler.set()` 实现
+
 ```js
 // 例子1
 let validator = {
@@ -256,10 +291,12 @@ const handler1 = {
 const proxy1 = new Proxy(monster1, handler1);
 ```
 
-## 扩展构造函数
+### 扩展构造函数
+
 TODO：先去看 Object.getOwnPropertyDescriptor() 、Object.create()
 
 方法代理可以轻松地通过一个新构造函数来**扩展**一个已有的构造函数。（这里是扩展，而不是继承，所以设置 `base.prototype` 不需要设置 `constructor` 属性）
+
 ```js
 function extend(sup, base) {
   // 从构造函数的原型获取 构造函数 的属性描述符

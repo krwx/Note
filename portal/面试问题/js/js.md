@@ -42,6 +42,11 @@
   - [41. 数组有自身循环的方法吗](#41-数组有自身循环的方法吗)
   - [42. 讲一下 splice 怎么使用](#42-讲一下-splice-怎么使用)
   - [43. 有了解 es6 的数组新增的方法吗](#43-有了解-es6-的数组新增的方法吗)
+  - [44. 对象由什么组成](#44-对象由什么组成)
+  - [45. string 的 substr 和 substring 有什么区别](#45-string-的-substr-和-substring-有什么区别)
+  - [46. 手写Promise，promise有什么状态](#46-手写promisepromise有什么状态)
+  - [47. 创建对象的方法，除了Object.create 和 function](#47-创建对象的方法除了objectcreate-和-function)
+  - [48. Object.defineProperty 怎么用，除了定义属性还有什么其他方法](#48-objectdefineproperty-怎么用除了定义属性还有什么其他方法)
 
 ## 1. 函数柯里化
 
@@ -677,3 +682,49 @@ const removed = myFish.splice(2, 2);
 ## 43. 有了解 es6 的数组新增的方法吗
 
 map、filter、some、every、fill、copyWithin、find、findIndex、flat、flatMap、reduce
+
+## 44. 对象由什么组成
+
+属性、方法、事件
+
+## 45. string 的 substr 和 substring 有什么区别
+
+- 参数不同。
+  - `substr()` 方法的两个参数是 `start` 和 `length`，而 `substring()` 方法的参数是 `start` 和 `end`。
+- 参数为负数的处理。
+  - 如果 `substr()` 的 `start` 索引为负数，它将循环到字符串的末尾，而 `substring()` 会将其限制为 0。
+- 参数大小比较的处理
+  - 在 `substr()` 中，如果长度为负数，将被视为零，返回空字符串；而在 `substring()` 中，如果 `end` 小于 `start` ，则会交换这两个索引。
+
+```js
+const text = "Mozilla";
+console.log(text.substring(2, 5)); // "zil"
+console.log(text.substr(2, 3)); // "zil"
+```
+
+## 46. 手写Promise，promise有什么状态
+
+[Promise](../../js/内置对象/Promise.md/#手写-promise)
+
+## 47. 创建对象的方法，除了Object.create 和 function
+
+[创建对象](../../js/概念/创建对象.md)
+
+## 48. Object.defineProperty 怎么用，除了定义属性还有什么其他方法
+
+语法：`Object.defineProperty(obj, prop, descriptor)`  
+
+参数
+
+- `obj`：要定义属性的对象。
+- `prop`：一个字符串或 `Symbol`，指定了要定义或修改的属性键。
+- `descriptor`：要定义或修改的属性的描述符。
+
+```js
+Object.defineProperty(obj, "key2", {
+  enumerable: false,
+  configurable: false,
+  writable: false,
+  value: "static",
+});
+```

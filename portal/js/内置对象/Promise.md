@@ -1,58 +1,71 @@
-- [描述](#描述)
-  - [Promise 的链式调用](#promise-的链式调用)
-  - [Thenable](#thenable)
-  - [Promise 并发](#promise-并发)
-  - [示例](#示例)
-- [构造函数](#构造函数)
-  - [典型的 Promise 流程概述](#典型的-promise-流程概述)
-- [实例方法](#实例方法)
-  - [Promise.prototype.catch()](#promiseprototypecatch)
-    - [抛出错误时的陷阱](#抛出错误时的陷阱)
-  - [Promise.prototype.finally()](#promiseprototypefinally)
-- [静态方法](#静态方法)
-  - [Promise.all()](#promiseall)
-    - [Promise.all() 和 Promise.allSettled() 的区别](#promiseall-和-promiseallsettled-的区别)
-  - [Promise.allSettled()](#promiseallsettled)
-  - [Promise.any()](#promiseany)
-  - [Promise.race()](#promiserace)
-- [手写 Promise](#手写-promise)
+# Promise
+
+- [Promise](#promise)
+  - [描述](#描述)
+    - [Promise 的链式调用](#promise-的链式调用)
+    - [Thenable](#thenable)
+    - [Promise 并发](#promise-并发)
+    - [示例](#示例)
+  - [构造函数](#构造函数)
+    - [典型的 Promise 流程概述](#典型的-promise-流程概述)
+  - [实例方法](#实例方法)
+    - [Promise.prototype.catch()](#promiseprototypecatch)
+      - [抛出错误时的陷阱](#抛出错误时的陷阱)
+    - [Promise.prototype.finally()](#promiseprototypefinally)
+  - [静态方法](#静态方法)
+    - [Promise.all()](#promiseall)
+      - [Promise.all() 和 Promise.allSettled() 的区别](#promiseall-和-promiseallsettled-的区别)
+    - [Promise.allSettled()](#promiseallsettled)
+    - [Promise.any()](#promiseany)
+    - [Promise.race()](#promiserace)
+  - [手写 Promise](#手写-promise)
 
 Promise 对象有以下两个特点。
+
 1. 对象的状态不受外界影响。Promise 对象代表一个异步操作，有三种状态： `pending` （进行中）、`fulfilled`（已成功）和`rejected`（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。这也是 Promise 这个名字的由来，它的英语意思就是“承诺”，表示其他手段无法改变。
 2. 一旦状态改变，就不会再变，任何时候都可以得到这个结果。Promise对象的状态改变，只有两种可能：从 `pending` 变为 `fulfilled` 和从 `pending` 变为 `rejected` 。只要这两种情况发生，状态就凝固了，不会再变了，会一直保持这个结果，这时就称为 resolved（已定型）。如果改变已经发生了，你再对Promise对象添加回调函数，也会立即得到这个结果。这与事件（Event）完全不同，事件的特点是，如果你错过了它，再去监听，是得不到结果的。
 
+## 描述
 
-# 描述
 Promise 对象表示异步操作最终的完成（或失败）以及其结果值。是异步编程的一种解决方案
 
 **Promise 的状态**：  
+
 一个 Promise 必然处于以下几种状态之一：
+
 - 待定（`pending`）：初始状态，既没有被兑现，也没有被拒绝。
 - 已兑现（`fulfilled`）：意味着操作成功完成。
 - 已拒绝（`rejected`）：意味着操作失败。
 
 描述：
+
 - 一个待定的 `Promise` **最终状态**可以是已兑现并返回一个值，或者是已拒绝并返回一个原因（错误）。
 - 当其中任意一种情况发生时，通过 `Promise` 的 `then` 方法串联的处理程序将被调用。
 - 如果绑定相应处理程序时 `Promise` 已经兑现或拒绝，这处理程序将被立即调用，因此在异步操作完成和绑定处理程序之间不存在竞态条件。
 - **如果一个 `Promise` 已经被兑现或拒绝，即不再处于待定状态，那么则称之为已敲定（`settled`）**。
 
 **敲定和兑现或拒绝的区别**：
+
 - 敲定包括：已兑现或已拒绝
 
-## Promise 的链式调用
+### Promise 的链式调用
+
 `Promise.prototype.then()、Promise.prototype.catch() 和 Promise.prototype.finally()` 方法用于将进一步的操作与已敲定的 `Promise` 相关联。由于这些方法返回 `Promise`，因此它们可以被链式调用。
 
 **.then()**：  
+
 - `.then()` 方法最多接受两个参数；
   - 第一个参数是 `Promise` **兑现**时的回调函数，
   - 第二个参数是 `Promise` **拒绝**时的回调函数。
   - 每个 `.then()` 返回一个**新生成的 `Promise` 对象**
 - 链中每个已兑现的 `Promise` 的返回值会传递给下一个 `.then()`，而已拒绝的 `Promise` 会把失败原因传递给链中下一个拒绝处理函数。
+- `promise` 的 `reject` 不是只有报错才使用，数据不符合要求也可以使用，其他场景也可以
 
 **错误处理**：
+
 1. 有的错误必须立即被处理。在这种情况下，必须抛出某种类型的错误以维护链中的错误状态。这时通过 `then()` 的第二个参数进行处理
 2. 在没有迫切需要的情况下，最好将错误处理留到最后一个 .`catch()` 语句。
+
 ```js
 myPromise
   .then(handleFulfilledA)
@@ -62,6 +75,7 @@ myPromise
 ```
 
 **例子**：
+
 ```js
 const myPromise = new Promise((resolve, reject) => {
   setTimeout(() => {
@@ -89,18 +103,23 @@ myPromise
 ```
 
 **误区**：
+
 ```js
 const promiseA = new Promise(myExecutorFunc);
 const promiseB = promiseA.then(handleFulfilled1, handleRejected1);
 const promiseC = promiseA.then(handleFulfilled2, handleRejected2);
 ```
+
 当 `promiseA resolve` 值时，`promiseB` 和 `promiseC` 都会被调用
 
-## Thenable
+### Thenable
+
 Promise 是 thenable 对象。
 
-## Promise 并发
+### Promise 并发
+
 Promise 类提供了四个静态方法来促进异步任务的并发：
+
 - `Promise.all()`
   - 在所有传入的 Promise **都被兑现时兑现**；在**任意一个** Promise 被拒绝时拒绝。
 - `Promise.allSettled()`
@@ -112,8 +131,10 @@ Promise 类提供了四个静态方法来促进异步任务的并发：
 
 所有这些方法都接受一个 Promise（确切地说是 thenable）的可迭代对象，并**返回一个新的 Promise**。
 
-## 示例
-**错误处理**
+### 示例
+
+错误处理
+
 ```js
 // 为了尝试错误处理，使用“阈值”值会随机地引发错误。
 const THRESHOLD_A = 8; // 可以使用 0 使错误必现
@@ -174,15 +195,18 @@ new Promise(tetheredGetNumber)
 - `.then()` 如果只有一个参数，那么 `reject` 的话会运行 `.catch()`
 - `.then()` 有两个参数，那么第二个错误处理回调中处理完错误后，一定要通过 `throw` 抛出错误，不然这个错误会被当作“已修复”，程序会继续执行下面的 `.then()` 链。`throw` 抛出的错误会被 `.catch()` 捕捉到
 
-# 构造函数
+## 构造函数
+
 Promise() 构造函数
 
 语法：`new Promise(executor)`
+
 - executor：在构造函数中执行的 function。它接收两个函数作为参数：`resolveFunc` 和 `rejectFunc`。
   - `executor` 函数的返回值会被忽略
   - 如果在 `executor` 函数中抛出错误，则 `Promise` 将被拒绝，除非 `resolveFunc` 或 `rejectFunc` 已经被调用。
 
-## 典型的 Promise 流程概述
+### 典型的 Promise 流程概述
+
 1. 在构造函数生成新的 `Promise` 对象时，它还会生成一对相应的 `resolveFunc` 和 `rejectFunc` 函数；它们与 `Promise` 对象“绑定”在一起。
    1. 注意：`resolveFunc` 和 `rejectFunc` 函数是 Promise 构造函数生成的
 
@@ -204,7 +228,9 @@ Promise() 构造函数
 5. 一旦 Promise 敲定，它会（异步地）调用任何通过 `then()、catch()` 或 `finally()` 关联的进一步处理程序。
 
 **流程注意的点**：
+
 1. `executor` 是**同步调用的**（在构造 `Promise` 时立即调用）。注意下面的代码的执行顺序
+
 ```js
 const p1 = new Promise((resolve, reject) => {
   console.log("construct promise");
@@ -221,7 +247,8 @@ p1.then(value => console.log(value));
  */
 ```
 
-# 实例方法
+## 实例方法
+
 - [Promise.prototype.catch()](#promiseprototypecatch)
   - 将一个拒绝处理回调函数附加到 Promise 上，并返回一个新的 Promise，如果回调被调用，则解决为回调的返回值，如果 Promise 被兑现，解决为其原始兑现值。
   - 参数有一个，为处理错误的回调函数
@@ -233,7 +260,8 @@ p1.then(value => console.log(value));
 - Promise.prototype.then()
   - 将一个兑现处理器和拒绝处理器附加到 Promise 上，并返回一个新的 Promise，解决为调用处理器得到的返回值，或者如果 Promise 没有被处理（即相关处理器 onFulfilled 或 onRejected 不是函数），则以原始敲定值解决。
 
-## Promise.prototype.catch()
+### Promise.prototype.catch()
+
 - `Promise` 实例的 `catch()` 方法用于注册一个在 `promise` 被拒绝时调用的函数。
 - 它会立即返回一个等效的 `Promise` 对象，这可以允许你链式调用其他 `promise` 的方法。
 - **此方法是 `Promise.prototype.then(undefined, onRejected)` 的一种简写形式**。
@@ -242,6 +270,7 @@ p1.then(value => console.log(value));
 
 **注意**：  
 `catch()` 是 `Promise.prototype.then(undefined, onRejected)` 的一种简写形式。这意味着 `.catch()` 后面是可以接 `.then() 或 .catch() 或 .finally()`。
+
 ```js
 const p1 = new Promise((resolve, reject) => {
     setTimeout(() => resolve("p1 延迟解决"), 1000);
@@ -269,8 +298,10 @@ p2.catch((error) => {
 })
 ```
 
-### 抛出错误时的陷阱
+#### 抛出错误时的陷阱
+
 在异步函数内部抛出的错误会像未捕获的错误一样：
+
 ```js
 const p2 = new Promise((resolve, reject) => {
   setTimeout(() => {
@@ -284,6 +315,7 @@ p2.catch((e) => {
 ```
 
 在调用 resolve 之后抛出的错误会被忽略：
+
 ```js
 const p3 = new Promise((resolve, reject) => {
   resolve();
@@ -295,18 +327,21 @@ p3.catch((e) => {
 });
 ```
 
-## Promise.prototype.finally()
+### Promise.prototype.finally()
+
 Promise 实例的 `finally()` 方法用于注册一个在 promise 敲定（兑现或拒绝）时调用的函数。它会立即**返回一个等效的 Promise 对象**
 
 **语法**：`finally(onFinally)`
 
-**参数**
+参数
+
 - onFinally
   - 一个当 promise 敲定时**异步执行**的函数。
   - 它的返回值将被忽略，除非返回一个被拒绝的 promise。
   - 调用该函数时不带任何参数。
 
-**返回值**
+返回值
+
 - 返回等效的 Promise。
   - 如果处理程序抛出错误或返回被拒绝的 promise，那么 finally() 返回的 promise 将以该值被拒绝。
 
@@ -319,6 +354,7 @@ Promise 实例的 `finally()` 方法用于注册一个在 promise 敲定（兑�
   - 类似地，与 `Promise.reject(3).then(() => {}, () => 88)` 不同，它返回一个最终兑现为值 `88` 的 promise，而 `Promise.reject(3).finally(() => 88)` 返回一个最终以原因 `3` 拒绝的 promise。
 
 例子：
+
 ```js
 function checkMail() {
   return new Promise((resolve, reject) => {
@@ -342,8 +378,8 @@ checkMail()
   });
 ```
 
+## 静态方法
 
-# 静态方法
 - [Promise.all()](#promiseall)
   - 在所有传入的 Promise **都被兑现时兑现**；在**任意一个** Promise 被拒绝时拒绝。
 - [Promise.allSettled()](#promiseallsettled)
@@ -357,15 +393,18 @@ checkMail()
 - Promise.resolve()
   - 返回一个新的 Promise 对象，该对象以给定的值兑现。
 
-## Promise.all()
+### Promise.all()
+
 - 当所有输入的 Promise 都被兑现时，返回的 Promise 也将被兑现（即使传入的是一个空的可迭代对象），并返回一个包含所有兑现值的数组。
 - 如果输入的任意 Promise 被拒绝，则返回的 Promise 将被拒绝，并**带有第一个被拒绝的原因**。
 
-### Promise.all() 和 Promise.allSettled() 的区别
+#### Promise.all() 和 Promise.allSettled() 的区别
+
 - `Promise.all()` 方法会在任何一个输入的 `Promise` 被拒绝时立即拒绝。
 - `Promise.allSettled()` 方法返回的 Promise 会**等待所有输入的 Promise 完成，不管其中是否有 Promise 被拒绝**。如果你需要获取输入可迭代对象中每个 Promise 的最终结果，则应使用 allSettled() 方法。
 
 **例子**：
+
 ```js
 const p1 = Promise.resolve(3);
 const p2 = 1337;
@@ -385,6 +424,7 @@ Promise.all([p1, p2, p3]).then((values) => {
   - 传递空的 iterable 时（例如传递空数组 []），Promise.all() 是同步的
 
 异步性例子：
+
 ```js
 // 传入一个已经 resolved 的 Promise 数组，以尽可能快地触发 Promise.all
 const resolvedPromisesArray = [Promise.resolve(33), Promise.resolve(44)];
@@ -406,6 +446,7 @@ setTimeout(() => {
 ```
 
 同步性例子：
+
 ```js
 const p = Promise.all([]); // 将会立即解决
 const p2 = Promise.all([1337, "hi"]); // 非 promise 值将被忽略，但求值是异步进行的
@@ -451,6 +492,7 @@ Promise.all([p1, p2, p3])
 ```
 
 通过处理可能的拒绝，可以更改此行为：
+
 ```js
 const p1 = new Promise((resolve, reject) => {
   setTimeout(() => resolve("p1 延迟解决"), 1000);
@@ -469,8 +511,10 @@ Promise.all([p1.catch((error) => error), p2.catch((error) => error)]).then(
 );
 ```
 
-## Promise.allSettled()
+### Promise.allSettled()
+
 例子：
+
 ```js
 Promise.allSettled([
   Promise.resolve(33),
@@ -487,7 +531,8 @@ Promise.allSettled([
 // ]
 ```
 
-## Promise.any()
+### Promise.any()
+
 - 当输入的任何一个 Promise 兑现时，这个返回的 Promise 将会兑现，并**返回第一个兑现的值**。
 - 当所有输入 Promise **都被拒绝**（包括传递了空的可迭代对象）时，它会以一个包含拒绝原因数组的 AggregateError 拒绝。
 - 一旦有一个 Promise 兑现，它就会立即返回，因此不会等待其他 Promise 完成。
@@ -506,14 +551,17 @@ Promise.any(promises).then((value) => console.log(value));
 // Expected output: "quick"
 ```
 
-## Promise.race()
+### Promise.race()
+
 `Promise.race()` 静态方法接受一个 promise 可迭代对象作为输入，并返回一个 Promise。**这个返回的 promise 会随着第一个 promise 的敲定而敲定**。
 
 个人理解：
+
 - 敲定代表状态为 `fulfilled` 或 `rejected`，即 `Promise resolve` 或 `reject` 都代表 `Promise` 敲定了。
 - 所有 `Promise.race()` 里面的 `Promise` 只要其中一个 `Promise resolve` 或 `reject` 就会返回值
 
 **例子**：
+
 ```js
 const promise1 = new Promise((resolve, reject) => {
   setTimeout(resolve, 500, 'one');
@@ -534,6 +582,7 @@ Promise.race([promise1, promise2]).then((value) => {
 Promise.race 总是异步的。没有同步性。
 
 一个空的可迭代对象会导致返回的 Promise 一直处于待定状态：
+
 ```js
 const foreverPendingPromise = Promise.race([]);
 console.log(foreverPendingPromise);
@@ -551,6 +600,7 @@ setTimeout(() => {
 **使用 Promise.race() 实现请求超时**：  
 
 你可以使用一个定时器来与一个可能持续很长时间的请求进行竞争，以便超出时间限制时，返回的 `Promise` 自动拒绝。
+
 ```js
 const data = Promise.race([
   fetch("/api"),
@@ -562,11 +612,13 @@ const data = Promise.race([
   .then((res) => res.json())
   .catch((err) => displayError(err));
 ```
+
 如果 `data` `Promise` 被兑现，它将包含从 `/api` 获取的数据；否则，如果 `fetch` 保持待定状态并输给 `setTimeout` 定时器，这个 `Promise` 将在 5 秒后被拒绝。
 
-# 手写 Promise
+## 手写 Promise
 
 简单的 Promise：
+
 ```js
 const promise = new Promise((resolve, reject) => {
     resolve('成功')
@@ -580,6 +632,7 @@ promise.then(value => {
 ```
 
 原理：
+
 1. 定义状态常量：`pending、fulfilled、rejected`
 2. 定义 MyPromise 类
    1. 定义成员变量
@@ -630,7 +683,7 @@ promise.then(value => {
          1. 调用 第一个入参函数 获取处理后的值，然后对该值进行类型处理，符合数据类型的，则调用 `nextPromise` 的 `resolve`
       4. 实现当前 `Promise` 的状态为 `Rejected` 的处理函数： `rejectHandle`
          1. 调用 第二个入参函数 获取处理后的值，然后对该值进行类型处理，符合数据类型的，则调用 `nextPromise` 的 `resolve`
-         2. 从实现可以看出如果没有在第二个入参函数 `throw` 异常的话，`nextPromise` 会是正常的 `promise`，还是可以通过 `.then() `获取数据.
+         2. 从实现可以看出如果没有在第二个入参函数 `throw` 异常的话，`nextPromise` 会是正常的 `promise`，还是可以通过 `.then()`获取数据.
       5. 判断当前 `Promise` 的状态
          1. 如果状态为 `Fulfilled` ，立即执行 `resolveHandle` 函数
          2. 如果状态为 `Rejected` ，立即执行 `rejectHandle` 函数
@@ -646,20 +699,21 @@ promise.then(value => {
    2. 实现
       1. 返回 `then()`
       2. `then()` 的第一个入参函数的内容为：通过 `resolve(onFinally())` 等待异步函数，然后再通过 `.then()` 返回初始的 `value`
-      3.  `then()` 的第一个入参函数的内容为：通过 `resolve(onFinally())` 等待异步函数，然后再通过 `.then()` 抛出异常
+      3. `then()` 的第一个入参函数的内容为：通过 `resolve(onFinally())` 等待异步函数，然后再通过 `.then()` 抛出异常
 10. `resolve` 静态方法
     1. 如果 `value` 为 `Promise` ，直接返回 `value`
     2. 返回 `MyPromise` 的实例对象，构造函数的 `executor` 直接 `resolve value`
 11. `all` 静态方法
-    1.  特性
-        1.  入参为数组。返回一个会 resolve 返回值组成的数组的 Promise。
-        2.  当所有 `Promise resolve` 后返回数组。当任意一个 `Promise reject` 时 `reject`
+    1. 特性
+        1. 入参为数组。返回一个会 resolve 返回值组成的数组的 Promise。
+        2. 当所有 `Promise resolve` 后返回数组。当任意一个 `Promise reject` 时 `reject`
     2. 实现
        1. 声明数组变量，保存结果。声明 `index` 值，当遍历完 Promise 数组 resolve 结果数组
        2. 返回一个新的 `Promise`
        3. 在 `executor` 中遍历 `Promise` 数组，如果元素不是 `Promise` 类型，则直接添加到结果数组中；如果元素是 `Promise` 类型，则使用 `.then()` 进行处理。
 
 代码：
+
 ```js
 const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
