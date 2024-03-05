@@ -108,7 +108,8 @@ console.log(p(10,5)); */
     }
 } */
 
-const throttle = (fn, wait = 50) => {
+// 节流例子
+/* const throttle = (fn, wait = 50) => {
     // 上一次执行 fn 的时间
     let previous = 0
     // 将 throttle 处理结果当作函数返回
@@ -147,4 +148,17 @@ const trigger = () => {
     }
 }
 
-trigger();
+trigger(); */
+
+function test(name) {
+    this.name = name
+}
+
+let obj = new test("aa")
+obj.name = "ee"
+obj.__proto__.name = "dad"
+obj.__proto__.sayName = function () {
+    console.log(obj.name);
+}
+obj.sayName();
+obj.__proto__.sayName();

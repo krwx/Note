@@ -21,6 +21,8 @@
   - [18. localStorage 在关闭浏览器后还会存在吗？](#18-localstorage-在关闭浏览器后还会存在吗)
   - [19. sessionStorage 的会话是指什么含义](#19-sessionstorage-的会话是指什么含义)
   - [20. 同一个域名，两个不同的标签页可以共享 sessionStorage 吗？](#20-同一个域名两个不同的标签页可以共享-sessionstorage-吗)
+  - [21. http、www、html的中文名称](#21-httpwwwhtml的中文名称)
+  - [22. 浏览器对象](#22-浏览器对象)
 
 ## 1. 简单说一下http请求
 
@@ -244,3 +246,14 @@ XMLHttpRequest（XHR）对象用于与服务器交互。通过 XMLHttpRequest �
 ## 20. 同一个域名，两个不同的标签页可以共享 sessionStorage 吗？
 
 不可以。但是同域名的一个标签页如果从另一个标签页打开，会复制该标签页的 sessionStorage
+
+## 21. http、www、html的中文名称
+
+- http：超文本传输协议
+- www：万维网
+- html：超文本标记语言
+
+## 22. 浏览器对象
+
+`BOM` 指的是浏览器对象模型，它指的是把浏览器当做一个对象来对待，这个对象主要定义了与浏览器进行交互的法和接口。`BOM` 的核心是 `window`，而 `window` 对象具有双重角色，它既是通过 js 访问浏览器窗口的一个接口，又是一个 `Global`（全局）
+对象。

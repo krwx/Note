@@ -18,6 +18,9 @@
   - [15. setState 怎么同步处理，实现一个hook，实现同步处理state（参考v-model，通过Object.defineProperty实现）](#15-setstate-怎么同步处理实现一个hook实现同步处理state参考v-model通过objectdefineproperty实现)
   - [16. useEffect 不加依赖，什么时候回调用，组件更新时是否会调用（会，props发生改变时）（写代码测试一下）](#16-useeffect-不加依赖什么时候回调用组件更新时是否会调用会props发生改变时写代码测试一下)
   - [17. 怎么在自定义 hook 读取之前的 state 或 prop](#17-怎么在自定义-hook-读取之前的-state-或-prop)
+  - [18. 讲一下高阶组件（hoc），怎么使用，有用过吗？](#18-讲一下高阶组件hoc怎么使用有用过吗)
+  - [19. useEffect和useLayoutEffect的区别](#19-useeffect和uselayouteffect的区别)
+  - [20. 什么时候使用useLayoutEffect，有用过useLayoutEffect吗？](#20-什么时候使用uselayouteffect有用过uselayouteffect吗)
 
 ## 1. 你知道Hook是什么吗？有哪些
 
@@ -274,3 +277,93 @@ export default Greeting;
   - 如果完全不传递依赖数组，则 Effect 会在组件的 **每次单独渲染（和重新渲染）之后** 运行。
 
 ## 17. 怎么在自定义 hook 读取之前的 state 或 prop
+
+```js
+import React from "react";
+
+function usePrevious(value) {
+    const ref = React.useRef();
+    React.useEffect(() => {
+        ref.current = value;
+    }, [value]);
+    return ref.current;
+}
+
+export default function GetPreviousTest() {
+    const [value, setValue] = React.useState('')
+    const previous = usePrevious(value)
+    return <div>
+        previous: {previous}
+        <input value={value} onChange={(e) => setValue(e.target.value)} />
+    </div>
+}
+```
+
+## 18. 讲一下高阶组件（hoc），怎么使用，有用过吗？
+
+高阶组件（HOC）是 React 中用于复用组件逻辑的一种高级技巧。HOC 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的设计模式。
+
+**高阶组件是参数为组件，返回值为新组件的函数**。
+
+请注意，HOC 不会修改传入的组件，也不会使用继承来复制其行为。相反，HOC 通过将组件包装在容器组件中来组成新组件。HOC 是纯函数，没有副作用。
+
+```jsx
+import React, { useState } from "react";
+
+function enhance(Component) {
+    return function JudgeComponent({ visible, ...props }) {
+        return (
+            <>
+                {visible && <Component {...props} />}
+            </>
+        )
+    }
+}
+
+function ChildItem({ children, name }) {
+    return (
+        <>
+            {children}
+            <div>
+                name: {name}
+            </div>
+        </>
+    )
+}
+
+export default function HocExample() {
+    const [visible, setVisible] = useState(true);
+
+    const EnChildItem = enhance(ChildItem);
+    return (
+        <>
+            <div>
+                <button onClick={e => setVisible(!visible)}>click</button>
+            </div>
+            <EnChildItem visible={visible} name="first name">
+                hello 123
+            </EnChildItem>
+            <EnChildItem visible={visible} name="second name">
+                hello 456
+            </EnChildItem>
+        </>
+    )
+}
+```
+
+## 19. useEffect和useLayoutEffect的区别
+
+1. 触发时机：  
+   - `useEffect`：`useEffect`是在组件完成渲染之后(包括首次渲染和更新渲染)异步触发的。它不会阻塞组件的渲染过程。  
+   - `useLayoutEffect`：`useLayoutEffect`是在组件完成渲染之后、浏览器执行绘制之前同步触发的。它会在DOM更新之前被调用，可以阻塞组件的渲染过程。
+2. 执行时间点：  
+   - `useEffect`：`useEffect`的副作用操作是在组件渲染完成后的"提交阶段"执行的。这意味着它会在浏览器完成绘制后执行，对用户可见性没有直接影响。  
+   - `useLayoutEffect`：`useLayoutEffect`的副作用操作是在组件渲染完成后的"布局阶段"执行的。这意味着它会在浏览器执行绘制之前执行，对DOM的计算和布局有直接影响。因此，`useLayoutEffect`中的副作用操作会在浏览器更新屏幕之前同步触发。
+
+## 20. 什么时候使用useLayoutEffect，有用过useLayoutEffect吗？
+
+useLayoutEffect 是 useEffect 的一个版本，**在浏览器重新绘制屏幕之前触发**。
+
+用法：
+
+1. 在浏览器重新绘制屏幕前计算元素的布局

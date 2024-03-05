@@ -8,6 +8,7 @@
   - [Effect Hook](#effect-hook)
   - [性能 Hook](#性能-hook)
   - [自定义 Hook](#自定义-hook)
+    - [自定义 hook 读取之前的 state 或 prop](#自定义-hook-读取之前的-state-或-prop)
 
 ## 概览
 
@@ -59,3 +60,34 @@ Effect 允许组件 连接到外部系统并与之同步。这包括处理网络
 ## 自定义 Hook
 
 开发者可以 自定义 Hook 作为 JavaScript 函数。
+
+### 自定义 hook 读取之前的 state 或 prop
+
+```js
+import React from "react";
+
+function usePrevious(value) {
+    // 使用 useRef 存储之前的值
+    const ref = React.useRef();
+    // 当值发生变化更新 ref.current
+    React.useEffect(() => {
+        ref.current = value;
+    }, [value]);
+    return ref.current;
+}
+
+export default function GetPreviousTest() {
+    const [value, setValue] = React.useState('')
+    const previous = usePrevious(value)
+    return <div>
+        previous: {previous}
+        <input value={value} onChange={(e) => setValue(e.target.value)} />
+    </div>
+}
+```
+
+原理：
+
+1. 当输入框输入内容， `value` 为输入框的值。
+2. `useEffect` 监听到 `value` 发生变化，更新 `ref.current` ，但是改变 `ref` 是不会触发渲染的，所以不显示
+3. 当在输入框再次输入内容，`setValue` 触发渲染， `usePrevious` 返回的是上一次存储的值。之后 `useEffect` 再给 `ref.current` 设置新的值

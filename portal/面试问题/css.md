@@ -19,6 +19,8 @@
   - [15. display有哪些取值](#15-display有哪些取值)
   - [16. display 为 absolute 的 div，假如它的父 div 的 display 不是 absolute、relative，那么这个 div 以谁为基准](#16-display-为-absolute-的-div假如它的父-div-的-display-不是-absoluterelative那么这个-div-以谁为基准)
   - [17. display 的默认取值是什么](#17-display-的默认取值是什么)
+  - [18. 怎么实现三栏布局，左右两边是固定的。flex布局的话，三栏的flex-basic、flex-glow、flex-shirnk怎么设置](#18-怎么实现三栏布局左右两边是固定的flex布局的话三栏的flex-basicflex-glowflex-shirnk怎么设置)
+  - [19. css自定义属性怎么写，在哪里定义](#19-css自定义属性怎么写在哪里定义)
 
 ## 1. 移动端布局有哪些 / 响应式布局是什么 / 响应式布局有哪些，怎么使用
 
@@ -243,3 +245,37 @@ em 和 rem 的区别：
 ## 17. display 的默认取值是什么
 
 inline
+
+## 18. 怎么实现三栏布局，左右两边是固定的。flex布局的话，三栏的flex-basic、flex-glow、flex-shirnk怎么设置
+
+[三栏布局](../css/css实现功能.md/#实现三栏)
+
+flex布局的话，三栏的flex-basic、flex-glow、flex-shirnk怎么设置：
+
+- 左栏
+  - flex-basic 设置初始的宽度
+  - flex-glow 和 flex-shirnk 设置 0
+- 中间
+  - flex 设置 auto
+- 右栏
+  - flex-basic 设置初始的宽度
+  - flex-glow 和 flex-shirnk 设置 0
+
+## 19. css自定义属性怎么写，在哪里定义
+
+带有前缀 -- 的属性名，比如 --example--name，表示的是带有值的自定义属性，其可以通过 `var()` 函数在全文档范围内复用的。
+
+例子：
+
+```css
+/* 在 :root 声明自定义属性 */
+:root {
+  --first-color: #488cff;
+  --second-color: #ffff8c;
+}
+/* 通过 var() 函数获取自定义属性 */
+#firstParagraph {
+  background-color: var(--first-color);
+  color: var(--second-color);
+}
+```
