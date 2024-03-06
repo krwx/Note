@@ -9,6 +9,7 @@
   - [6. webpack 的 loader 和 plugin 是干什么的](#6-webpack-的-loader-和-plugin-是干什么的)
   - [7. 可以使用 plugin 代替 loader，如果可以，为什么要设置 loader？](#7-可以使用-plugin-代替-loader如果可以为什么要设置-loader)
   - [8. 有用过 webpack 的 externals 字段吗](#8-有用过-webpack-的-externals-字段吗)
+  - [9. dependency 和 dev-denpendency 的区别](#9-dependency-和-dev-denpendency-的区别)
 
 ## 1. 说一下 webpack 的工作流程以及简单分析构建后的 JS 产物怎么处理模块导入和依赖关系
 
@@ -121,3 +122,16 @@ chunk
 ## 8. 有用过 webpack 的 externals 字段吗
 
 `externals` 字段防止将某些 `import` 的包(`package`)打包到 `bundle` 中，而是在运行时(`runtime`)再去从外部获取这些扩展依赖(`external dependencies`)。
+
+## 9. dependency 和 dev-denpendency 的区别
+
+运行 `npm install` 会同时下载 `dependencies` 和 `devDependencies` 的包
+
+官方解释：
+
+- `"dependencies"`: Packages required by your application in production.
+- `"devDependencies"`: Packages that are only needed for local development and testing.
+
+对于开发网站或应用，差别不大，因为使用 `webpack` 打包会把 `js` 或 `ts` 文件引入的包都一起打包。
+
+**它们的区别在发布一个 `npm package` 时出现**。发布包是不会把 `devDependencies` 的包打包进来，因为别的项目使用这个发布的包是不需要这个包开发或测试需要的包，只需要它生产环境下需要的包，即 `dependencies` 。

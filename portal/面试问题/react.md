@@ -360,6 +360,11 @@ export default function HocExample() {
    - `useEffect`：`useEffect`的副作用操作是在组件渲染完成后的"提交阶段"执行的。这意味着它会在浏览器完成绘制后执行，对用户可见性没有直接影响。  
    - `useLayoutEffect`：`useLayoutEffect`的副作用操作是在组件渲染完成后的"布局阶段"执行的。这意味着它会在浏览器执行绘制之前执行，对DOM的计算和布局有直接影响。因此，`useLayoutEffect`中的副作用操作会在浏览器更新屏幕之前同步触发。
 
+other:
+
+- `useEffect` 是异步执行的，而 `useLayoutEffect` 是同步执行的。
+- `useEffect` 的执行时机是浏览器完成渲染之后，而 `useLayoutEffect` 的执行时机是浏览器把内容真正渲染到界面之前。
+
 ## 20. 什么时候使用useLayoutEffect，有用过useLayoutEffect吗？
 
 useLayoutEffect 是 useEffect 的一个版本，**在浏览器重新绘制屏幕之前触发**。
