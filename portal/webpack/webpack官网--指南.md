@@ -14,6 +14,10 @@
   - [懒加载](#懒加载)
   - [缓存](#缓存)
   - [创建library](#创建library)
+  - [Typescript](#typescript)
+    - [基础配置](#基础配置)
+    - [loader](#loader)
+    - [source map](#source-map)
 
 ## 起步
 
@@ -366,4 +370,96 @@ node 环境下的全局内置变量。表示当前文件所在文件夹的绝对
         },
     },
   };
+```
+
+## Typescript
+
+### 基础配置
+
+首先，执行以下命令安装 `TypeScript` 编译器和 `loader`：
+
+```shell
+npm install --save-dev typescript ts-loader
+```
+
+添加 tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node"
+  }
+}
+```
+
+配置 webpack 处理 TypeScript
+
+webpack.config.js：
+
+```js
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+};
+```
+
+上面的配置将会指定 `./src/index.ts` 为入口文件，并通过 `ts-loader` 加载所有 `.ts` 和 `.tsx` 文件，并在当前目录 输出 一个 `bundle.js` 文件。
+
+### loader
+
+在本指南中，我们使用 `ts-loader`，因为它能够很方便地启用额外的 `webpack` 功能，例如将其他 web 资源导入到项目中。
+
+> 警告
+>
+> `ts-loader` 使用 `TypeScript` 编译器 `tsc`，并依赖于 `tsconfig.json` 配置。请确保避免将 `module` 设置为 `"CommonJS"`，否则 `webpack` 将无法对代码进行 `tree shaking`。
+
+请注意，如果已经使用 `babel-loader` 转译代码，可以使用 `@babel/preset-typescript` 以让 `Babel` 处理 `JavaScript` 和 `TypeScript` 文件，而不需要额外使用 `loader`。请记住，与 `ts-loader` 相反，底层的 `@babel/plugin-transform-typescript` 插件不执行任何类型检查。
+
+### source map
+
+我们需要对 `TypeScript` 进行配置以启用 `source map`，从而实现将内联的 `source map` 输出到编译后的 `JavaScript` 文件。必须在 `TypeScript` 配置中添加下面这行：
+
+tsconfig.json
+
+```json
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      // ...
+    }
+}
+```
+
+现在，我们需要告诉 `webpack` 提取这些 `source map`，并内联到最终的 `bundle` 中。
+
+webpack.config.js
+
+```js
+module.exports = {
+    // ...
+    devtool: 'inline-source-map',
+};
 ```

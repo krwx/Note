@@ -21,6 +21,11 @@
   - [17. display 的默认取值是什么](#17-display-的默认取值是什么)
   - [18. 怎么实现三栏布局，左右两边是固定的。flex布局的话，三栏的flex-basic、flex-glow、flex-shirnk怎么设置](#18-怎么实现三栏布局左右两边是固定的flex布局的话三栏的flex-basicflex-glowflex-shirnk怎么设置)
   - [19. css自定义属性怎么写，在哪里定义](#19-css自定义属性怎么写在哪里定义)
+  - [20. 讲一下有哪些盒子模型，各自的特点是什么](#20-讲一下有哪些盒子模型各自的特点是什么)
+  - [21. 怎么指定盒子模型](#21-怎么指定盒子模型)
+  - [22. BFC 是什么](#22-bfc-是什么)
+  - [23. 怎么实现两栏布局（左边宽度固定，右边自适应）](#23-怎么实现两栏布局左边宽度固定右边自适应)
+  - [24. flex布局怎么实现垂直居中。为什么 justify-content：center 可以实现](#24-flex布局怎么实现垂直居中为什么-justify-contentcenter-可以实现)
 
 ## 1. 移动端布局有哪些 / 响应式布局是什么 / 响应式布局有哪些，怎么使用
 
@@ -279,3 +284,39 @@ flex布局的话，三栏的flex-basic、flex-glow、flex-shirnk怎么设置：
   color: var(--second-color);
 }
 ```
+
+## 20. 讲一下有哪些盒子模型，各自的特点是什么
+
+（1）有两种盒子模型：IE盒模型（border-box）、W3C标准盒模型（content-box）  
+（2）盒模型：分为内容（content）、填充（padding）、边界（margin）、边框（border）四个部分
+
+IE盒模型和W3C标准盒模型的区别：
+
+（1）W3C标准盒模型：属性width，height只包含内容content，不包含border和padding  
+（2）IE盒模型：属性width，height包含content、border和padding，指的是content
++padding+border。
+
+## 21. 怎么指定盒子模型
+
+由 `box-sizing`（CSS新增的属性）控制，默认值为 `content-box` ，即标准盒模型；
+如果将 `box-sizing` 设为 `border-box` 则用的是IE盒模型。
+
+## 22. BFC 是什么
+
+BFC指的是块级格式化上下文，一个元素形成了BFC之后，那么它内部元素产生的布局不会影响到外部元素，外部元素的布局也不会影响到BFC中的内部元素。一个BFC就像是一个隔离区域，和其他区域互不影响。
+
+## 23. 怎么实现两栏布局（左边宽度固定，右边自适应）
+
+1. flex
+2. 右边设置 width：100%
+3. 不知道 float 怎么设置。回答了左边设置 float:left，面试官问右边不会顶上吗
+   1. 所以右边要设置 margin-left
+4. 还有什么方法
+
+[两栏布局](../css/css实现功能.md/#实现两栏)
+
+## 24. flex布局怎么实现垂直居中。为什么 justify-content：center 可以实现
+
+设置 `align-items: center;`
+
+因为主轴的 direction 为 row ？

@@ -2,6 +2,7 @@
 
 - [css 实现功能](#css-实现功能)
   - [单行、多行文本显示省略号](#单行多行文本显示省略号)
+  - [实现两栏](#实现两栏)
   - [实现三栏](#实现三栏)
   - [图片居中](#图片居中)
   - [图片旋转](#图片旋转)
@@ -27,6 +28,124 @@
     overflow: hidden;
     ```
 
+## 实现两栏
+
+```html
+	<body>
+		<div class="outer">
+			<div class="left">123</div>
+			<div class="right">right</div>
+		</div>
+	</body>
+```
+
+（1）利用**浮动**，将左边元素宽度设置为200px，并且设置向左浮动。将右边元素的margin-left设置为200px，宽度设置为auto（默认为auto，撑满整个父元素）
+
+```css
+.outer {
+  height: 100px;
+}
+
+.left {
+  float: left;
+
+  height: 100px;
+  width: 200px;
+
+  background: tomato;
+}
+
+.right {
+  margin-left: 200px;
+
+  width: auto;
+  height: 100px;
+
+  background: gold;
+}
+```
+
+（2）第二种是利用 **flex 布局**，将左边元素的放大和缩小比例设置为 0，基础大小设置为 200px 。将右边的元素的放大比例设置为 1 ，缩小比例设置为 1 ，基础大小设置为auto。
+
+```css
+.outer {
+  display: flex;
+
+  height: 100px;
+}
+
+.left {
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: 200px;
+
+  background: tomato;
+}
+
+.right {
+  flex: auto;
+  /*11auto*/
+
+  background: gold;
+}
+```
+
+（3）第三种是利用 **绝对定位** 布局的方式，  
+将父级元素设置相对定位。左边元素设置为 absolute 定位，并且宽度设置为 200px。将右边元素的 margin-left 的值设置为200px。
+
+```css
+.outer {
+  position: relative;
+
+  height: 100px;
+}
+
+.left {
+  position: absolute;
+
+  width: 200px;
+  height: 100px;
+
+  background: tomato;
+}
+
+.right {
+  margin-left: 200px;
+  height: 100px;
+
+  background: gold;
+}
+```
+
+（4）第四种还是利用**绝对定位**的方式，  
+将父级元素设置为相对定位。左边元素宽度设置为 200px，**右边元素设置为绝对定位**，左边定位为 200px，其余方向定位为0。
+
+```css
+.outer {
+  position: relative;
+
+  height: 100px;
+}
+
+.left {
+  width: 200px;
+  height: 100px;
+
+  background: tomato;
+}
+
+.right {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 200px;
+
+  background: gold;
+}
+```
+
 ## 实现三栏
 
 ```html
@@ -45,7 +164,7 @@
 	</body>
 ```
 
-(1) 绝对布局。中间和右边设置 position: absolute
+(1) **绝对布局**。中间和右边设置 position: absolute
 
 ```css
 		.outer {
@@ -77,7 +196,7 @@
 		}
 ```
 
-(2) 绝对布局。左边和右边设置 position: absolute
+(2) **绝对布局**。左边和右边设置 position: absolute
 
 ```css
 .outer {
@@ -111,7 +230,7 @@
 }
 ```
 
-(3) flex布局的方式。左右两栏的放大和缩小比例都设置为0，基础大小设置为固定的大小，中间一栏设置为auto
+(3) **flex布局**的方式。左右两栏的放大和缩小比例都设置为0，基础大小设置为固定的大小，中间一栏设置为auto
 
 ```css
 .outer {
@@ -135,7 +254,7 @@
 }
 ```
 
-(4) 浮动的方式。左右两栏设置固定大小，并设置对应方向的浮动。中间一栏设置左右两个方向的margin值，注意这种方式，**中间一栏必须放到最后**。
+(4) **浮动**的方式。左右两栏设置固定大小，并设置对应方向的浮动。中间一栏设置左右两个方向的margin值，注意这种方式，**中间一栏必须放到最后**。
 
 ```html
 	<body>
@@ -181,7 +300,7 @@
 }
 ```
 
-(5) 圣杯布局。利用浮动和负边距来实现。
+(5) 圣杯布局。利用**浮动和负边距**来实现。
 
 - 父级元素设置左右的 padding，
 - 三列均设置向左浮动，**中间一列放在最前面**，宽度设置为父级元素的宽度，因此后面两列都被挤到了下一行，
@@ -296,7 +415,7 @@
 }
 ```
 
-(7) grid 布局也可以
+(7) **grid 布局**也可以
 
 ```css
 		.left {
