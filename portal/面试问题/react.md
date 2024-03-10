@@ -21,6 +21,8 @@
   - [18. 讲一下高阶组件（hoc），怎么使用，有用过吗？](#18-讲一下高阶组件hoc怎么使用有用过吗)
   - [19. useEffect和useLayoutEffect的区别](#19-useeffect和uselayouteffect的区别)
   - [20. 什么时候使用useLayoutEffect，有用过useLayoutEffect吗？](#20-什么时候使用uselayouteffect有用过uselayouteffect吗)
+  - [21. 了解 redux 怎么进行异步的状态管理（就是需要发送异步请求获取状态）](#21-了解-redux-怎么进行异步的状态管理就是需要发送异步请求获取状态)
+  - [22. 了解 redux-saga 吗](#22-了解-redux-saga-吗)
 
 ## 1. 你知道Hook是什么吗？有哪些
 
@@ -372,3 +374,7 @@ useLayoutEffect 是 useEffect 的一个版本，**在浏览器重新绘制屏幕
 用法：
 
 1. 在浏览器重新绘制屏幕前计算元素的布局
+
+## 21. 了解 redux 怎么进行异步的状态管理（就是需要发送异步请求获取状态）
+
+## 22. 了解 redux-saga 吗
