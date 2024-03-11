@@ -61,6 +61,10 @@
   - [60. 讲一下事件循环。宏观任务是什么？微型任务是什么？](#60-讲一下事件循环宏观任务是什么微型任务是什么)
   - [61. Promise的 resolve() 和 reject() 的作用是什么，区别是什么](#61-promise的-resolve-和-reject-的作用是什么区别是什么)
   - [62. Promise.all() 和 Promise.race() 的区别](#62-promiseall-和-promiserace-的区别)
+  - [63. 了解 promise 透传（透穿）吗](#63-了解-promise-透传透穿吗)
+  - [64. 三种引用数据类型有哪些](#64-三种引用数据类型有哪些)
+  - [65. 强制类型转换为 number 的3种方法](#65-强制类型转换为-number-的3种方法)
+  - [66. es6 中声明变量的方法，除了 var 和 function](#66-es6-中声明变量的方法除了-var-和-function)
 
 ## 1. 函数柯里化
 
@@ -981,3 +985,101 @@ function myInstanceof(left, right) {
   - 当所有输入的 Promise 都被兑现时，返回的 Promise 也将被兑现（即使传入的是一个空的可迭代对象），并返回一个包含所有兑现值的数组。
   - 如果输入的任意 Promise 被拒绝，则返回的 Promise 将被拒绝，__并带有第一个被拒绝的原因__。
 - `Promise.race()` 静态方法接受一个 promise 可迭代对象作为输入，并返回一个 Promise。__这个返回的 promise 会随着第一个 promise 的敲定而敲定__。
+
+## 63. 了解 promise 透传（透穿）吗
+
+1. 当你使用 `Promise` 的 `then` ，进行链式调用的时候，可以在最后指定失败的回调
+2. 前面任何操作出现了异常，都会传递到最后失败的回调中进行处理；
+Promise的异常穿透和 `p.then(resolve=>{ do someting success thing},err=>{ do someting fil thing})`
+是不同的哈
+
+promise的异常穿透是进行链式调用的时候才会出现异常穿透；
+
+例子：
+
+```js
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject('第一种err');
+    }, 2000)
+})
+p.then(res => {
+    console.log(111); //2s后不会输出111
+}).then(res => {
+    console.log(222); //2s后不会输出222
+}).catch(err => {
+    console.log(err) //最终直接走这里哈
+})
+```
+
+之所以会走这里是因为，是 `setTimeout` 抛出了一个错误的异常；所以不会走 `then;` 而是直接走 `catch;`
+
+换一句话说就是:使用 `reject` 之后，将不会去执行 `then` 了，而是去执行 `catch`
+
+**Promise的非异常穿透，对错误的处理**，例子：
+
+```js
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject('第一种err');
+    }, 2000)
+})
+p.then((res) => {
+    console.log(res)
+}, (err) => {
+    console.log(err);//输出错误
+})
+```
+
+总结：
+
+- 当使用`.catch`时，会默认为没有指定失败状态回调函数的`.then`添加一个失败回调函数（上文中有具体函数代码）。
+- `.catch`所谓的异常穿透并不是一次失败状态就触发`catch`,而是一层一层的传递下来的。
+- 异常穿透的前提条件是所有的`.then`都没有指定失败状态的回调函数。
+- 如果`.catch`前的所有`.then`都指定了失败状态的回调函数，`.catch`就失去了意义。
+
+## 64. 三种引用数据类型有哪些
+
+JavaScript 中的引用数据类型：对象（Object）、数组（Array）、函数（Function）。
+
+## 65. 强制类型转换为 number 的3种方法
+
+在JavaScript中，可以使用以下三种方法将值强制转换为数字：
+
+1. `Number()` 函数
+2. 一元加号运算符 `+`
+3. `parseInt()` 或 `parseFloat()` 函数（适用于字符串）
+
+方法1: 使用 `Number()` 函数
+
+```js
+let value = "123";
+let number = Number(value); // 123
+```
+
+方法2: 使用一元加号运算符 `+`
+
+```js
+let value = "123";
+let number = +value; // 123
+```
+
+方法3: 使用 `parseInt()` 或 `parseFloat()` 函数
+
+```js
+当需要将字符串转换为数字时，这些函数更有用。
+
+let stringValue = "123.45";
+let number = parseFloat(stringValue); // 123.45
+ 
+let stringValue = "123abc";
+let number = parseInt(stringValue); // 123 (只解析数字直到非数字字符)
+```
+
+注意：如果值无法转换为数字，`Number()` 和一元加号会返回 `NaN`，而 `parseInt()` 和 `parseFloat()` 会尝试解析直到遇到非数字字符。
+
+## 66. es6 中声明变量的方法，除了 var 和 function
+
+ES5 只有两种声明变量的方法： `var` 命令和 `function` 命令。
+
+ES6 除了添加 `let` 和 `const` 命令，还有两种声明变量的方法： `import` 命令和 `class` 命令。

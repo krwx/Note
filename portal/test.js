@@ -150,15 +150,18 @@ const trigger = () => {
 
 trigger(); */
 
-function test(name) {
-    this.name = name
+class Color {
+    static colorChange(newColor) {
+        this.newColor = newColor;
+        return this.newColor;
+    }
+
+    constructor({newColor = 'green'} = {}) {
+        this.newColor = newColor;
+    }
 }
 
-let obj = new test("aa")
-obj.name = "ee"
-obj.__proto__.name = "dad"
-obj.__proto__.sayName = function () {
-    console.log(obj.name);
-}
-obj.sayName();
-obj.__proto__.sayName();
+const obj = new Color({newColor: 'purple'});
+console.log(Color.colorChange('orange'));
+// console.log(obj.colorChange('orange'));
+console.log(obj.newColor);

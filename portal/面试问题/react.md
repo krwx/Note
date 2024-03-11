@@ -23,6 +23,7 @@
   - [20. 什么时候使用useLayoutEffect，有用过useLayoutEffect吗？](#20-什么时候使用uselayouteffect有用过uselayouteffect吗)
   - [21. 了解 redux 怎么进行异步的状态管理（就是需要发送异步请求获取状态）](#21-了解-redux-怎么进行异步的状态管理就是需要发送异步请求获取状态)
   - [22. 了解 redux-saga 吗](#22-了解-redux-saga-吗)
+  - [23. redux 实际开发中有用过哪些异步方案](#23-redux-实际开发中有用过哪些异步方案)
 
 ## 1. 你知道Hook是什么吗？有哪些
 
@@ -377,4 +378,17 @@ useLayoutEffect 是 useEffect 的一个版本，**在浏览器重新绘制屏幕
 
 ## 21. 了解 redux 怎么进行异步的状态管理（就是需要发送异步请求获取状态）
 
+使用 createAsyncThunk 。[用法](../redux/文档/基础教程/第5节：异步逻辑与数据请求.md)
+
 ## 22. 了解 redux-saga 吗
+
+使用 synchronous-looking 的生成器函数处理异步逻辑。 Sagas 返回效果的描述，由 saga 中间件执行，就像 JS 应用程序的“后台线程”一样。
+
+## 23. redux 实际开发中有用过哪些异步方案
+
+- gaearon/redux-thunk
+- listenerMiddleware (Redux Toolkit)
+- redux-saga/redux-saga
+- redux-observable/redux-observable
+- redux-loop/redux-loop
+- jeffbski/redux-logic

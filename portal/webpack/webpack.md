@@ -10,6 +10,7 @@
     - [删除 Dead Code](#删除-dead-code)
   - [概念](#概念)
     - [`bundle` 通常与构建完成的 `chunk` 为一对一的关系](#bundle-通常与构建完成的-chunk-为一对一的关系)
+    - [chunk](#chunk)
   - [工作流程](#工作流程)
     - [1. 初始化参数](#1-初始化参数)
     - [2. 开始编译](#2-开始编译)
@@ -155,6 +156,20 @@ a.js 文件动态导入了 b.js 文件，那么最终生成的 bundle 有 0.bund
 
 其中一个文件对应 a.js ，另一个文件对应 b.js
 ```
+
+### chunk
+
+Webpack 内部包含三种类型的 Chunk：
+
+- `Initial Chunk`：基于 `Entry` 配置项生成的 `Chunk`
+- `Async Chunk`：异步模块引用，如 `import(xxx)` 语句对应的异步 `Chunk`
+- `Runtime Chunk`：只包含运行时代码的 `Chunk`
+
+chunk 对象，默认的分包规则有：
+
+- 同一个 `entry` 下触达到的模块组织成一个 `chunk`
+- 异步模块单独组织为一个 `chunk`
+- `entry.runtime` 单独组织成一个 `chunk`
 
 ## 工作流程
 

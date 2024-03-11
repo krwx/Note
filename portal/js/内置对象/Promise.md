@@ -19,6 +19,9 @@
     - [Promise.any()](#promiseany)
     - [Promise.race()](#promiserace)
   - [手写 Promise](#手写-promise)
+  - [Promise的异常穿透和中断Promise的链式请求](#promise的异常穿透和中断promise的链式请求)
+    - [Promise的异常穿透](#promise的异常穿透)
+    - [中断Promise链式操作](#中断promise链式操作)
 
 Promise 对象有以下两个特点。
 
@@ -892,3 +895,82 @@ p3.then(value => {
     console.log(value);
 })
 ```
+
+## Promise的异常穿透和中断Promise的链式请求
+
+### Promise的异常穿透
+
+1. 当你使用 `Promise` 的 `then` ，进行链式调用的时候，可以在最后指定失败的回调
+2. 前面任何操作出现了异常，都会传递到最后失败的回调中进行处理；
+Promise的异常穿透和 `p.then(resolve=>{ do someting success thing},err=>{ do someting fil thing})`
+是不同的哈
+
+promise的异常穿透是进行链式调用的时候才会出现异常穿透；
+
+例子：
+
+```js
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject('第一种err');
+    }, 2000)
+})
+p.then(res => {
+    console.log(111); //2s后不会输出111
+}).then(res => {
+    console.log(222); //2s后不会输出222
+}).catch(err => {
+    console.log(err) //最终直接走这里哈
+})
+```
+
+之所以会走这里是因为，是 `setTimeout` 抛出了一个错误的异常；所以不会走 `then;` 而是直接走 `catch;`
+
+换一句话说就是:使用 `reject` 之后，将不会去执行 `then` 了，而是去执行 `catch`
+
+**Promise的非异常穿透，对错误的处理**，例子：
+
+```js
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject('第一种err');
+    }, 2000)
+})
+p.then((res) => {
+    console.log(res)
+}, (err) => {
+    console.log(err);//输出错误
+})
+```
+
+总结：
+
+- 当使用`.catch`时，会默认为没有指定失败状态回调函数的`.then`添加一个失败回调函数（上文中有具体函数代码）。
+- `.catch`所谓的异常穿透并不是一次失败状态就触发`catch`,而是一层一层的传递下来的。
+- 异常穿透的前提条件是所有的`.then`都没有指定失败状态的回调函数。
+- 如果`.catch`前的所有`.then`都指定了失败状态的回调函数，`.catch`就失去了意义。
+
+### 中断Promise链式操作
+
+办法：在回调函数中返回一个 `pendding` 状态的 `promise` 对象
+
+```js
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        resolve('ok');
+    }, 2000)
+})
+p.then(res => {
+    console.log(111)
+    // 有且只有一种方式去中断Promise；让Promise的状态是pendding
+    return new Promise(() => {})
+}).then(res => {
+    console.log(222);
+}).catch(err => {
+    console.log(err)
+})
+```
+
+只常的情况下，会输出111和222.
+
+但是你中断了 `Promise` ，让 `Promise` 的状态是 `pendding` ，所以只能够输出111了。222不能够输出。

@@ -23,6 +23,12 @@
   - [20. 同一个域名，两个不同的标签页可以共享 sessionStorage 吗？](#20-同一个域名两个不同的标签页可以共享-sessionstorage-吗)
   - [21. http、www、html的中文名称](#21-httpwwwhtml的中文名称)
   - [22. 浏览器对象](#22-浏览器对象)
+  - [23. 有了解 http2 协议吗](#23-有了解-http2-协议吗)
+  - [24. 讲一下有哪些网络的安全危害](#24-讲一下有哪些网络的安全危害)
+  - [25. xss的防范措施有哪些](#25-xss的防范措施有哪些)
+  - [26. http 的状态码有哪些。服务器和客户端报错对应的状态码分别是什么](#26-http-的状态码有哪些服务器和客户端报错对应的状态码分别是什么)
+  - [27. HTTPS 和 HTTP 的介绍和区别](#27-https-和-http-的介绍和区别)
+  - [28. HTTP 1.1 的请求方法有几种？怎么区分简单请求和复杂请求](#28-http-11-的请求方法有几种怎么区分简单请求和复杂请求)
 
 ## 1. 简单说一下http请求
 
@@ -257,3 +263,92 @@ XMLHttpRequest（XHR）对象用于与服务器交互。通过 XMLHttpRequest �
 
 `BOM` 指的是浏览器对象模型，它指的是把浏览器当做一个对象来对待，这个对象主要定义了与浏览器进行交互的法和接口。`BOM` 的核心是 `window`，而 `window` 对象具有双重角色，它既是通过 js 访问浏览器窗口的一个接口，又是一个 `Global`（全局）
 对象。
+
+## 23. 有了解 http2 协议吗
+
+HTTP/2 在 HTTP/1.1 有几处基本的不同：
+
+- HTTP/2 是**二进制协议而不是文本协议**。**不再可读**，也不可无障碍的手动创建，改善的优化技术现在可被实施。
+- 这是一个**多路复用协议**。并行的请求能在同一个链接中处理，移除了 HTTP/1.x 中顺序和阻塞的约束。
+- **压缩了标头**。因为标头在一系列请求中常常是相似的，其移除了重复和传输重复数据的成本。
+- 其允许**服务器在客户端缓存中填充数据**，通过一个叫服务器推送的机制来提前请求。
+
+## 24. 讲一下有哪些网络的安全危害
+
+1. 点击劫持（Click-jacking）
+2. XSS攻击（Cross-site scripting、跨站点脚本攻击）
+3. CSRF攻击（Cross-site request forgery）
+4. Man-in-the-middle (MitM)
+5. 会话劫持（Session hijacking）
+
+## 25. xss的防范措施有哪些
+
+内容安全策略（CSP）
+
+配置方式：
+
+1. 配置网络服务器返回 Content-Security-Policy HTTP 标头
+
+   ```http
+   Content-Security-Policy: policy
+   ```
+
+2. 设置 meta 元素
+
+    ```html
+    <meta
+        http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src https://*; child-src 'none';>" />
+    ```
+
+## 26. http 的状态码有哪些。服务器和客户端报错对应的状态码分别是什么
+
+响应被归为以下五大类：
+
+1. 信息响应 (100–199)
+2. 成功响应 (200–299)
+3. 重定向消息 (300–399)
+4. 客户端错误响应 (400–499)
+5. 服务端错误响应 (500–599)
+
+[状态码参考](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status)
+
+常用状态码：
+
+- 200：请求成功
+- 403：禁止请求
+- 404：找不到资源
+- 500：服务器内部错误
+
+## 27. HTTPS 和 HTTP 的介绍和区别
+
+1. 安全性
+   1. `HTTP` 和 `HTTPS` 是两种不同的协议，它们之间最主要的区别在于安全性。HTTP协议以明文方式发送内容，不提供任何方式的数据加密，容易被攻击者截取信息。
+   2. `HTTPS` 则在 `TCP` 和 `HTTP` 网络层之间加入了 `SSL/TLS` 安全协议，使得报文能够加密传输，保证了数据的安全性。
+2. 端口号不同
+   1. HTTP和HTTPS使用的是完全不同的连接方式用的端口也不一样，HTTP是80、HTTPS是443。
+3. 证书
+   1. HTTPS需要申请证书，而HTTP不需要，申请证书也会有一些费用。
+
+## 28. HTTP 1.1 的请求方法有几种？怎么区分简单请求和复杂请求
+
+简单请求：
+
+HTTP方法是下列之一：
+
+- HEAD
+- GET
+- POST
+
+HTTP头信息不超出以下几种字段：
+
+- Accept
+- Accept-Language
+- Content-Language
+- Last-Event-ID
+- Content-Type，但仅能是下列之一
+- application/x-www-form-urlencoded
+- multipart/form-data
+- text/plain
+
+任何一个不满足上述要求的请求，即被认为是复杂请求。一个复杂请求不仅有包含通信内容的请求，同时也包含预请求（preflight request）。

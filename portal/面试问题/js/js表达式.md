@@ -7,6 +7,8 @@
   - [4. 变量提升，但是引用的值不会提升](#4-变量提升但是引用的值不会提升)
   - [5. 1 \&\& 2](#5-1--2)
   - [5. 100000000 变成 100，000，000的正则表达式](#5-100000000-变成-100000000的正则表达式)
+  - [6. 以下哪个表达式的结果为 true](#6-以下哪个表达式的结果为-true)
+  - [7. 写出以下表达式的结果](#7-写出以下表达式的结果)
 
 ## 1. typeof (function* f() { yield f })().next().next()
 
@@ -65,4 +67,23 @@ let b = 2
 var str="100000000";
 var reg="/(?=(\B)(\d{3})+$)/g";
 console.log(str.replace(reg,","));
+```
+
+## 6. 以下哪个表达式的结果为 true
+
+```js
+  null instanceof Object;  // false
+  null === undefined; // false
+  null == undefined; // true
+  NaN == NaN; // false
+
+  typeof null; // 'object'
+```
+
+## 7. 写出以下表达式的结果
+
+```js
+  Function instanceof Object; // true
+  Object instanceof Function; // true
+  typeof Function; // 'function'
 ```
