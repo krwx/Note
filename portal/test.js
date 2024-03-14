@@ -150,18 +150,45 @@ const trigger = () => {
 
 trigger(); */
 
-class Color {
-    static colorChange(newColor) {
-        this.newColor = newColor;
-        return this.newColor;
-    }
+function throttle(fn, delay) {
+    let preTime = 0;
 
-    constructor({newColor = 'green'} = {}) {
-        this.newColor = newColor;
+    return function () {
+        let context = this,
+            args = arguments,
+            nowTime = Date.now();
+
+        // 如果两次时间间隔超过了指定时间，则执行函数。
+        if (nowTime - preTime >= delay) {
+            preTime = Date.now();
+            return fn.apply(context, args);
+        }
+    };
+}
+
+let fn = () => {
+    console.log("time: ", new Date().toString());
+}
+
+let method = throttle(fn, 1000);
+
+function trigger() {
+    method();
+
+    let temp = () => { };
+    for (let i = 1; i < 5; i++) {
+        temp = getTimeFn(method, temp);
+    }
+    temp();
+}
+
+function getTimeFn(callback, otherTimeFn) {
+    return () => {
+        setTimeout(() => {
+            callback();
+            otherTimeFn();
+        }, 300)
     }
 }
 
-const obj = new Color({newColor: 'purple'});
-console.log(Color.colorChange('orange'));
-// console.log(obj.colorChange('orange'));
-console.log(obj.newColor);
+trigger();

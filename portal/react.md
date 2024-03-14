@@ -1,3 +1,5 @@
+# react
+
 1. e.preventDefault()  
     - 阻止默认操作。不阻止冒泡？
 2. e.stopPropagation  
@@ -15,7 +17,7 @@
     - 用于分组，而且不向dom树添加任何节点，用于子组件分组内部dom元素用。
     与<></>用途一样，但是<React.Fragment></React.Fragment>可以添加属性
 5. htmlFor  
-    1. 对应的是<label> 标签的 for 属性。for 属性规定 label 与哪个表单元素绑定。
+    1. 对应的是`<label>` 标签的 for 属性。for 属性规定 label 与哪个表单元素绑定。
     2. 效果：点击标签，那么对应的表单元素就会获取焦点
 6. hook  
     - const [title, setTitle] = useState('');  
@@ -33,4 +35,3 @@
 11. React.memo
     - 如果您的组件在给定相同的 props 的情况下呈现相同的结果，您可以将其包装在调用中以React.memo在某些情况下通过记忆结果来提高性能。这意味着 React 将跳过渲染组件，并重用上次渲染的结果。
     - 相当于将函数组件变成PureComponent
-    

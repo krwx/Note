@@ -11,3 +11,10 @@
 
 - 行合并：rowspan
 - 列合并：colspan
+
+## 3. html5有哪些新特性、移除了那些元素？
+
+1. html5新标签  
+   - section、nav、article、aside
+
+## 4. HTML5 的离线储存怎么使⽤，⼯作原理能不能解释⼀下？

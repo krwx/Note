@@ -1,4 +1,7 @@
+# usetip
+
 ## el-menu 使用 vue-router
+
 el-menu 添加 `router` 属性
 
 `router` ：是否启用 `vue-router` 模式。 启用该模式会在激活导航时以 `index` 作为 `path` 进行路由跳转 使用 `default-active` 来设置加载时的激活项。

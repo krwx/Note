@@ -71,10 +71,10 @@ JavaScript是单线程，在JavaScript运行时其他的事情不能被浏览器
 ```js
 // 函数防抖的实现
 function debounce(fn, wait) {
-  var timer = null;
+  let timer = null;
 
   return function() {
-    var context = this,
+    let context = this,
       args = arguments;
 
     // 如果此时存在定时器的话，则取消之前的定时器重新记时
@@ -92,10 +92,10 @@ function debounce(fn, wait) {
 
 // 函数节流的实现;
 function throttle(fn, delay) {
-  var preTime = 0;
+  let preTime = 0;
 
   return function() {
-    var context = this,
+    let context = this,
       args = arguments,
       nowTime = Date.now();
 

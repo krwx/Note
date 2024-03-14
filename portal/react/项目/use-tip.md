@@ -8,6 +8,8 @@
     - [传递给事件处理函数的函数应直接传递，而非调用](#传递给事件处理函数的函数应直接传递而非调用)
     - [style 属性接受一个对象](#style-属性接受一个对象)
     - [父组件使用子组件的方法](#父组件使用子组件的方法)
+    - [通过数组的map方法返回react元素](#通过数组的map方法返回react元素)
+    - [新建组件的 js 文件](#新建组件的-js-文件)
   - [TypeScript](#typescript)
     - [使用父组件传递的方法](#使用父组件传递的方法)
 
@@ -48,6 +50,14 @@ const obj: React.CSSProperties = {
 
 1. 使用 `ref` 获取子组件 `DOM` 节点的实例
 2. 子组件使用 `useImperativeHandle()` 暴露对应方法给父组件
+
+### 通过数组的map方法返回react元素
+
+记住为 `arr.map(value => (element))` ，而不是 `arr.map(value => {element})` 。用 `(element)` 才表示为返回 react 元素
+
+### 新建组件的 js 文件
+
+文件名开头为大写字母
 
 ## TypeScript
 
