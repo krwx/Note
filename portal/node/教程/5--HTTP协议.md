@@ -375,6 +375,7 @@ server.listen(9000, () => {
 |设置响应状态描述| response.statusMessage （ 用的非常少 ）|
 |设置响应头信息| response.setHeader('头名', '头值')|
 |设置响应体| response.write('xx')<br>response.end('xxx')|
+|设置响应状态码、状态描述和响应头信息| `response.writeHead(statusCode[, statusMessage][, headers])` |
 
 ```js
 write 和 end 的两种使用情况：
@@ -416,6 +417,18 @@ const server = http.createServer((request, response) => {
 server.listen(9000, () => {
     console.log("服务已经启动");
 })
+```
+
+`writeHead` 的使用：
+
+```js
+const body = 'hello world';
+response
+  .writeHead(200, {
+    'Content-Length': Buffer.byteLength(body),
+    'Content-Type': 'text/plain'
+  })
+  .end(body);
 ```
 
 注意事项：

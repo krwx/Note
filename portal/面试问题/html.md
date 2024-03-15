@@ -14,7 +14,35 @@
 
 ## 3. html5有哪些新特性、移除了那些元素？
 
-1. html5新标签  
-   - section、nav、article、aside
+- 语义化标签。
+  - HTML5 提供了新的标签，如 `article、section、nav` 等，这些标签增强了网页的结构性，使得页面内容更加清晰和易于理解，对搜索引擎也更友好。
+- 增强型表单。
+  - `HTML5` 增加了多种新的表单输入类型，如 `color、date、time、email、url` 等，以及用于不同类型输出的表单元素，如 `calendar` 和 `search`。
+  - 还引入了新的表单属性，如 `placeholder` 用于显示提示，以及 `required、pattern、min、max、step、autofocus` 和 `multiple` 等属性，以增强表单的验证和用户体验。
+- 多媒体支持。
+  - HTML5 支持在网页中直接播放视频和音频，无需使用插件。这些元素允许用户对视频和音频进行控制和操作。
+  - 用于媒介回放的 `video` 和 `audio` 元素;
+- 画布(`Canvas`)和 `SVG`。
+  - `Canvas` 元素用于在网页上绘制图形，支持多种绘制路径和形状
+  - `SVG` 则用于创建和展示矢量图形和动画。
+- 地理定位。
+  - `HTML5` 提供了 `Geolocation API`，用于获取用户的地理位置信息，这在基于位置的应用中非常有用。
+- Web 存储。
+  - HTML5 提供了 Web 存储 API，包括 `localStorage` 和 `sessionStorage` ，用于在浏览器中存储数据，并在不同页面和会话中保持数据一致性。
+- `Web Workers`。
+  - `Web Workers` 允许开发者在后台运行 JavaScript 代码，而不阻塞页面的其他操作，提高了网页性能。
+- 拖放 `API`。
+  - HTML5 支持拖放功能，允许用户通过拖放来上传文件。
+- 响应式设计。
+  - HTML5 支持响应式设计，使得网页能够根据不同设备的屏幕大小和方向进行调整。
+
+移除的元素有：
+
+- 纯表现的元素：basefont，big，center，font, s，strike，tt，u;
+- 对可用性产生负面影响的元素：frame，frameset，noframes；
 
 ## 4. HTML5 的离线储存怎么使⽤，⼯作原理能不能解释⼀下？
+
+- 在线的情况下，浏览器发现 `html` 头部有 `manifest` 属性，它会请求 `manifest` 文件，如果是第一次访问页面 ，那么浏览器就会根据 `manifest` 文件的内容下载相应的资源并且进行离线存储。
+- 如果已经访问过页面并且资源已经进行离线存储了，那么浏览器就会使用离线的资源加载页面，然后浏览器会对比新的 `manifest` 文件与旧的 `manifest` 文件，如果文件没有发生改变，就不做任何操作，如果文件改变了，就会重新下载文件中的资源并进行离线存储。
+- 离线的情况下，浏览器会直接使用离线存储的资源。

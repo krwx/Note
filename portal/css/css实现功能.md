@@ -7,6 +7,7 @@
   - [图片居中](#图片居中)
   - [图片旋转](#图片旋转)
   - [实现百分比环形图](#实现百分比环形图)
+  - [实现居中](#实现居中)
 
 ## 单行、多行文本显示省略号
 
@@ -657,4 +658,114 @@ cover 为显示文字的 div
 		border-left: 0;
 	}
 </style>
+```
+
+## 实现居中
+
+（1）我们可以利用 `margin:0 auto` 来实现元素的水平居中。
+
+```css
+div {
+  width: 200px;
+  margin: 0 auto;
+}
+```
+
+（2）水平居中，利用 text-align:center 实现
+
+```css
+.container {
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  font-size: 0;
+}
+
+.box {
+  display: inline-block;
+  width: 500px;
+  height: 400px;
+  background-color: pink;
+}
+```
+
+（3）利用绝对定位，设置四个方向的值都为 0 ，并将 `margin` 设置为 `auto` ，由于宽高固定，因此对应方向实现平分，可以实现水平和垂直方向上的居中。
+
+```css
+div {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: pink; /*方便看效果*/
+}
+```
+
+（4）利用绝对定位，先将元素的左上角通过 `top:50%` 和 `left:50%` 定位到页面的中心，然后再通过 `margin` 负值来调整元素的中心点到页面的中心。
+
+```css
+div {
+	position: absolute;/*绝对定位*/
+	width: 500px;
+	height: 300px;
+	top: 50%;
+	left: 50%;
+	margin: -150px 0 0 -250px;/*外边距为自身宽高的一半*/
+	background-color: pink;/*方便看效果*/
+}
+```
+
+（5）利用绝对定位，先将元素的左上角通过 `top:50%` 和 `left:50%` 定位到页面的中心，然后再通过 `translate` 来调整元素的中心点到页面的中心。
+
+```css
+/*未知容器的宽高，利用`transform`属性*/
+div {
+  position: absolute; /*相对定位或绝对定位均可*/
+  width: 500px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: pink; /*方便看效果*/
+}
+```
+
+（6）使用 `flex` 布局，通过 `align-items:center` 和 `justify-content:center` 设置容器的垂直和水平方向上为居中对齐，然后它的子元素也可以实现垂直和水平的居中。
+
+```css
+/*利用flex布局实际使用时应考虑兼容性*/
+.container {
+  display: flex;
+  align-items: center; /*垂直居中*/
+  justify-content: center; /*水平居中*/
+}
+.containerdiv {
+  width: 100px;
+  height: 100px;
+  background-color: pink; /*方便看效果*/
+}
+```
+
+（7）设置 `display` 为 `table-cell`
+
+```css
+/* 设置父元素 */
+.parent {
+	width: 500px;
+	height: 600px;
+	display: table-cell;
+	text-align: center;
+	background-color: antiquewhite;
+	vertical-align: middle;
+}
+/* 子元素*/
+.child {
+	display: inline-block;
+	width: 200px;
+	height: 300px;
+	background-color: aqua;
+}
 ```

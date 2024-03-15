@@ -84,19 +84,23 @@ Vue 2 使用 `getter / setters` 完全是出于支持旧版本浏览器的限制
 
 Vue2
 
-- 使用Object.defineProperty
+- 使用 `Object.defineProperty`
 - 无法监听删除属性的操作
-- 需要遍历目标对象的所有属性并加上 setter getter 才能监听
+- 需要遍历目标对象的所有属性并加上 `setter getter` 才能监听
 - 对于对象的新增属性，需要手动监听
 - 在遇到一个对象的属性还是一个对象的情况下，需要递归监听。
-- 对于数组通过push、unshift方法增加的元素，也无法监听
+- 对于数组通过 `push、unshift` 方法增加的元素，也无法监听
 
 Vue3
 
-- 使用Proxy双向数据绑定
-- Proxy代理的是整个对象，而不是对象的某个特定属性，不需要我们通过遍历来逐个进行数- 据绑定。
-- Object.defineProperty中的问题都能解决.
-- Proxy支持13种拦截操作
-- Proxy常常搭配Reflect使用
+- 使用 `Proxy` 双向数据绑定
+- `Proxy` 代理的是整个对象，而不是对象的某个特定属性，不需要我们通过遍历来逐个进行数- 据绑定。
+- `Object.defineProperty` 中的问题都能解决.
+- `Proxy` 支持13种拦截操作
+- `Proxy` 常常搭配 `Reflect` 使用
 
 ## 6. 了解 vue 的原理吗
+
+## 7. 使用 VueJs 遇到的一个难题，并说明你是如何解决的
+
+vue2是有过滤器功能的，但是vue3没有，项目升级到vue3时需要重新实现这个功能。解决方案是通过声明一个方法实现过滤器功能，然后在模版里面通过双括号调用函数来实现过滤。
