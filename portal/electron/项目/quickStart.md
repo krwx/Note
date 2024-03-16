@@ -1,31 +1,42 @@
-- [创建项目](#创建项目)
-  - [vue 项目（js）](#vue-项目js)
-    - [1. 创建 vue 项目](#1-创建-vue-项目)
-    - [2. 添加 electron 依赖](#2-添加-electron-依赖)
-    - [3. 添加主进程文件main.js、预加载脚本preload.js](#3-添加主进程文件mainjs预加载脚本preloadjs)
-    - [4. 引入 Electron Forge](#4-引入-electron-forge)
-    - [5. 更改 package.json，指定electron主进程文件路径，添加启动指令](#5-更改-packagejson指定electron主进程文件路径添加启动指令)
-    - [6. 启动 electron，执行 npm start](#6-启动-electron执行-npm-start)
-    - [6. electron 打包](#6-electron-打包)
-  - [遇到的问题](#遇到的问题)
+# quickStart
 
-# 创建项目
-## vue 项目（js）
-### 1. 创建 vue 项目  
-```
+- [quickStart](#quickstart)
+  - [创建项目](#创建项目)
+    - [vue 项目（js）](#vue-项目js)
+      - [1. 创建 vue 项目](#1-创建-vue-项目)
+      - [2. 添加 electron 依赖](#2-添加-electron-依赖)
+      - [3. 添加主进程文件main.js、预加载脚本preload.js](#3-添加主进程文件mainjs预加载脚本preloadjs)
+      - [4. 引入 Electron Forge](#4-引入-electron-forge)
+      - [5. 更改 package.json，指定electron主进程文件路径，添加启动指令](#5-更改-packagejson指定electron主进程文件路径添加启动指令)
+      - [6. 启动 electron，执行 npm start](#6-启动-electron执行-npm-start)
+      - [7. electron 打包](#7-electron-打包)
+    - [遇到的问题](#遇到的问题)
+      - [vue 项目，electron 打包后，路由展示为空白](#vue-项目electron-打包后路由展示为空白)
+
+## 创建项目
+
+### vue 项目（js）
+
+#### 1. 创建 vue 项目  
+
+```shell
 npm create vue@latest
 ```
+
 参考 vue 项目的 [quickStart.md](../../vue/项目/quickStart.md)
 
-### 2. 添加 electron 依赖
-```
+#### 2. 添加 electron 依赖
+
+```shell
 npm install --save-dev electron
 ```
 
-### 3. 添加主进程文件main.js、预加载脚本preload.js
+#### 3. 添加主进程文件main.js、预加载脚本preload.js
+
 在项目根目录（是根目录，不是 src 文件夹）创建 `electron` 文件夹，在里面创建 `main.js` 和 `preload.js`
 
 main.js
+
 ```js
 const { app, protocol, BrowserWindow, globalShortcut } = require('electron')
 // 需在当前文件内开头引入 Node.js 的 'path' 模块
@@ -85,6 +96,7 @@ app.on('window-all-closed', () => {
 ```
 
 preload.js。下面的代码只是例子，和 electron 的配置没关系
+
 ```js
 // 所有的 Node.js API接口 都可以在 preload 进程中被调用.
 // 它拥有与Chrome扩展一样的沙盒。
@@ -100,36 +112,44 @@ window.addEventListener('DOMContentLoaded', () => {
   })
 ```
 
-### 4. 引入 Electron Forge
+#### 4. 引入 Electron Forge
+
 使用 Electron Forge 进行打包
 
 安装依赖：
-```
+
+```shell
 npm install --save-dev @electron-forge/cli
 npx electron-forge import
 ```
 
-### 5. 更改 package.json，指定electron主进程文件路径，添加启动指令
+#### 5. 更改 package.json，指定electron主进程文件路径，添加启动指令
+
 添加
-```
+
+```js
 "main": "electron/main.js"
 "scripts": {
   "start": "vite | electron-forge start"
 }
 ```
+
 注意 `electron` 的启动指令要用 `Electron Forge` 的指令，不能再用回 `electron` 的指令
 
-### 6. 启动 electron，执行 npm start
+#### 6. 启动 electron，执行 npm start
+
 如果启动后是空包的，可能是 `vite` 启动后的地址不是 127.0.0.1 ，而是 localhost 。
 
 这时可以将主进程文件 `main.js` 第34行 `win.loadURL('http://127.0.0.1:5173/')` 修改为 `win.loadURL('http://localhost:5173/')`
 
-### 6. electron 打包
+#### 7. electron 打包
+
 在项目根目录下新建 `build\electron-icon` 文件夹，然后分别将.icns、.ico、.png类型文件放置此文件夹下
 
 在 `package.json` 添加 `author、description、build` 字段，同时在 `scripts` 字段添加 `electron:build` 命令
 
 package.json:
+
 ```json
 {
   "name": "electron-vue-spcc",
@@ -236,6 +256,7 @@ package.json:
 ```
 
 修改 `vite.config.js` ,添加 base 字段
+
 ```js
 import { fileURLToPath, URL } from 'node:url'
  
@@ -254,12 +275,14 @@ export default defineConfig({
 })
 ```
 
-执行 `npm run electron:build` 指令，打包内容会输出到 `out` 文件夹中 
+执行 `npm run electron:build` 指令，打包内容会输出到 `out` 文件夹中
 
-## 遇到的问题
-1. vue 项目，electron 打包后，路由展示为空白  
-   路由问题，把 `history` 模式改为 `hash` 模式：
-将 `createWebHistory` 改为 `createWebHashHistory`
+### 遇到的问题
+
+#### vue 项目，electron 打包后，路由展示为空白  
+
+路由问题，把 `history` 模式改为 `hash` 模式：将 `createWebHistory` 改为 `createWebHashHistory`
+
 ```js
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),

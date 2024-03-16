@@ -5,6 +5,8 @@
   - [package.json文件](#packagejson文件)
     - [dependencies 和 devDependencies 的区别](#dependencies-和-devdependencies-的区别)
   - [package-lock.json文件](#package-lockjson文件)
+  - [scripts](#scripts)
+    - [npm 并行 or 继发](#npm-并行-or-继发)
 
 Node Package Manager，也就是Node包管理器。  
 配置文件为 package.json
@@ -80,3 +82,21 @@ package-lock.json 是自动生成的，就是相当于我们的缓存文件，�
 
 - 当我们安装依赖时，`package-lock.json` 文件会自动生成。里面会描述上一次更改后的确切的依赖管理树，包含了唯一的版本号和相关的包信息。之后的 `npm install` 会根据 `package-lock.json` 文件进行安装，保证不同环境、不同时间下的依赖是一样的；
 - 由于 `package-lock.json` 文件中记录了下载源地址，可以加快我们的 `npm install` 速度。
+
+## scripts
+
+### npm 并行 or 继发
+
+`npm` 脚本里面需要执行多个任务，那么需要明确他们的执行顺序
+
+- 并行执行（即同时的平行执行），可以使用 `&` 符号；
+- 继发执行（即只有前一个任务成功，才执行下一个任务），可以使用 `&&` 符号。
+
+```shell
+# package.json  sciptes中添加两个打包环境的命令
+# 案例1：并发
+"build:all": "vue-cli-service build --mode gather & vue-cli-service build --mode manager",
+
+# 案例2：继发
+"build:all": "vue-cli-service build --mode gather && vue-cli-service build --mode manager",
+```

@@ -1,12 +1,16 @@
 # electron-vue
+
 ## 起步
+
 1. 创建项目
-   ```
+
+   ```shell
     npm install -g vue-cli
     vue init simulatedgreg/electron-vue my-project
    ```
 
 ## 项目结构
+
 单一的 package.json 设置
 
 - dependencies
