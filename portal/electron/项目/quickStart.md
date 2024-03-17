@@ -68,9 +68,11 @@ const createWindow = () => {
         }
     })
     win.setMenu(null)
+    // 生产环境，加载打包好的 index.html
     if (app.isPackaged) {
         win.loadURL(`file://${path.join(__dirname, '../dist/index.html')}`)
     } else {
+      // 开发环境，加载运行前端服务器的地址。vite 用 localhost 的地址
         win.loadURL('http://127.0.0.1:5173/')
            //win.loadURL('http://localhost:5173/')
         win.webContents.openDevTools()
@@ -114,7 +116,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 #### 4. 引入 Electron Forge
 
-使用 Electron Forge 进行打包
+使用 `Electron Forge` 进行打包
 
 安装依赖：
 
@@ -137,6 +139,24 @@ npx electron-forge import
 注意 `electron` 的启动指令要用 `Electron Forge` 的指令，不能再用回 `electron` 的指令
 
 #### 6. 启动 electron，执行 npm start
+
+运行命令，前端开启 `web dev server`
+
+```shell
+vite
+```
+
+运行命令，调试 `electron` 。注意要在另一个终端运行命令
+
+```shell
+electron-forge start
+```
+
+`start` 指令:
+
+```shell
+vite | electron-forge
+```
 
 如果启动后是空包的，可能是 `vite` 启动后的地址不是 127.0.0.1 ，而是 localhost 。
 

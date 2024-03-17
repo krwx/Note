@@ -7,6 +7,8 @@
   - [package-lock.json文件](#package-lockjson文件)
   - [scripts](#scripts)
     - [npm 并行 or 继发](#npm-并行-or-继发)
+    - [钩子](#钩子)
+    - [管道](#管道)
 
 Node Package Manager，也就是Node包管理器。  
 配置文件为 package.json
@@ -100,3 +102,56 @@ package-lock.json 是自动生成的，就是相当于我们的缓存文件，�
 # 案例2：继发
 "build:all": "vue-cli-service build --mode gather && vue-cli-service build --mode manager",
 ```
+
+### 钩子
+
+`npm` 脚本有 `pre` 和 `post` 两个钩子。
+
+举例来说，`build` 脚本命令的钩子就是 `prebuild` 和 `postbuild` 。
+
+```shell
+"prebuild": "echo I run before the build script",
+"build": "cross-env NODE_ENV=production webpack",
+"postbuild": "echo I run after the build script"
+```
+
+用户执行 `npm run build` 的时候，会自动按照下面的顺序执行。
+
+`npm run prebuild && npm run build && npm run postbuild`
+
+因此，可以在这两个钩子里面，完成一些准备工作和清理工作。下面是一个例子。
+
+```shell
+"clean": "rimraf ./dist && mkdir dist",
+"prebuild": "npm run clean",
+"build": "cross-env NODE_ENV=production webpack"
+```
+
+npm 默认提供下面这些钩子。
+
+- prepublish，postpublish
+- preinstall，postinstall
+- preuninstall，postuninstall
+- preversion，postversion
+- pretest，posttest
+- prestop，poststop
+- prestart，poststart
+- prerestart，postrestart
+
+自定义的脚本命令也可以加上 `pre` 和 `post` 钩子。
+
+### 管道
+
+在npm脚本中，可以使用管道（`|`）来将一个命令的输出作为另一个命令的输入。在`Unix-like`系统中，可以使用 `bash` 来执行这样的操作。
+
+例如，如果你想将 `echo` 命令的输出传递给另一个命令，可以这样写：
+
+```js
+{
+  "scripts": {
+    "example": "echo 'Hello World' | wc -w"
+  }
+}
+```
+
+在这个例子中，`echo 'Hello World'` 输出了文本 `Hello World` ，然后通过管道（`|`）将这个输出传递给 `wc -w` 命令，后者是 `Unix` 系统中的单词计数命令。

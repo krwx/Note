@@ -65,6 +65,7 @@
   - [64. 三种引用数据类型有哪些](#64-三种引用数据类型有哪些)
   - [65. 强制类型转换为 number 的3种方法](#65-强制类型转换为-number-的3种方法)
   - [66. es6 中声明变量的方法，除了 var 和 function](#66-es6-中声明变量的方法除了-var-和-function)
+  - [67. js 如何一次性大量插入 dom 元素并且不卡顿](#67-js-如何一次性大量插入-dom-元素并且不卡顿)
 
 ## 1. 函数柯里化
 
@@ -1083,3 +1084,58 @@ let number = parseInt(stringValue); // 123 (只解析数字直到非数字字符
 ES5 只有两种声明变量的方法： `var` 命令和 `function` 命令。
 
 ES6 除了添加 `let` 和 `const` 命令，还有两种声明变量的方法： `import` 命令和 `class` 命令。
+
+## 67. js 如何一次性大量插入 dom 元素并且不卡顿
+
+1、`window.requestAnimationFrame()`
+
+`window.requestAnimationFrame()` 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行
+
+**实现**：
+
+- 使用文档片段（`DocumentFragment`）创建DOM元素，然后一次性插入到文档中。
+- 使用 `requestAnimationFrame` 或 `setTimeout` 分批插入元素，给浏览器重绘的机会。
+
+```js
+function createAndInsertElements(count) {
+  const fragment = document.createDocumentFragment();
+  const container = document.getElementById('container');
+ 
+  for (let i = 0; i < count; i++) {
+    const element = document.createElement('div');
+    element.textContent = 'Element ' + i;
+    fragment.appendChild(element);
+  }
+ 
+  container.appendChild(fragment);
+}
+ 
+function batchInsertElements(count, batchSize, callback) {
+  let index = 0;
+ 
+  function insertBatch() {
+    if (index < count) {
+      const batchEnd = Math.min(index + batchSize, count);
+      for (; index < batchEnd; index++) {
+        createAndInsertElements(1);
+      }
+      requestAnimationFrame(insertBatch);
+    } else {
+      callback();
+    }
+  }
+ 
+  insertBatch();
+}
+ 
+// 使用示例
+batchInsertElements(10000, 100, () => {
+  console.log('All elements inserted');
+});
+```
+
+在这个示例中， `createAndInsertElements` 函数创建单个元素并将其插入容器中。 `batchInsertElements` 函数接受元素总数、批次大小和回调函数作为参数，它使用 `requestAnimationFrame` 分批插入元素。这种方法可以有效地处理大量 `DOM` 操作，避免 `UI` 冻结。
+
+2、虚拟滚动 `virtualized scroller`
+
+原理就是只渲染可视区域内的内容，非可见区域的那就完全不渲染了，当用户在滚动的时候就实时去替换渲染的内容
