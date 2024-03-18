@@ -1,0 +1,36 @@
+<html>
+    <head lang="zh-CN">
+        <meta charset="utf-8" />
+        <meta name="renderer" content="webkit" />
+        <title>第三题</title>
+        <script>
+
+            // 请完善这个方法让输入结果为下面的结果
+            const greet = function(greeting) {
+                return (item) => {
+                    return greeting + item;
+                }
+            }
+
+            const arr = ['凌华', '心海', '申鹤', '万叶']
+
+            const logs = arr.map(greet('您好'))
+
+            // 这里输出的结果为 
+            // ['您好凌华', '您好心海', '您好申鹤', '您好万叶']
+            console.log(logs)
+
+
+            // 理解错误。错误回答
+            const greet = function(greeting, item) {
+                return greeting + item;
+            }
+            const logs = arr.map(item => greet('您好', item))
+        </script>
+    </head>
+
+
+
+    <body>
+    </body>
+</html>

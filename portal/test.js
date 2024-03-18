@@ -150,45 +150,17 @@ const trigger = () => {
 
 trigger(); */
 
-function throttle(fn, delay) {
-    let preTime = 0;
 
-    return function () {
-        let context = this,
-            args = arguments,
-            nowTime = Date.now();
-
-        // 如果两次时间间隔超过了指定时间，则执行函数。
-        if (nowTime - preTime >= delay) {
-            preTime = Date.now();
-            return fn.apply(context, args);
-        }
-    };
-}
-
-let fn = () => {
-    console.log("time: ", new Date().toString());
-}
-
-let method = throttle(fn, 1000);
-
-function trigger() {
-    method();
-
-    let temp = () => { };
-    for (let i = 1; i < 5; i++) {
-        temp = getTimeFn(method, temp);
-    }
-    temp();
-}
-
-function getTimeFn(callback, otherTimeFn) {
-    return () => {
-        setTimeout(() => {
-            callback();
-            otherTimeFn();
-        }, 300)
+const greet = function (greeting) {
+    return (item) => {
+        return greeting + item;
     }
 }
 
-trigger();
+const arr = ['凌华', '心海', '申鹤', '万叶']
+
+const logs = arr.map(greet('您好'))
+
+// 这里输出的结果为 
+// ['您好凌华', '您好心海', '您好申鹤', '您好万叶']
+console.log(logs)

@@ -1,0 +1,184 @@
+<html>
+    <head lang="zh-CN">
+        <meta charset="utf-8" />
+        <meta name="renderer" content="webkit" />
+        <title>第四题</title>
+    </head>
+
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .wrap {
+            background: #212121;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #btn {
+            border: 2px solid #444;
+            outline: none;
+            color: #eaeaea;
+            background: #444;
+            height: 40px;
+            width: 150px;
+            cursor: pointer;
+        }  
+        #btn:hover {
+            border: 2px solid #ccc;
+        }      
+
+        .modal {
+            height: 180px;
+            width: 400px;
+            background-color: white;
+            border-radius: 5%;
+            border-style: solid;
+            border-color: white;
+            position: relative;
+        }
+
+        .tipTitle {
+            text-align: center;
+            margin-top: 10px;
+            color: deepskyblue;
+        }
+
+        .tipText {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btnGroup {
+            width: 100%;
+            height: 40px;
+            position: absolute;
+            bottom: 0px;
+            border-style: solid;
+            border-width: 2px 0 0 0;
+            border-color: #ccc;
+            display: flex;
+        }
+
+        .cancelBtn {
+            flex: 1;
+            color: #ccc;
+            border-style: solid;
+            border-width: 0 2px 0 0;
+            border-color: #ccc;
+            text-align: center;
+            padding-top: 5px;
+            height: 100%;
+        }
+
+        .okBtn {
+            flex: 1;
+            color: deepskyblue;
+            text-align: center;
+            padding-top: 5px;
+            height: 100%;
+        }
+
+    </style>
+    <body>
+        <div class="wrap">
+            <button id="btn">
+                Alert
+            </button>
+        </div>
+
+        <script>
+            const btn = document.getElementById('btn')
+            btn.addEventListener('click', ()=> {
+                $alert({
+                    title: '温馨提示',
+                    text: '是否继续？',
+                    cancelBtnText: '取消',
+                    confirmBtnText: '确定',
+                    callback: () => {
+                        document.querySelector('.wrap').style.background = 'red'
+                    }
+                })
+            })
+    
+            // 请在这个方法里封装一个弹窗
+            // 不可以 使用JS库喔！
+            // 点击按钮后弹出的弹窗效果如 第四题最终实现效果.png
+            // 点击 取消 关闭弹窗
+            // 点击 确定 时运行的方法为上述的 callback 方法，背景色会变红色，之后会自动关闭弹窗
+            function $alert(oo) {
+                document.querySelector('#btn').style.display = 'none';
+
+                const modal = document.querySelector("#modal");
+
+                let {title, text, cancelBtnText, confirmBtnText, callback} = oo;
+
+                if (modal) {
+                    document.querySelector("#modal").style.display = "inline";
+
+                    document.querySelector(".tipTitle").innerText = title;
+                    document.querySelector(".tipText").innerText = text;
+                    document.querySelector(".cancelBtn").innerText = cancelBtnText;
+
+                    let okBtn = document.querySelector(".okBtn");
+                    okBtn.innerText = confirmBtnText;
+                    okBtn.onclick = (event) => {
+                        callback();
+                        document.querySelector("#modal").style.display = "none";
+                        document.querySelector('#btn').style.display = 'inline';
+                    }
+                } else {
+                    createModal(oo);
+                }
+            }
+
+            // 创建模态框
+            function createModal(oo) {
+                let {title, text, cancelBtnText, confirmBtnText, callback} = oo;
+                
+                let modal = document.createElement("div");
+                modal.className = "modal";
+                modal.id = "modal";
+
+                let tipTitle = createDivElement("tipTitle", title);
+
+                let tipText = createDivElement("tipText", text);
+
+                let btnGroup = document.createElement("div");
+                btnGroup.className = "btnGroup";
+
+                let okBtn = createDivElement("okBtn", confirmBtnText);
+                okBtn.onclick = (event) => {
+                    callback();
+                    document.querySelector("#modal").style.display = "none";
+                    document.querySelector('#btn').style.display = 'inline';
+                }
+
+                let cancelBtn = createDivElement("cancelBtn", cancelBtnText);
+                cancelBtn.onclick = (event) => {
+                    document.querySelector("#modal").style.display = "none";
+                    document.querySelector('#btn').style.display = 'inline';
+                }
+
+                btnGroup.appendChild(cancelBtn);
+                btnGroup.appendChild(okBtn);
+                
+
+                modal.appendChild(tipTitle);
+                modal.appendChild(tipText);
+                modal.appendChild(btnGroup);
+
+                document.querySelector(".wrap").appendChild(modal);
+            }
+
+            function createDivElement (className, innerText) {
+                let element = document.createElement("div");
+                element.className = className;
+                element.innerText = innerText;
+                return element;
+            }
+        </script>
+    </body>
+</html>

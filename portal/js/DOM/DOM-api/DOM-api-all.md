@@ -1,5 +1,29 @@
 # 原生JS中DOM节点相关API合集
+
+- [原生JS中DOM节点相关API合集](#原生js中dom节点相关api合集)
+  - [节点属性](#节点属性)
+  - [操作](#操作)
+  - [Document节点](#document节点)
+    - [Document节点的属性](#document节点的属性)
+    - [Document节点的方法](#document节点的方法)
+      - [读写方法](#读写方法)
+      - [查找节点](#查找节点)
+      - [生成节点](#生成节点)
+      - [其他](#其他)
+  - [Element节点](#element节点)
+    - [Element节点的属性](#element节点的属性)
+      - [特性属性](#特性属性)
+      - [尺寸属性](#尺寸属性)
+      - [节点相关属性](#节点相关属性)
+    - [Element节点的方法](#element节点的方法)
+      - [位置方法](#位置方法)
+      - [属性方法](#属性方法)
+      - [查找方法](#查找方法)
+      - [事件方法](#事件方法)
+      - [其他](#其他-1)
+
 ## 节点属性
+
 ```js
 Node.nodeName   //返回节点名称，只读
 Node.nodeType   //返回节点类型的常数值，只读
@@ -22,7 +46,9 @@ Node.firstElementChild  //返回当前节点的第一个Element子节点
 Node.lastElementChild   //返回当前节点的最后一个Element子节点
 Node.childElementCount  //返回当前节点所有Element子节点的数目。
 ```
+
 ## 操作
+
 ```js
 Node.appendChild(node)   //向节点添加最后一个子节点
 Node.hasChildNodes()   //返回布尔值，表示当前节点是否有子节点
@@ -43,7 +69,9 @@ Node.replaceWith()
 ```
 
 ## Document节点
+
 ### Document节点的属性
+
 ```js
 document.doctype   //
 document.documentElement  //返回当前文档的根节点
@@ -76,14 +104,18 @@ document.cookie   //用来操作Cookie
 ```
 
 ### Document节点的方法
+
 #### 读写方法
+
 ```js
 document.open()   //用于新建并打开一个文档
 document.close()   //不安比open方法所新建的文档
 document.write()   //用于向当前文档写入内容
 document.writeIn()  //用于向当前文档写入内容，尾部添加换行符。
 ```
+
 #### 查找节点
+
 ```js
 document.querySelector(selectors)   //接受一个CSS选择器作为参数，返回第一个匹配该选择器的元素节点。
 document.querySelectorAll(selectors)  //接受一个CSS选择器作为参数，返回所有匹配该选择器的元素节点。
@@ -93,7 +125,9 @@ document.getElementsByName(name)   //用于选择拥有name属性的HTML元素�
 document.getElementById(id)   //返回匹配指定id属性的元素节点。
 document.elementFromPoint(x,y)  //返回位于页面指定位置最上层的Element子节点。
 ```
+
 #### 生成节点
+
 ```js
 document.createElement(tagName)   //用来生成HTML元素节点。
 document.createTextNode(text)   //用来生成文本节点
@@ -106,7 +140,9 @@ document.addEventListener(type,listener,capture)  //注册事件
 document.removeEventListener(type,listener,capture)  //注销事件
 document.dispatchEvent(event)  //触发事件
 ```
+
 #### 其他
+
 ```js
 document.hasFocus()   //返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
 document.adoptNode(externalNode)  //将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
@@ -114,8 +150,11 @@ document.importNode(externalNode, deep)   //从外部文档拷贝指定节点，
 ```
 
 ## Element节点
+
 ### Element节点的属性
+
 #### 特性属性
+
 ```js
 Element.attributes  //返回当前元素节点的所有属性节点
 Element.id  //返回指定元素的id属性，可读写
@@ -126,7 +165,9 @@ Element.className  //返回当前元素的class属性，可读写
 Element.classList  //返回当前元素节点的所有class集合
 Element.dataset   //返回元素节点中所有的data-*属性。
 ```
+
 #### 尺寸属性
+
 ```js
 Element.clientHeight   //返回元素节点可见部分的高度
 Element.clientWidth   //返回元素节点可见部分的宽度
@@ -142,7 +183,9 @@ Element.offsetLeft    //返回当前元素左上角相对于Element.offsetParent
 Element.offsetTop   //返回水平位移
 Element.style  //返回元素节点的行内样式
 ```
+
 #### 节点相关属性
+
 ```js
 Element.children   //包括当前元素节点的所有子元素
 Element.childElementCount   //返回当前元素节点包含的子HTML元素节点的个数
@@ -152,8 +195,11 @@ Element.nextElementSibling  //返回当前元素节点的下一个兄弟HTML元�
 Element.previousElementSibling  //返回当前元素节点的前一个兄弟HTML节点
 Element.offsetParent   //返回当前元素节点的最靠近的、并且CSS的position属性不等于static的父元素。
 ```
+
 ### Element节点的方法
+
 #### 位置方法
+
 ```js
 getBoundingClientRect()  
 // getBoundingClientRect返回一个对象，包含top,left,right,bottom,width,height // width、height 元素自身宽高
@@ -173,21 +219,27 @@ return {
   left: rect.left + document.body.scrollLeft  
 }
 ```
+
 #### 属性方法
+
 ```js
 Element.getAttribute()：读取指定属性  
 Element.setAttribute()：设置指定属性  
 Element.hasAttribute()：返回一个布尔值，表示当前元素节点是否有指定的属性  
 Element.removeAttribute()：移除指定属性
 ```
+
 #### 查找方法
+
 ```js
 Element.querySelector()  
 Element.querySelectorAll()  
 Element.getElementsByTagName()  
 Element.getElementsByClassName()
 ```
+
 #### 事件方法
+
 ```js
 Element.addEventListener()：添加事件的回调函数  
 Element.removeEventListener()：移除事件监听函数  
@@ -210,7 +262,9 @@ ul.addEventListener('click', function(event) {
   }  
 });
 ```
+
 #### 其他
+
 ```js
 Element.scrollIntoView()   //滚动当前元素，进入浏览器的可见区域
 
