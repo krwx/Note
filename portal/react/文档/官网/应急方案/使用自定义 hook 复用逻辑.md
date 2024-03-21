@@ -1,29 +1,36 @@
-- [摘要](#摘要)
-- [自定义 Hook：组件间共享逻辑](#自定义-hook组件间共享逻辑)
-  - [例子](#例子)
-  - [Hook 的名称必须永远以 use 开头](#hook-的名称必须永远以-use-开头)
-  - [自定义 Hook 共享的是状态逻辑，而不是状态本身 （注意，这点非常重要，是写自定义 hook 的核心）](#自定义-hook-共享的是状态逻辑而不是状态本身-注意这点非常重要是写自定义-hook-的核心)
-    - [错误理解](#错误理解)
-- [在 Hook 之间传递响应值](#在-hook-之间传递响应值)
-  - [把事件处理函数传到自定义 Hook 中](#把事件处理函数传到自定义-hook-中)
-- [例子](#例子-1)
-  - [传递值](#传递值)
-  - [自定义 hook 保存之前的 state](#自定义-hook-保存之前的-state)
+# 使用自定义 hook 复用逻辑
 
-# 摘要
-- 自定义 Hook 让你可以在组件间共享逻辑。
-- 自定义 Hook 命名必须以后跟一个大写字母的 use 开头。
-- 自定义 Hook 共享的只是状态逻辑，不是状态本身。
-- 你可以将响应值从一个 Hook 传到另一个，并且他们会保持最新。
-- 每次组件重新渲染时，所有的 Hook 会重新运行。
-- 自定义 Hook 的代码应该和组件代码一样保持纯粹。
-- 把自定义 Hook 收到的事件处理函数包裹到 Effect Event（useEffectEvent）。
-- 不要创建像 useMount 这样的自定义 Hook。保持目标具体化。
+- [使用自定义 hook 复用逻辑](#使用自定义-hook-复用逻辑)
+  - [摘要](#摘要)
+  - [自定义 Hook：组件间共享逻辑](#自定义-hook组件间共享逻辑)
+    - [例子](#例子)
+    - [Hook 的名称必须永远以 use 开头](#hook-的名称必须永远以-use-开头)
+    - [自定义 Hook 共享的是状态逻辑，而不是状态本身 （注意，这点非常重要，是写自定义 hook 的核心）](#自定义-hook-共享的是状态逻辑而不是状态本身-注意这点非常重要是写自定义-hook-的核心)
+      - [错误理解](#错误理解)
+  - [在 Hook 之间传递响应值](#在-hook-之间传递响应值)
+    - [把事件处理函数传到自定义 Hook 中](#把事件处理函数传到自定义-hook-中)
+  - [例子](#例子-1)
+    - [传递值](#传递值)
+    - [自定义 hook 保存之前的 state](#自定义-hook-保存之前的-state)
+
+## 摘要
+
+- 自定义 `Hook` 让你可以在组件间共享逻辑。
+- 自定义 `Hook` 命名必须以后跟一个大写字母的 `use` 开头。
+- 自定义 `Hook` **共享的只是状态逻辑，不是状态本身**。
+- 你可以将响应值从一个 `Hook` 传到另一个，并且他们会保持最新。
+- 每次组件重新渲染时，所有的 `Hook` 会重新运行。
+- 自定义 `Hook` 的代码应该和组件代码一样保持纯粹。
+- 把自定义 `Hook` 收到的事件处理函数包裹到 `Effect Event（useEffectEvent）`。
+- 不要创建像 `useMount` 这样的自定义 `Hook`。保持目标具体化。
 - 如何以及在哪里选择代码边界取决于你。
 
-# 自定义 Hook：组件间共享逻辑
-## 例子
-自定义 hook ，监听网络状态
+## 自定义 Hook：组件间共享逻辑
+
+### 例子
+
+自定义 `hook` ，监听网络状态
+
 ```jsx
 import { useEffect, useState } from "react";
 
@@ -50,7 +57,9 @@ export function useOnlineStatus() {
     return onlineStatus;
 }
 ```
+
 使用自定义 hook
+
 ```jsx
 import React from "react";
 import { useOnlineStatus } from "./useOnlineStatus";
@@ -67,32 +76,40 @@ const StatusBar = () => {
 export default StatusBar;
 ```
 
-## Hook 的名称必须永远以 use 开头 
+### Hook 的名称必须永远以 use 开头
+
 公约：
+
 1. **React 组件名称必须以大写字母开头**，比如 StatusBar 和 SaveButton。React 组件还需要返回一些 React 能够显示的内容，比如一段 JSX。
 2. **Hook 的名称必须以 use 开头，然后紧跟一个大写字母**，就像内置的 useState 或者本文早前的自定义 useOnlineStatus 一样。Hook 可以返回任意值。
 
-## 自定义 Hook 共享的是状态逻辑，而不是状态本身 （注意，这点非常重要，是写自定义 hook 的核心）
+### 自定义 Hook 共享的是状态逻辑，而不是状态本身 （注意，这点非常重要，是写自定义 hook 的核心）
+
 自定义 Hook 共享的只是状态逻辑而不是状态本身。对 Hook 的每个调用完全独立于对同一个 Hook 的其他调用。
 
 以上面的例子为例，如果有两个组件通过 useOnlineStatus() 获取网络状态。这两个组件获取的 state 是不一样的，对应的 useEffect 过程也是不一样的
 
-### 错误理解
+#### 错误理解
+
 使用自定义 hook 保存是否展示这个状态
+
 ```js
 export function useVisble() {
     const [visible, setVisible] = useState(true);
     return [visible, setVisible];
 }
 ```
+
 但是当其他组件使用这个 hook 时，当使用 `setVisible` 设置是否展示时，只有当前组件有反应。因为 **自定义 Hook 共享的是状态逻辑，而不是状态本身** 每个组件获取到的 `visible` 是不一样的，不是共享的状态。
 
 所以实现是否展示这个功能需要通过 `context、provider` 保存共享的状态，而不是自定义 hook 实现
 
-# 在 Hook 之间传递响应值 
-**每当组件重新渲染，自定义 Hook 中的代码就会重新运行**。这就是组件和自定义 Hook 都 需要是纯函数 的原因。我们应该把自定义 Hook 的代码看作组件主体的一部分。
+## 在 Hook 之间传递响应值
 
-## 把事件处理函数传到自定义 Hook 中 
+**每当组件重新渲染，自定义 Hook 中的代码就会重新运行**。这就是组件和自定义 `Hook` 都 需要是纯函数 的原因。我们应该把自定义 `Hook` 的代码看作组件主体的一部分。
+
+### 把事件处理函数传到自定义 Hook 中
+
 如果自定义 hook 接收函数作为参数，那么将函数通过 `useEffectEvent` 进行包装
 
 ```jsx
@@ -109,9 +126,12 @@ export function useInterval(callback, delay) {
 }
 ```
 
-# 例子
-## 传递值
+## 例子
+
+### 传递值
+
 useCounter.js
+
 ```jsx
 import { useState, useEffect } from 'react';
 
@@ -126,7 +146,9 @@ export function useCounter(delay) {
   return count;
 }
 ```
+
 App.js
+
 ```jsx
 import { useState } from 'react';
 import { useCounter } from './useCounter.js';
@@ -154,12 +176,14 @@ export default function Counter() {
 }
 ```
 
-## 自定义 hook 保存之前的 state
+### 自定义 hook 保存之前的 state
+
 这个例子中，鼠标为一个红点，然后鼠标后面会有4个红点跟着鼠标，这是通过延迟设置坐标实现的。
 
-**保存之前的 state 的原理是：在自定义 hook 里面定义一个 oldState 保存当前的 state，那么当 state 发生变更时，oldState 就是旧的 state 了。**
+**保存之前的 state 的原理是：在自定义 hook 里面定义一个 `oldState` 保存当前的 `state`，那么当 `state` 发生变更时，`oldState` 就是旧的 `state` 了。**
 
 App.js
+
 ```jsx
 import { useState, useEffect } from 'react';
 import { usePointerPosition } from './usePointerPosition.js';
@@ -210,7 +234,9 @@ function Dot({ position, opacity }) {
   );
 }
 ```
+
 usePointerPosition.js
+
 ```jsx
 import { useState, useEffect } from 'react';
 
@@ -226,12 +252,3 @@ export function usePointerPosition() {
   return position;
 }
 ```
-
-
-
-
-
-
-
-
-

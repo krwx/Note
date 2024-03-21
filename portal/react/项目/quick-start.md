@@ -16,16 +16,22 @@ npm install -g create-react-app
 创建项目：
 
 ```shell
-// js
+# js
 create-react-app [项目名称] 
 
 举例： create-react-app reactapp
 
-// ts
+# ts
 npx create-react-app [项目名称] --template typescript
 
-// vite 创建 react 项目
-npm create vite@latest [name-of-your-project] -- --template react
+# vite 创建 react 项目
+npm init vite@latest [name-of-your-project] -- --template react
+
+# vite 创建 react + ts 项目
+npm init vite@latest [name-of-your-project] -- --template react-ts
+
+# pnpm
+pnpm create vite my-vue-app -- --template react-ts
 
 # Redux + Plain JS template
 npx create-react-app my-app --template redux
@@ -38,6 +44,7 @@ npx create-react-app my-app --template redux-typescript
 
 ```js
 npm install antd --save
+pnpm install antd --save
 
 // js文件
 import { Button } from 'antd'
