@@ -18,8 +18,8 @@
 
 参数
 
-- `calculateValue`：要缓存计算值的函数。
-  - 它应该是一个没有任何参数的纯函数，并且可以返回任意类型。
+- `calculateValue`：**要缓存计算值的函数**。
+  - 它应该是一个**没有任何参数的纯函数**，并且可以返回任意类型。
   - React 将会在首次渲染时调用该函数；在之后的渲染中，如果 `dependencies` 没有发生变化，React 将直接返回相同值。否则，将会再次调用 `calculateValue` 并返回最新结果，然后缓存该结果以便下次重复使用。
 - `dependencies`：所有在 `calculateValue` 函数中使用的**响应式变量**组成的数组。
   - 响应式变量包括 `props、state` 和所有你直接在组件中定义的变量和函数。
@@ -166,10 +166,10 @@ function Dropdown({ allItems, text }) {
   // ...
 ```
 
-useMemo() 的依赖包括 searchOptions，searchOptions 是一个包含 text props 的对象。  
-那么每次渲染时，都会重新创建 searchOptions 对象，导致 useMemo 的依赖发生变更，也需要重新计算值。
+`useMemo()` 的依赖包括 `searchOptions`，`searchOptions` 是一个包含 `text props` 的对象。  
+那么每次渲染时，都会重新创建 `searchOptions` 对象，导致 `useMemo` 的依赖发生变更，也需要重新计算值。
 
-解决办法是记忆 searchOptions 对象或者在 useMemo() 创建 searchOptions 对象，useMemo() 的依赖改为 text props
+解决办法是记忆 `searchOptions` 对象或者在 `useMemo()` 创建 `searchOptions` 对象，`useMemo()` 的依赖改为 `text props`
 
 ```js
 // 1. 记忆 searchOptions

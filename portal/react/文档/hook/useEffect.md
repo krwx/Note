@@ -16,7 +16,7 @@
 
 ## 原理
 
-所以整个useEffect异步调用分为三步：
+所以整个 `useEffect` 异步调用分为三步：
 
 1. `before mutation` 阶段在 `scheduleCallback` 中调度 `flushPassiveEffects`
 2. `layout` 阶段之后将 `effectList` 赋值给 `rootWithPendingPassiveEffects`
@@ -39,7 +39,7 @@
 总结：
 
 - `useEffect`是异步触发，适用于大多数副作用操作。
-- `useLayoutEffect`是同步触发，适用于需要在DOM更新之前立即执行操作的情况，但需要注意潜在的性能问题。
+- `useLayoutEffect`是同步触发，适用于需要在 `DOM` 更新之前立即执行操作的情况，但需要注意潜在的性能问题。
 
 - `useEffect` 是异步执行的，而 `useLayoutEffect` 是同步执行的。
 - `useEffect` 的执行时机是浏览器完成渲染之后，而 `useLayoutEffect` 的执行时机是浏览器把内容真正渲染到界面之前。
@@ -47,11 +47,11 @@
 ## 依赖：传递依赖数组、空数组和不传递依赖项之间的区别
 
 - 传递依赖项数组
-  - 如果指定了依赖项，则 Effect 在 **初始渲染后以及依赖项变更的重新渲染后** 运行。
+  - 如果指定了依赖项，则 `Effect` 在 **初始渲染后以及依赖项变更的重新渲染后** 运行。
 - 传递空依赖项数组
-  - 如果你的 Effect 确实没有使用任何响应式值，则它仅在 **初始渲染后** 运行。
+  - 如果你的 `Effect` 确实没有使用任何响应式值，则它仅在 **初始渲染后** 运行。
 - 不传递依赖项数组
-  - 如果完全不传递依赖数组，则 Effect 会在组件的 **每次单独渲染（和重新渲染）之后** 运行。
+  - 如果完全不传递依赖数组，则 `Effect` 会在组件的 **每次单独渲染（和重新渲染）之后** 运行。
 
 ## 语法
 
@@ -59,15 +59,15 @@
 
 参数：
 
-- setup：
+- `setup`：
   - 处理 `Effect` 的函数。
-  - setup 函数选择性返回一个 清理（cleanup） 函数。
+  - `setup` 函数选择性返回一个 清理（`cleanup`） 函数。
   - 当组件被添加到 DOM 的时候，React 将运行 setup 函数。
-  - 在每次依赖项变更重新渲染后，React 将首先使用旧值运行 cleanup 函数（如果你提供了该函数），然后使用新值运行 setup 函数。
+  - 在每次依赖项变更重新渲染后，React 将首先使用旧值运行 `cleanup` 函数（如果你提供了该函数），然后使用新值运行 `setup` 函数。
   - 在组件从 DOM 中移除后，React 将最后一次运行 cleanup 函数。
-- 可选 dependencies：
-  - setup 代码中引用的所有响应式值的列表。
-  - 响应式值包括 props、state 以及所有直接在组件内部声明的变量和函数。
+- 可选 `dependencies`：
+  - `setup` 代码中引用的所有响应式值的列表。
+  - 响应式值包括 `props、state` 以及所有直接在组件内部声明的变量和函数。
   - 依赖项列表的元素数量必须是固定的，并且必须像 `[dep1, dep2, dep3]` 这样内联编写。
   - React 将使用 `Object.is` 来比较每个依赖项和它先前的值。
   - **如果省略此参数，则在每次重新渲染组件之后，将重新运行 Effect 函数**。
@@ -99,7 +99,7 @@ useEffect 是在浏览器渲染完后再执行，所以是先执行组件内进�
 
 ### 父组件有多个子组件，子组件间的 useEffect 的执行顺序
 
-如果有一个这样的component：
+如果有一个这样的 `component` ：
 
 ```text
 <A>
@@ -114,7 +114,7 @@ useEffect 是在浏览器渲染完后再执行，所以是先执行组件内进�
 </A>
 ```
 
-mount 时 effect 的执行顺序：类似于二叉树的后序遍历，先遍历孩子，再遍历根，即：`[A1_1, A1_2, A1, A2_1, A2_2, A2, A]`。
+`mount` 时 `effect` 的执行顺序：类似于二叉树的后序遍历，先遍历孩子，再遍历根，即：`[A1_1, A1_2, A1, A2_1, A2_2, A2, A]`。
 
 ## 用法
 
@@ -159,7 +159,7 @@ export function useChatRoom({ serverUrl, roomId }) {
 
 ### 在 Effect 中根据先前 state 更新 state
 
-当你想要在 Effect 中根据先前的 state 更新 state 时，你可能会遇到问题：
+当你想要在 `Effect` 中根据先前的 `state` 更新 `state` 时，你可能会遇到问题：
 
 ```js
 function Counter() {
@@ -175,9 +175,9 @@ function Counter() {
 }
 ```
 
-因为 count  是一个响应式值，所以必须在依赖项列表中指定它。但是，这会导致 Effect 在每次 count 更改时再次执行 cleanup 和 setup。这并不理想。
+因为 `count` 是一个响应式值，所以必须在依赖项列表中指定它。但是，这会导致 Effect 在每次 `count` 更改时再次执行 `cleanup` 和 `setup`。这并不理想。
 
-解决方法：**向 setState() 传递更新函数**
+解决方法：**向 `setState()` 传递更新函数**
 
 ```js
 import { useState, useEffect } from 'react';

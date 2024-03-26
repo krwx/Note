@@ -24,11 +24,11 @@
 
 ### React理念介绍
 
-重点是 快速响应.制约快速响应的因素有 CPU 瓶颈和 IO 瓶颈
+重点是 快速响应.制约快速响应的因素有 `CPU` 瓶颈和 `IO` 瓶颈
 
 ### CPU瓶颈
 
-主流浏览器刷新频率为60Hz，即每（1000ms / 60Hz）16.6ms浏览器刷新一次。我们知道，JS可以操作DOM，GUI渲染线程与JS线程是互斥的。所以JS脚本执行和浏览器布局、绘制不能同时执行。  
+主流浏览器刷新频率为 `60Hz` ，即每（1000ms / 60Hz）16.6ms浏览器刷新一次。我们知道，JS可以操作DOM，GUI渲染线程与JS线程是互斥的。所以JS脚本执行和浏览器布局、绘制不能同时执行。  
 
 在每16.6ms时间内，需要完成如下工作：JS脚本执行 -----  样式布局 ----- 样式绘制
 
@@ -50,15 +50,15 @@ React实现了Suspense (opens new window)功能及配套的hook——useDeferred
 
 React16架构可以分为三层：
 
-- Scheduler（调度器）—— 调度任务的优先级，高优任务优先进入Reconciler
-- Reconciler（协调器）—— 负责找出变化的组件
-- Renderer（渲染器）—— 负责将变化的组件渲染到页面上
+- `Scheduler` （调度器）—— 调度任务的优先级，高优任务优先进入 `Reconciler`
+- `Reconciler` （协调器）—— 负责找出变化的组件
+- `Renderer` （渲染器）—— 负责将变化的组件渲染到页面上
 
 渲染流程可以分为：
 
-1. schedule阶段，当触发状态改变后，schedule阶段判断触发的更新的优先级，通知render阶段接下来应该处理哪个更新。
-2. render阶段，收到schedule阶段的通知，处理更新对应的JSX，决定哪些JSX对象是需要最终被渲染的。
-3. commit阶段，将render阶段整理出的需要被渲染的内容渲染到页面上。
+1. `schedule` 阶段，当触发状态改变后， `schedule` 阶段判断触发的更新的优先级，通知 `render` 阶段接下来应该处理哪个更新。
+2. `render` 阶段，收到 `schedule` 阶段的通知，处理更新对应的 `JSX` ，决定哪些 `JSX` 对象是需要最终被渲染的。
+3. `commit` 阶段，将 `render` 阶段整理出的需要被渲染的内容渲染到页面上。
 
 ### Reconciler
 
@@ -75,37 +75,35 @@ function workLoopConcurrent() {
 }
 ```
 
-当Scheduler将任务交给Reconciler后，Reconciler会为变化的虚拟DOM打上代表增/删/更新的标记
+当 `Scheduler` 将任务交给 `Reconciler` `后，Reconciler` 会为变化的虚拟 `DOM` 打上代表增/删/更新的标记
 
-整个Scheduler与Reconciler的工作都在内存中进行。只有当所有组件都完成Reconciler的工作，才会统一交给Renderer
+整个 `Scheduler` 与 `Reconciler` 的工作都在内存中进行。只有当所有组件都完成 `Reconciler` 的工作，才会统一交给 `Renderer`
 
-在组件mount时，Reconciler根据JSX描述的组件内容生成组件对应的Fiber节点。在update时，Reconciler将JSX与Fiber节点保存的数据对比，生成组件对应的Fiber节点，并根据对比结果为Fiber节点打上标记
+在组件 `mount` 时， `Reconciler` 根据JSX描述的组件内容生成组件对应的 `Fiber` 节点。在 `update` `时，Reconciler` 将 `JSX` 与 `Fiber` 节点保存的数据对比，生成组件对应的 `Fiber` 节点，并根据对比结果为 `Fiber` 节点打上标记
 
 ### Renderer（渲染器）
 
-Renderer根据Reconciler为虚拟DOM打的标记，同步执行对应的DOM操作
-
-***
+`Renderer` 根据 `Reconciler` 为虚拟 `DOM` 打的标记，同步执行对应的 `DOM` 操作
 
 ## Fiber架构
 
-React Fiber可以理解为：  
-React内部实现的一套状态更新机制。支持任务不同优先级，可中断与恢复，并且恢复后可以复用之前的中间状态。其中每个任务更新单元为React Element对应的Fiber节点。
-***
+`React Fiber` 可以理解为：  
+
+`React` 内部实现的一套状态更新机制。支持任务不同优先级，可中断与恢复，并且恢复后可以复用之前的中间状态。其中每个任务更新单元为 `React Element` 对应的 `Fiber` 节点。
 
 ### Fiber的含义
 
 Fiber包含三层含义：
 
-1. 作为架构来说，之前React15的Reconciler采用递归的方式执行，数据保存在递归调用栈中，所以被称为stack Reconciler。React16的Reconciler基于Fiber节点实现，被称为Fiber Reconciler。
-2. 作为静态的数据结构来说，每个Fiber节点对应一个React element，保存了该组件的类型（函数组件/类组件/原生组件...）、对应的DOM节点等信息。
-3. 作为动态的工作单元来说，每个Fiber节点保存了本次更新中该组件改变的状态、要执行的工作（需要被删除/被插入页面中/被更新...）
+1. 作为架构来说，之前React15的Reconciler采用递归的方式执行，数据保存在递归调用栈中，所以被称为stack Reconciler。React16 的 `Reconciler` 基于 `Fiber` 节点实现，被称为 `Fiber Reconciler` 。
+2. 作为静态的数据结构来说，每个 `Fiber` 节点对应一个 `React element` ，保存了该组件的类型（函数组件/类组件/原生组件...）、对应的DOM节点等信息。
+3. 作为动态的工作单元来说，每个 `Fiber` 节点保存了本次更新中该组件改变的状态、要执行的工作（需要被删除/被插入页面中/被更新...）
 
 ### Fiber节点的属性定义
 
 #### **作为架构**
 
-Fiber节点靠下面的节点连接形成树。Fiber节点构成的Fiber树就对应DOM树
+`Fiber` 节点靠下面的节点连接形成树。 `Fiber` 节点构成的 `Fiber` 树就对应 `DOM` 树
 
 ``` js
 // 指向父级Fiber节点
@@ -116,8 +114,9 @@ this.child = null;
 this.sibling = null;
 ```
 
-父级指针叫做return而不是parent或者father的原因：  
-因为作为一个工作单元，return指节点执行完completeWork（本章后面会介绍）后会返回的下一个节点。子Fiber节点及其兄弟节点完成工作后会返回其父级节点，所以用return指代父级节点。
+父级指针叫做 `return` 而不是 `parent` 或者 `father` 的原因：  
+
+因为作为一个工作单元， `return` 指节点执行完 `completeWork` （本章后面会介绍）后会返回的下一个节点。子 `Fiber` 节点及其兄弟节点完成工作后会返回其父级节点，所以用 `return` 指代父级节点。
 
 #### **作为静态的数据结构**
 
@@ -170,42 +169,40 @@ this.alternate = null;
 
 ### 双缓存Fiber树
 
-在React中最多会同时存在两棵Fiber树。当前屏幕上显示内容对应的Fiber树称为`current Fiber`树，正在内存中构建的Fiber树称为`workInProgress Fiber`树。
+在 `React` 中最多会同时存在两棵 `Fiber` 树。当前屏幕上显示内容对应的 `Fiber` 树称为`current Fiber`树，正在内存中构建的 `Fiber` 树称为`workInProgress Fiber`树。
 
-`current Fiber`树中的Fiber节点被称为`current fiber`，`workInProgress Fiber`树中的Fiber节点被称为`workInProgress fiber`，他们通过 `alternate` 属性连接。
+`current Fiber`树中的 `Fiber` 节点被称为`current fiber`，`workInProgress Fiber`树中的 `Fiber` 节点被称为`workInProgress fiber`，他们通过 `alternate` 属性连接。
 
 ```js
 currentFiber.alternate === workInProgressFiber;
 workInProgressFiber.alternate === currentFiber;
 ```
 
-React应用的根节点通过使current指针在不同Fiber树的rootFiber间切换来完成current Fiber树指向的切换。
+React 应用的根节点通过使 `current` 指针在不同 `Fiber` 树的 `rootFiber` 间切换来完成 `current Fiber` 树指向的切换。
 
-即当workInProgress Fiber树构建完成交给Renderer渲染在页面上后，应用根节点的current指针指向workInProgress Fiber树，此时workInProgress Fiber树就变为current Fiber树。
+即当 `workInProgress Fibe` 树构建完成交给 `Renderer` 渲染在页面上后，应用根节点的 `current` 指针指向 `workInProgress Fiber` 树，此时 `workInProgress Fiber` 树就变为 `current Fiber` 树。
 
-每次状态更新都会产生新的workInProgress Fiber树，通过current与workInProgress的替换，完成DOM更新。
+每次状态更新都会产生新的 `workInProgress Fiber` 树，通过 `current` 与 `workInProgress` 的替换，完成DOM更新。
 
 ### mount时的工作流程
 
-1. 首次执行ReactDOM.render会创建fiberRootNode（源码中叫fiberRoot）和rootFiber。其中fiberRootNode是整个应用的根节点，rootFiber是`<App/>`所在组件树的根节点。
-    1. 之所以要区分fiberRootNode与rootFiber，是因为在应用中我们可以多次调用ReactDOM.render渲染不同的组件树，他们会拥有不同的rootFiber。但是整个应用的根节点只有一个，那就是fiberRootNode。
-    2. fiberRootNode的current会指向当前页面上已渲染内容对应Fiber树，即current Fiber树。
-    3. 由于是首屏渲染，页面中还没有挂载任何DOM，所以fiberRootNode.current指向的rootFiber没有任何子Fiber节点（即current Fiber树为空）。
-2. 接下来进入render阶段，根据组件返回的JSX在内存中依次创建Fiber节点并连接在一起构建Fiber树，被称为workInProgress Fiber树。
-    1. 在构建workInProgress Fiber树时会尝试复用current Fiber树中已有的Fiber节点内的属性，在首屏渲染时只有rootFiber存在对应的current fiber）。
-3. 图中右侧已构建完的workInProgress Fiber树在commit阶段渲染到页面。
-    1. 此时DOM更新为右侧树对应的样子。fiberRootNode的current指针指向workInProgress Fiber树使其变为current Fiber 树。
+1. 首次执行 `ReactDOM.render` 会创建 `fiberRootNode` （源码中叫fiberRoot）和 `rootFiber` 。其中 `fiberRootNode` 是整个应用的根节点， `rootFiber` 是`<App/>`所在组件树的根节点。
+    1. 之所以要区分 `fiberRootNode` 与 `rootFiber` ，是因为在应用中我们可以多次调用 `ReactDOM.render` 渲染不同的组件树，他们会拥有不同的 `rootFiber` 。但是整个应用的根节点只有一个，那就是 `fiberRootNode` 。
+    2. `fiberRootNode` 的 `current` 会指向当前页面上已渲染内容对应 `Fiber` 树，即 `current Fiber` 树。
+    3. 由于是首屏渲染，页面中还没有挂载任何DOM，所以 `fiberRootNode.current` 指向的 `rootFiber` 没有任何子 `Fiber` 节点（即 `current Fiber` 树为空）。
+2. 接下来进入 `render` 阶段，根据组件返回的 JSX 在内存中依次创建 `Fiber` 节点并连接在一起构建 Fiber 树，被称为 `workInProgress Fiber` 树。
+    1. 在构建 `workInProgress Fiber` 树时会尝试复用 `current Fiber` 树中已有的 `Fiber` 节点内的属性，在首屏渲染时只有 `rootFiber` 存在对应的 `current fiber`。
+3. 图中右侧已构建完的 `workInProgress Fiber` 树在 `commit` 阶段渲染到页面。
+    1. 此时 `DOM` 更新为右侧树对应的样子。 `fiberRootNode` 的 `current` 指针指向 `workInProgress Fiber` 树使其变为 `current Fiber` 树。
 
 ### update时的工作原理
 
-1. 构建一棵新的workInProgress Fiber 树。
-   1. workInProgress fiber的创建可以复用current Fiber树对应的节点数据。决定是否复用的过程就是Diff算法
-2. workInProgress Fiber 树在render阶段完成构建后进入commit阶段渲染到页面上。渲染完毕后，workInProgress Fiber 树变为current Fiber 树
-
-***
+1. 构建一棵新的 `workInProgress Fiber` 树。
+   1. `workInProgress fiber` 的创建可以复用 `current Fiber` 树对应的节点数据。决定是否复用的过程就是 `Diff` 算法
+2. `workInProgress Fiber` 树在 `render` 阶段完成构建后进入 `commit` 阶段渲染到页面上。渲染完毕后，`workInProgress Fiber` 树变为 `current Fiber` 树
 
 ## JSX
 
-1. JSX在编译时会被Babel编译为React.createElement方法
-2. React.createElement最终会调用ReactElement方法返回一个包含组件数据的对象，该对象有个参数`$$typeof: REACT_ELEMENT_TYPE`标记了该对象是个`React Element`
+1. `JSX` 在编译时会被 `Babel` 编译为 `React.createElement` 方法
+2. `React.createElement` 最终会调用 `ReactElement` 方法返回一个包含组件数据的对象，该对象有个参数`$$typeof: REACT_ELEMENT_TYPE`标记了该对象是个`React Element`
 3. React Element、React Component、instance 的区别

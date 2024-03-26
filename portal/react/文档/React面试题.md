@@ -1,39 +1,44 @@
-- [1. 触发页面更新有哪些API](#1-触发页面更新有哪些api)
-- [2. React的优化方法](#2-react的优化方法)
-- [3. 性能优化](#3-性能优化)
-- [4. hook 的作用](#4-hook-的作用)
+# React 面试题
 
-
+- [React 面试题](#react-面试题)
+  - [1. 触发页面更新有哪些API](#1-触发页面更新有哪些api)
+  - [2. React的优化方法](#2-react的优化方法)
+  - [3. 性能优化](#3-性能优化)
+  - [4. hook 的作用](#4-hook-的作用)
 
 ## 1. 触发页面更新有哪些API
+
 触发状态更新：
-* ReactDOM.render —— HostRoot
-* this.setState —— ClassComponent
-* this.forceUpdate —— ClassComponent
-* useState —— FunctionComponent
-* useReducer —— FunctionComponent
+
+- ReactDOM.render —— HostRoot
+- this.setState —— ClassComponent
+- this.forceUpdate —— ClassComponent
+- useState —— FunctionComponent
+- useReducer —— FunctionComponent
 
 ## 2. React的优化方法
-1. 使用 React.memo 进行组件记忆
-2. 使用 useCallback 缓存传递给子组件的函数
+
+1. 使用 `React.memo` 进行组件记忆
+2. 使用 `useCallback` 缓存传递给子组件的函数
 3. 懒加载组件
-4. 使用 React Fragments 避免额外标记
+4. 使用 `React Fragments` 避免额外标记
 5. 不要使用内联函数定义
-   1. 如果我们使用内联函数，则每次调用“render”函数时都会创建一个新的函数实例。
+   1. 如果我们使用内联函数，则每次调用“`render`”函数时都会创建一个新的函数实例。
 6. 避免使用内联样式属性
-   1. 使用内联样式时浏览器需要花费更多时间来处理脚本和渲染，因为它必须映射传递给实际 CSS 属性的所有样式规则。
-   2. 更好的办法是将 CSS 文件导入组件。
-7. 优化 React 中的条件渲染
+   1. 使用内联样式时浏览器需要花费更多时间来处理脚本和渲染，因为它必须映射传递给实际 `CSS` 属性的所有样式规则。
+   2. 更好的办法是将 `CSS` 文件导入组件。
+7. 优化 `React` 中的条件渲染
    1. 当多种条件进行渲染时都有相同的组件需要渲染，可以将该组件拿出来，只对需要进行条件渲染的组件设置条件
-8. render 函数应保持纯净
-   1. 不要在 render 函数使用 setState 或者其他影响状态的方法
-9. 迭代的时候给组件设置 key
-10. 用 CSS 动画代替 JavaScript 动画
-11. 使用 Web Workers 处理 CPU 密集任务
-12. 优化 useEffect
-    1.  删除不必要的对象或函数依赖项
+8. `render` 函数应保持纯净
+   1. 不要在 `render` 函数使用 `setState` 或者其他影响状态的方法
+9. 迭代的时候给组件设置 `key`
+10. 用 `CSS` 动画代替 `JavaScript` 动画
+11. 使用 `Web Workers` 处理 `CPU` 密集任务
+12. 优化 `useEffect`
+    1. 删除不必要的对象或函数依赖项
 
 ## 3. 性能优化
+
 1. 当一个组件在视觉上包装其他组件时，让它 **接受 JSX 作为子元素**。随后，如果包装组件更新自己的 state，React 知道它的子组件不需要重新渲染。
 2. 建议使用 state 并且不要 **提升状态** 超过必要的程度。不要将表单和项是否悬停等短暂状态保存在树的顶部或全局状态库中。
 3. 保持 **渲染逻辑纯粹**。如果重新渲染组件会导致问题或产生一些明显的视觉瑕疵，那么这是组件自身的问题！请修复这个错误，而不是添加记忆化。
@@ -41,4 +46,5 @@
 5. 尝试 **从 Effect 中删除不必要的依赖关系**。例如，将某些对象或函数移动到副作用内部或组件外部通常更简单，而不是使用记忆化。
 
 ## 4. hook 的作用
+
 Hook 可以帮助在组件中使用不同的 React 功能。

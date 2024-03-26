@@ -50,7 +50,7 @@ pnpm install antd --save
 import { Button } from 'antd'
 ```
 
-普通js文件：
+普通 `js` 文件：
 
 ```js
 import React from "react";

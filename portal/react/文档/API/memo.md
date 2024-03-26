@@ -29,8 +29,8 @@ memo(Component, arePropsEqual?)
 - `Component` ：要进行记忆化的组件。
   - `memo` 不会修改该组件，而是返回一个新的、记忆化的组件。
   - 它接受任何有效的 React 组件，包括函数组件和 `forwardRef` 组件。
-- 可选参数 `arePropsEqual`：一个**函数**，接受两个参数：组件的前一个 props 和新的 props。
-  - 如果旧的和新的 props 相等，即组件使用新的 props 渲染的输出和表现与旧的 props 完全相同，则它应该返回 true。否则返回 false。
+- 可选参数 `arePropsEqual`：一个**函数**，接受两个参数：组件的前一个 `props` 和新的 `props`。
+  - 如果旧的和新的 `props` 相等，即组件使用新的 `props` 渲染的输出和表现与旧的 `props` 完全相同，则它应该返回 `true`。否则返回 `false`。
   - 通常情况下，你不需要指定此函数。
   - **默认情况下，React 将使用 `Object.is` 比较每个 `prop`** 。
 
@@ -65,9 +65,9 @@ export default Greeting;
 
 ### 最小化 props 的变化
 
-当你使用 memo 时，只要任何一个 prop 与先前的值不是 浅层相等 的话，你的组件就会重新渲染。这意味着 React 会使用 Object.is 比较组件中的每个 prop 与其先前的值。
+当你使用 `memo` 时，只要任何一个 prop 与先前的值不是 **浅层相等** 的话，你的组件就会重新渲染。这意味着 React 会使用 `Object.is` 比较组件中的每个 prop 与其先前的值。
 
-1、当 props 是对象时，使用 useMemo  
+1、当 `props` 是对象时，使用 `useMemo`  
 可以使用 `useMemo` **避免父组件每次都重新创建该对象**
 
 ```js
@@ -109,9 +109,9 @@ const Greeting = memo(function Greeting({ person: {name} }) {
 });
 ```
 
-2、当 props 是对象时，可以考虑拆解对象，只传递关键的属性，而不是传递对象
+2、当 `props` 是对象时，可以考虑拆解对象，只传递关键的属性，而不是传递对象
 
-3、当 props 是函数，使用 useCallback  
+3、当 `props` 是函数，使用 `useCallback`  
 例子参考 [useCallback hook](../hook/useCallback.md)
 
 ### 指定自定义比较函数
@@ -136,8 +136,8 @@ function arePropsEqual(oldProps, newProps) {
 
 陷阱：
 
-1. 必须比较每个 prop，包括函数
-2. 避免在 arePropsEqual 中进行深比较，数据结构具有已知有限的深度。深比较可能会变得非常缓慢
+1. 必须比较每个 `prop`，包括函数
+2. 避免在 `arePropsEqual` 中进行深比较，数据结构具有已知有限的深度。深比较可能会变得非常缓慢
 
 ## 当组件的某个 prop 是对象、数组或函数时，我的组件会重新渲染的原因
 

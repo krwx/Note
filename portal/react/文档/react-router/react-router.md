@@ -1,13 +1,22 @@
-## React Router
+# React Router
+
+- [React Router](#react-router)
+  - [使用 object](#使用-object)
+  - [JSX](#jsx)
+
 安装
-```
+
+```shell
 npm install react-router-dom localforage match-sorter sort-by
 ```
-两种使用方式 (两种方式都可以)
-1. 使用 createBrowserRouter() 设置路由,通过一个 object 入参设置 route
-2. 使用 JSX 设置 route 
 
-### 使用 object 
+两种使用方式 (两种方式都可以)
+
+1. 使用 `createBrowserRouter()` 设置路由,通过一个 `object` 入参设置 `route`
+2. 使用 `JSX` 设置 `route`
+
+## 使用 object
+
 ```js
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
@@ -30,7 +39,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 );
 ```
 
-### JSX
+## JSX
+
 ```js
 import {
   createRoutesFromElements,
