@@ -72,10 +72,15 @@ slice(indexStart, indexEnd)
 规则：
 
 - 如果 `indexStart >= str.length`，则返回一个空字符串。
+
 - 如果 `indexStart < 0`，则索引从字符串末尾开始计数。更正式地说，在这种情况下，子字符串从 `max(indexStart + str.length, 0)` 开始。
+
 - 如果 `indexStart` 被省略、为 `undefined`，或无法转换为数字（使用 `Number(indexStart)`），则将其视为 0。
+
 - 如果 `indexEnd` 被省略、为 `undefined`，或无法转换为数字（使用 `Number(indexEnd)`），或者 `indexEnd >= str.length`，则 slice() 提取到字符串的末尾。
+
 - 如果 `indexEnd < 0`，则索引从字符串末尾开始计数。更正式地说，在这种情况下，子字符串在 `max(indexEnd + str.length, 0)` 处结束。
+
 - 在标准化负值后，如果 `indexEnd <= indexStart`（即 indexEnd 表示位于 indexStart 之前的字符），则返回一个**空字符串**。
 
 ```js

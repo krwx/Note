@@ -1,6 +1,6 @@
 # keyof 类型运算符
 
-keyof 运算符采用对象类型并生成其键的字符串或数字字面联合。
+`keyof` 运算符采用对象类型并生成其键的字符串或数字字面联合。
 
 ```js
 type Point = { x: number; y: number };

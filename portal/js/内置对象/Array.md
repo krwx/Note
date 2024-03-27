@@ -18,19 +18,23 @@
     - [Array.prototype.unshift()](#arrayprototypeunshift)
     - [Array.prototype.map()](#arrayprototypemap)
       - [将 parseInt() 与 map() 一起使用](#将-parseint-与-map-一起使用)
+    - [Array.prototype.flat()](#arrayprototypeflat)
+    - [Array.prototype.flatMap()](#arrayprototypeflatmap)
+    - [Array.prototype.reduce()](#arrayprototypereduce)
+    - [Array.prototype.reduceRight()](#arrayprototypereduceright)
 
 ## 方法
 
-- join()：用指定的分隔符将数组每一项拼接为字符串
-- push() ：向数组的末尾添加新元素
-- pop()：删除数组的最后一项
-- shift()：删除数组的第一项
-- unshift()：向数组首位添加新元素
-- slice()：按照条件查找出其中的部分元素
-- splice()：对数组进行增删改
-- fill(): 方法能使用特定值填充数组中的一个或多个元素
-- filter():“过滤”功能
-- concat()：用于连接两个或多个数组
+- `join()`：用指定的分隔符将数组每一项拼接为字符串
+- `push()` ：向数组的末尾添加新元素
+- `pop()`：删除数组的最后一项
+- `shift()`：删除数组的第一项
+- `unshift()`：向数组首位添加新元素
+- `slice()`：按照条件查找出其中的部分元素
+- `splice()`：对数组进行增删改
+- `fill()`: 方法能使用特定值填充数组中的一个或多个元素
+- `filter()`:“过滤”功能
+- `concat()`：用于连接两个或多个数组
 - indexOf()：检测当前值在数组中第一次出现的位置索引
 - lastIndexOf()：检测当前值在数组中最后一次出现的位置索引
 - every()：判断数组中每一项都是否满足条件
@@ -137,11 +141,11 @@ console.log(numbers[3]); // undefined；多余的元素会被删除
 ## 静态方法
 
 - `Array.from()`
-  - : 从数组类对象或可迭代对象创建一个新的 Array 实例。
+  - : 从数组类对象或可迭代对象创建一个新的 `Array` 实例。
 - `Array.isArray()`
   - : 如果参数是数组则返回 true ，否则返回 false 。
 - `Array.of()`
-  - : 创建一个新的 Array 实例，具有可变数量的参数，而不管参数的数量或类型。
+  - : 创建一个新的 `Array` 实例，具有可变数量的参数，而不管参数的数量或类型。
 
 ## 实例方法
 
@@ -178,10 +182,10 @@ console.log(numbers[3]); // undefined；多余的元素会被删除
 - Array.prototype.findLastIndex()
   - 返回数组中满足所提供测试函数的最后一个元素的索引，如果没有找到合适的元素，则返回 -1。
 
-- Array.prototype.flat()
+- [Array.prototype.flat()](#arrayprototypeflat)
   - 返回一个新数组，所有子数组元素递归地连接到其中，直到指定的深度。
 
-- Array.prototype.flatMap()
+- [Array.prototype.flatMap()](#arrayprototypeflatmap)
   - 对调用数组的每个元素调用给定的回调函数，然后将结果展平一层，返回一个新数组。
 
 - Array.prototype.forEach()
@@ -211,10 +215,10 @@ console.log(numbers[3]); // undefined；多余的元素会被删除
 - Array.prototype.push()
   - 在数组末尾添加一个或多个元素，并返回数组新的 length。
 
-- Array.prototype.reduce()
+- [Array.prototype.reduce()](#arrayprototypereduce)
   - 对数组的每个元素（从左到右）执行用户提供的“reducer”回调函数，将其简化为单个值。
 
-- Array.prototype.reduceRight()
+- [Array.prototype.reduceRight()](#arrayprototypereduceright)
   - 对数组的每个元素（从右到左）执行用户提供的“reducer”回调函数，将其简化为单个值。
 
 - Array.prototype.reverse()
@@ -428,7 +432,7 @@ console.log(array1);
 // Expected output: Array [1, 100000, 21, 30, 4]
 ```
 
-对有数字的数字使用 sort() ，是根据 Unicode 排序的，不是根据数字大小排，要手写比较函数才能按数字大小排。
+对有数字的数字使用 `sort()` ，是根据 `Unicode` 排序的，不是根据数字大小排，要手写比较函数才能按数字大小排。
 
 **语法**：
 
@@ -443,7 +447,7 @@ sort(compareFn)
   - 定义排序顺序的函数。返回值应该是一个数字，其正负性表示两个元素的相对顺序。该函数使用以下参数调用：
     - a：第一个用于比较的元素。不会是 undefined。
     - b：第二个用于比较的元素。不会是 undefined。
-  - 如果省略该函数，数组元素会被转换为字符串，然后根据每个字符的 Unicode 码位值进行排序。
+  - 如果省略该函数，数组元素会被转换为字符串，然后根据每个字符的 `Unicode` 码位值进行排序。
 
 |compareFn(a, b) 返回值 |排序顺序|
 |--|--|
@@ -642,7 +646,7 @@ console.log(doubles); // [2, 8, 18]
 console.log(numbers); // [1, 4, 9]
 ```
 
-在非数组对象上调用 map()：
+在非数组对象上调用 `map()`：
 
 - `map()` 方法读取 `this` 的 `length` 属性，然后访问每个整数索引。
 
@@ -762,4 +766,389 @@ const numbers = strings.map(parseInt);
 console.log(numbers);
 // 根据以上描述，[10, NaN, 2] 的实际结果可能会出乎意料。
 // 因为最后一次迭代是 parseInt("10", 2); "10" 以二进制解析结果为 2
+```
+
+### Array.prototype.flat()
+
+`flat()` 方法创建一个新的数组，并根据指定深度递归地将所有子数组元素拼接到新的数组中。
+
+语法：
+
+```js
+flat()
+flat(depth)
+```
+
+参数：
+
+- `depth` 可选
+  - 指定要提取嵌套数组的结构深度，默认值为 `1`。
+
+返回值:
+
+一个新的数组，其中包含拼接后的子数组元素。
+
+**描述**：
+
+`flat()` 方法属于复制方法。它不会改变 `this` 数组，而是**返回一个浅拷贝**，该浅拷贝包含了原始数组中相同的元素。
+
+如果待展开的数组是稀疏的，`flat()` 方法**会忽略其中的空槽**。  
+例如，如果 depth 是 1，那么根数组和第一层嵌套数组中的空槽都会被忽略，**但在更深的嵌套数组中的空槽则会与这些数组一起保留**。
+
+`flat()` 方法是通用的。它只需要 `this` 值具有 `length` 属性和整数键属性即可。但是，**如果要展开元素，则它们必须是数组**。
+
+**例子**：
+
+```js
+const arr1 = [1, 2, [3, 4]];
+arr1.flat();
+// [1, 2, 3, 4]
+
+const arr2 = [1, 2, [3, 4, [5, 6]]];
+arr2.flat();
+// [1, 2, 3, 4, [5, 6]]
+
+const arr3 = [1, 2, [3, 4, [5, 6]]];
+arr3.flat(2);
+// [1, 2, 3, 4, 5, 6]
+
+const arr4 = [1, 2, [3, 4, [5, 6, [7, 8, [9, 10]]]]];
+arr4.flat(Infinity);
+// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+- 在稀疏数组上使用 `flat()`
+
+```js
+const arr5 = [1, 2, , 4, 5];
+console.log(arr5.flat()); // [1, 2, 4, 5]
+
+const array = [1, , 3, ["a", , "c"]];
+console.log(array.flat()); // [ 1, 3, "a", "c" ]
+
+const array2 = [1, , 3, ["a", , ["d", , "e"]]];
+console.log(array2.flat()); // [ 1, 3, "a", ["d", empty, "e"] ]
+console.log(array2.flat(2)); // [ 1, 3, "a", "d", "e"]
+```
+
+- 在非数组对象上调用 `flat()`
+  - `flat()` 方法读取 `this` 的 `length` 属性，然后访问每个整数索引。
+  - 如果元素不是数组，则直接将其附加到结果中，不进行展开操作。
+  - 如果元素是数组，则根据 `depth` 参数进行展开操作。
+
+```js
+const arrayLike = {
+  length: 3,
+  0: [1, 2],
+  // 嵌套的类数组对象不会被展平
+  1: { length: 2, 0: 3, 1: 4 },
+  2: 5,
+};
+console.log(Array.prototype.flat.call(arrayLike));
+// [ 1, 2, { '0': 3, '1': 4, length: 2 }, 5 ]
+```
+
+### Array.prototype.flatMap()
+
+`flatMap()` 方法对数组中的每个元素应用给定的回调函数，然后将结果展开一级，返回一个新数组。
+
+它等价于在调用 `map()` 方法后再调用深度为 `1` 的 `flat()` 方法（`arr.map(...args).flat()`），但比分别调用这两个方法稍微更高效一些。
+
+语法：
+
+```js
+flatMap(callbackFn)
+flatMap(callbackFn, thisArg)
+```
+
+参数：
+
+- `callbackFn`
+  - 一个在数组的每个元素上执行的函数。它应该返回一个包含新数组元素的数组，或是要添加到新数组中的单个非数组值。该函数将被传入以下参数：
+    - `element` ：数组中正在处理的当前元素。
+    - `index` ：数组中正在处理的当前元素的索引。
+    - `array` ：调用 `flatMap()` 的当前数组。
+- `thisArg` 可选
+  - 在执行 `callbackFn` 时用作 `this` 的值。参见迭代方法。
+
+返回值：
+
+一个新的数组，其中每个元素都是回调函数的结果，并且被展开一级。
+
+**示例**:
+
+- `map()` 与 `flatMap()`
+
+```js
+const arr1 = [1, 2, 3, 4];
+
+arr1.map((x) => [x * 2]);
+// [[2], [4], [6], [8]]
+
+arr1.flatMap((x) => [x * 2]);
+// [2, 4, 6, 8]
+
+// 只有一层被展平
+arr1.flatMap((x) => [[x * 2]]);
+// [[2], [4], [6], [8]]
+
+
+const arr = [1, 2, 3, 4];
+arr.flatMap((x) => [x, x * 2]);
+// [1, 2, 2, 4, 3, 6, 4, 8]
+
+
+
+const arr1 = ["it's Sunny in", "", "California"];
+
+arr1.map((x) => x.split(" "));
+// [["it's","Sunny","in"],[""],["California"]]
+
+arr1.flatMap((x) => x.split(" "));
+// ["it's","Sunny","in", "", "California"]
+```
+
+- 在 `map()` 方法过程中添加和删除元素
+
+```js
+// 假设我们想要删除所有负数，并将奇数拆分成偶数和 1
+const a = [5, 4, -3, 20, 17, -33, -4, 18];
+//         |\  \  x   |  | \   x   x   |
+//        [4,1, 4,   20, 16, 1,       18]
+
+const result = a.flatMap((n) => {
+  if (n < 0) {
+    return [];
+  }
+  return n % 2 === 0 ? [n] : [n - 1, 1];
+});
+console.log(result); // [4, 1, 4, 20, 16, 1, 18]
+```
+
+- 在稀疏数组上使用 `flatMap()`
+
+```js
+console.log([1, 2, , 4, 5].flatMap((x) => [x, x * 2])); // [1, 2, 2, 4, 4, 8, 5, 10]
+console.log([1, 2, 3, 4].flatMap((x) => [, x * 2])); // [2, 4, 6, 8]
+```
+
+- 在非数组对象上调用 `flatMap()`
+  - `flatMap()` 方法读取 `this` 的 `length` 属性，然后访问每个整数索引。
+  - 如果**回调函数的返回值不是数组**，则始终直接将其附加到结果数组的末尾。
+
+```js
+const arrayLike = {
+  length: 3,
+  0: 1,
+  1: 2,
+  2: 3,
+};
+console.log(Array.prototype.flatMap.call(arrayLike, (x) => [x, x * 2]));
+// [1, 2, 2, 4, 3, 6]
+
+// 回调函数返回的类数组对象不会被展平
+console.log(
+  Array.prototype.flatMap.call(arrayLike, (x) => ({
+    length: 1,
+    0: x,
+  })),
+);
+// [ { '0': 1, length: 1 }, { '0': 2, length: 1 }, { '0': 3, length: 1 } ]
+```
+
+### Array.prototype.reduce()
+
+`reduce()` 方法对数组中的每个元素按序执行一个提供的 `reducer` 函数，每一次运行 `reducer` 会将先前元素的计算结果作为参数传入，最后将其结果汇总为单个返回值。
+
+- 第一次执行回调函数时，不存在“上一次的计算结果”。
+- **如果需要回调函数从数组索引为 0 的元素开始执行，则需要传递初始值**。
+- 否则，数组索引为 0 的元素将被用作初始值，迭代器将从第二个元素开始执行（即从索引为 1 而不是 0 的位置开始）。
+
+语法：
+
+```js
+reduce(callbackFn)
+reduce(callbackFn, initialValue)
+```
+
+参数：
+
+- `callbackFn`
+  - 为数组中每个元素执行的函数。其返回值将作为下一次调用 `callbackFn` 时的 `accumulator` 参数。对于最后一次调用，返回值将作为 `reduce()` 的返回值。该函数被调用时将传入以下参数：
+    - `accumulator`
+      - 上一次调用 `callbackFn` 的结果。在第一次调用时，如果指定了 `initialValue` 则为指定的值，否则为 `array[0]` 的值。
+    - `currentValue`
+      - 当前元素的值。在第一次调用时，如果指定了 `initialValue`，则为 `array[0]` 的值，否则为 `array[1]`。
+    - `currentIndex`
+      - `currentValue` 在数组中的索引位置。在第一次调用时，如果指定了 `initialValue` 则为 0，否则为 1。
+    - `array`
+      - 调用了 `reduce()` 的数组本身。
+- initialValue 可选
+  - 第一次调用回调时初始化 `accumulator` 的值。
+  - 如果指定了 `initialValue`，则 `callbackFn` 从数组中的第一个值作为 `currentValue` 开始执行。
+  - 如果没有指定 `initialValue`，则 `accumulator` 初始化为数组中的第一个值，并且 `callbackFn` 从数组中的第二个值作为 `currentValue` 开始执行。在这种情况下，如果数组为空（没有第一个值可以作为 accumulator 返回），则会抛出错误。
+
+返回值：
+
+使用“reducer”回调函数遍历整个数组后的结果。
+
+**描述**:
+
+`callbackFn` 仅对已分配值的数组索引进行调用。不会对稀疏数组中的空槽进行调用。
+
+在第一次调用 `callbackFn` 之前，数组的长度会被保存。因此：
+
+- 当开始调用 `reduce()` 时，`callbackFn` 将不会访问超出数组初始长度的任何元素。
+- 对已访问索引的更改不会导致再次在这些元素上调用 `callbackFn`。
+- 如果数组中一个现有的、尚未访问的元素被 `callbackFn` 更改，则它传递给 `callbackFn` 的值将是该元素被修改后的值。被删除的元素则不会被访问。
+
+**边界情况**:
+
+- 如果数组只有一个元素（无论位置如何）且未提供 `initialValue`，或者提供了 `initialValue` 但数组为空，则将返回该单个值，而不调用 `callbackFn`。
+
+- 如果提供了 `initialValue` 且数组不为空，则 `reduce` 方法将始终从索引 0 开始调用回调函数。
+
+- 如果未提供 `initialValue`，则对于长度大于 1、等于 1 和 0 的数组，`reduce` 方法将有不同的表现
+
+```js
+const getMax = (a, b) => Math.max(a, b);
+
+// 从索引 0 开始为数组中的每个元素调用回调函数
+[1, 100].reduce(getMax, 50); // 100
+[50].reduce(getMax, 10); // 50
+
+// 仅为索引 1 处的元素调用回调函数
+[1, 100].reduce(getMax); // 100
+
+// 不调用回调函数
+[50].reduce(getMax); // 50
+[].reduce(getMax, 1); // 1
+
+[].reduce(getMax); // TypeError
+```
+
+**示例**：
+
+- 展平嵌套数组
+
+```js
+const flattened = [
+  [0, 1],
+  [2, 3],
+  [4, 5],
+].reduce((accumulator, currentValue) => accumulator.concat(currentValue), []);
+// flattened 的值是 [0, 1, 2, 3, 4, 5]
+```
+
+- 统计对象中值的出现次数
+
+```js
+const names = ["Alice", "Bob", "Tiff", "Bruce", "Alice"];
+
+const countedNames = names.reduce((allNames, name) => {
+  const currCount = allNames[name] ?? 0;
+  return {
+    ...allNames,
+    [name]: currCount + 1,
+  };
+}, {});
+// countedNames 的值是：
+// { 'Alice': 2, 'Bob': 1, 'Tiff': 1, 'Bruce': 1 }
+```
+
+- 使用 `reduce()` 来替代 `.filter().map()`
+
+```js
+const numbers = [-5, 6, 2, 0];
+
+const doubledPositiveNumbers = numbers.reduce((accumulator, currentValue) => {
+  if (currentValue > 0) {
+    const doubled = currentValue * 2;
+    return [...accumulator, doubled];
+  }
+  return accumulator;
+}, []);
+
+console.log(doubledPositiveNumbers); // [12, 4]
+```
+
+- 使用函数组合实现管道
+
+```js
+// 组合使用的构建块
+const double = (x) => 2 * x;
+const triple = (x) => 3 * x;
+const quadruple = (x) => 4 * x;
+
+// 函数组合，实现管道功能
+const pipe =
+  (...functions) =>
+  (initialValue) =>
+    functions.reduce((acc, fn) => fn(acc), initialValue);
+
+// 组合的函数，实现特定值的乘法
+const multiply6 = pipe(double, triple);
+const multiply9 = pipe(triple, triple);
+const multiply16 = pipe(quadruple, quadruple);
+const multiply24 = pipe(double, triple, quadruple);
+
+// 用例
+multiply6(6); // 36
+multiply9(9); // 81
+multiply16(16); // 256
+multiply24(10); // 240
+```
+
+- 在稀疏数组中使用 `reduce()`
+  - `reduce()` 会跳过稀疏数组中缺失的元素，但不会跳过 `undefined` 值。
+
+```js
+console.log([1, 2, , 4].reduce((a, b) => a + b)); // 7
+console.log([1, 2, undefined, 4].reduce((a, b) => a + b)); // NaN
+```
+
+- 在非数组对象上调用 `reduce()`
+  - `reduce()` 方法读取 `this` 的 `length` 属性，然后访问每个整数索引。
+
+```JS
+const arrayLike = {
+  length: 3,
+  0: 2,
+  1: 3,
+  2: 4,
+};
+console.log(Array.prototype.reduce.call(arrayLike, (x, y) => x + y));
+// 9
+```
+
+### Array.prototype.reduceRight()
+
+`reduceRight()` 方法对累加器（`accumulator`）和数组的每个值（按**从右到左的顺序**）应用一个函数，并使其成为单个值。
+
+例子：
+
+```js
+const array1 = [
+  [0, 1],
+  [2, 3],
+  [4, 5],
+];
+
+const result = array1.reduceRight((accumulator, currentValue) =>
+  accumulator.concat(currentValue),
+);
+
+console.log(result);
+// Expected output: Array [4, 5, 2, 3, 0, 1]
+```
+
+`reduce` 与 `reduceRight` 之间的区别：
+
+```js
+const a = ["1", "2", "3", "4", "5"];
+const left = a.reduce((prev, cur) => prev + cur);
+const right = a.reduceRight((prev, cur) => prev + cur);
+
+console.log(left); // "12345"
+console.log(right); // "54321"
 ```

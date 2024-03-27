@@ -77,6 +77,7 @@
 `Object.prototype.toString()` 返回 `"[object Type]"`，这里的 Type 是对象的类型。如果对象有 `Symbol.toStringTag` 属性，其值是一个字符串，则它的值将被用作 Type。
 
 许多内置的对象，包括 `Map` 和 `Symbol，都有` `Symbol.toStringTag`。一些早于 ES6 的对象没有 `Symbol.toStringTag`，但仍然有一个特殊的标签。下面列出了所有的例子：
+
 |例子| 返回值|
 |--|--|
 |[] | [object Array]|
@@ -104,7 +105,7 @@ console.log(Object.prototype.toString.call("jerry"));//[object String]
 ##### 使用 Object.prototype.toString.call(obj)
 
 调用 `Object.prototype.toString.call(obj)` 的含义是：  
-将 `this` 指针指向 obj 对象，调用其原型的 `toString()` 的方法，即 Object 的 toString 方法，而不是 obj 对象对应的对象类型的有可能重写的 toString 方法。这里返回的是反映 obj 对象的字符串。
+将 `this` 指针指向 `obj` 对象，调用其原型的 `toString()` 的方法，即 `Object` 的 `toString` 方法，而不是 obj 对象对应的对象类型的有可能重写的 toString 方法。这里返回的是反映 obj 对象的字符串。
 
 ##### 不使用 Object.prototype.toString()
 
@@ -137,7 +138,8 @@ Object.prototype.toString.call(new Date()); // [object prototype polluted]
 
 基本类型 “调用” `toString()` 方法时，实际上是先创建了一个对应的基本包装类型，由此基本包装类型调用 `toString()` 最后返回了其对应的字符串，看起来就好像是基本类型调用了 `toString()` 方法而得到了对应的字符串。
 
-1、Boolean  
+1、`Boolean`  
+
 返回的是字符串
 
 ```js
@@ -149,14 +151,15 @@ var a = true;
 console.log(a.toString());//"true"
 ```
 
-2、String
+2、`String`
 
 ```js
 var obj = new String("hello");
 console.log(obj.toString()); // "hello"
 ```
 
-3、Number  
+3、`Number`
+
 返回的是字符串
 
 ```js
@@ -166,28 +169,28 @@ console.log(a.toString()); // "123"
 
 ##### 对象类型
 
-1、数组Array类型（返回数组内容组成的字符串）  
+1、数组 `Array` 类型（返回数组内容组成的字符串）  
 
 ```js
 var a = [1,2,3,4];
 console.log(a.toString()); // "1,2,3,4"
 ```
 
-2、函数Function类型（返回函数代码字符串）  
+2、函数 `Function` 类型（返回函数代码字符串）  
 
 ```js
 function testFunc() {console.log("hello")}
 console.log(testFunc.toString()); // "function testFunc() {console.log("hello")}"
 ```
 
-3、正则RegExp类型（返回原正则表达式的字符串表示）
+3、正则 `RegExp` 类型（返回原正则表达式的字符串表示）
 
 ```js
 var a = /a/g;
 console.log(a.toString()); // "/a/g"
 ```
 
-4、Date类型（返回表示当前时间的字符串）
+4、 `Date` 类型（返回表示当前时间的字符串）
 
 ```js
 var obj = new Date();
@@ -197,7 +200,7 @@ console.log(obj.toString());//"Wed May 10 2017 18:20:05 GMT+0800 (中国标准�
 
 #### 删除重写的 toString 方法
 
-如果删除了对象重写的 toString 方法，那么会调用上一层原型搭地 toString 方法。（如果上一层原型为 Object.prototype 那么就是调用 Object.toString ）
+如果删除了对象重写的 `toString` 方法，那么会调用上一层原型搭地 `toString` 方法。（如果上一层原型为 `Object.prototype` 那么就是调用 `Object.toString` ）
 
 以数组为例：
 
@@ -296,27 +299,27 @@ Object.is(foo, sameFoo); // true
 
 `Object.is()` 确定两个值是否为相同值。如果以下其中一项成立，则两个值相同：
 
-- 都是 undefined
-- 都是 null
-- 都是 true 或者都是 false
+- 都是 `undefined`
+- 都是 `null`
+- 都是 `true` 或者都是 `false`
 - 都是长度相同、字符相同、顺序相同的字符串
 - 都是相同的对象（**意味着两个值都引用了内存中的同一对象**）（***如果两个对象内的属性相同，但是不是引用同一个对象，是不相同的***）
-- 都是 BigInt 且具有相同的数值
-- 都是 symbol 且引用相同的 symbol 值
+- 都是 `BigInt` 且具有相同的数值
+- 都是 `symbol` 且引用相同的 `symbol` 值
 - 都是数字且
-  - 都是 +0
-  - 都是 -0
-  - 都是 NaN
-  - 都有相同的值，非零且都不是 NaN
+  - 都是 `+0`
+  - 都是 `-0`
+  - 都是 `NaN`
+  - 都有相同的值，非零且都不是 `NaN`
 
 #### Object.is() 与 == 与 === 的区别
 
-- Object.is() 与 == 运算符并不等价。
-  - == 运算符会对两个操作数进行类型转换（如果它们不是相同的类型）
+- `Object.is()` 与 `==` 运算符并不等价。
+  - `==` 运算符会对两个操作数进行类型转换（如果它们不是相同的类型）
   - 但是 `Object.is()` 不会对其操作数进行类型转换。
-- Object.is() 也不等价于 === 运算符。唯一区别在于它们处理带符号的 0 和 NaN 值的时候，刚好处理相反。
-  - === 运算符（和 == 运算符）将数值 -0 和 +0 视为相等，但是会将 NaN 视为彼此不相等。
-  - Object.is() 将数值 -0 和 +0 视为不相等，但是会将 NaN 视为彼此相等。
+- `Object.is()` 也不等价于 `===` 运算符。唯一区别在于它们处理带符号的 0 和 `NaN` 值的时候，刚好处理相反。
+  - `===` 运算符（和 == 运算符）将数值 -0 和 +0 视为相等，但是会将 `NaN` 视为彼此不相等。
+  - `Object.is()` 将数值 -0 和 +0 视为不相等，但是会将 `NaN` 视为彼此相等。
 
 ### Object.defineProperty()
 
@@ -395,13 +398,13 @@ Object.defineProperty(o, "k", { set: undefined })
 
 #### 使用经验
 
-1. configurable 为 false 或者 true
-   1. writable 为 true，可以修改值
-   2. writable 为 false，不可以修改值
-2. configurable 为 false
+1. `configurable` 为 false 或者 true
+   1. `writable` 为 true，可以修改值
+   2. `writable` 为 false，不可以修改值
+2. `configurable` 为 false
    1. 再使用 `Object.defineProperty()` 定义该属性会报错
-3. writable 为 false，即使修改值也不会生效
-   1. configurable 为 true，可以通过 `Object.defineProperty()` 定义 value 来改写值，或者定义 writable 为 true 再改写值
+3. `writable` 为 false，即使修改值也不会生效
+   1. `configurable` 为 true，可以通过 `Object.defineProperty()` 定义 value 来改写值，或者定义 writable 为 true 再改写值
 
 #### 示例
 
@@ -681,8 +684,8 @@ Object.defineProperties(obj, {
 
 参数
 
-- obj：要查找其属性的对象
-- prop：要检索其描述的属性的名称或 Symbol。
+- `obj`：要查找其属性的对象
+- `prop`：要检索其描述的属性的名称或 Symbol。
 
 返回值
 

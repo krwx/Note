@@ -53,15 +53,15 @@
 
 ```css
 /* 类型选择器 */
-span{
+span {
 
 }
 /* 类选择器 */
-.className{
+.className {
 
 }
 /* ID 选择器 */
-#id{
+#id {
 
 }
 /* 一个元素有多个类，连着写 */
@@ -74,13 +74,13 @@ span{
 
 | 选择器 | 示例 | 描述 |
 | ---- | ---- | ---- |
-| [attr] |a[title] |匹配带有一个名为attr的属性的元素——方括号里的值。|
-| [attr=value]| a[href="https://example.com"]| 匹配带有一个名为attr的属性的元素，其值为value——引号中的字符串。|
-| [attr~=value]| p[class~="special"]| 匹配带有一个名为attr的属性的元素，其值为value，或者匹配带有一个attr属性的元素，其值有一个或者更多，至少有一个和value匹配。注意，在一列中的好几个值，是用空格隔开的。|
-| [attr&#124;=value]| div[lang&#124;="zh"] | 匹配带有一个名为attr的属性的元素，其值可正为value，或者开始为value，后面紧随着一个连字符（即后面紧跟着 - ）。|
-| [attr^=value]| li[class^="box-"]| 匹配带有一个名为attr的属性的元素，其值开头为value子字符串。|
-| [attr$=value]| li[class$="-box"]| 匹配带有一个名为attr的属性的元素，其值结尾为value子字符串|
-| [attr*=value]| li[class*="box"]| 匹配带有一个名为attr的属性的元素，其值的字符串中的任何地方，至少出现了一次value子字符串。|
+| `[attr]` |`a[title]` |匹配带有一个名为attr的属性的元素——方括号里的值。|
+| `[attr=value]`| `a[href="https://example.com"]`| 匹配带有一个名为attr的属性的元素，其值为value——引号中的字符串。|
+| `[attr~=value]`| `p[class~="special"]`| 匹配带有一个名为attr的属性的元素，其值为value，或者匹配带有一个attr属性的元素，其值有一个或者更多，至少有一个和value匹配。注意，在一列中的好几个值，是用空格隔开的。|
+| `[attr&#124;=value]`| `div[lang&#124;="zh"]` | 匹配带有一个名为attr的属性的元素，其值可正为value，或者开始为value，后面紧随着一个连字符（即后面紧跟着 - ）。|
+| `[attr^=value]`| `li[class^="box-"]`| 匹配带有一个名为attr的属性的元素，其值开头为value子字符串。|
+| `[attr$=value]`| `li[class$="-box"]`| 匹配带有一个名为attr的属性的元素，其值结尾为value子字符串|
+| `[attr*=value]`| `li[class*="box"]`| 匹配带有一个名为attr的属性的元素，其值的字符串中的任何地方，至少出现了一次value子字符串。|
 
 在大小写不敏感的情况下，匹配属性值的话，你可以在闭合括号之前，使用i值
 
@@ -95,7 +95,8 @@ li[class^="a" i] {
 
 #### 伪类
 
-伪类是选择器的一种，它用于选择处于特定状态的元素。一些例子如下：  
+伪类是选择器的一种，它**用于选择处于特定状态的元素**。一些例子如下：
+
 |伪类|含义|
 |--|--|
 |:first-child| 第一个子元素  |
@@ -120,23 +121,23 @@ li[class^="a" i] {
 相同点：  
 
 - 做的事情是一样的，作用是一样的
-- 使用 :is() 或 :where() 时，如果一个选择器无法解析，整个选择器列表不会被视为无效，而是会忽略不正确或不支持的选择器，并使用其他的选择器。  
+- 使用 `:is()` 或 `:where()` 时，如果一个选择器无法解析，整个选择器列表不会被视为无效，而是会忽略不正确或不支持的选择器，并使用其他的选择器。  
 
 区别：
 
-- :is() 会计入整个选择器的优先级（它采用其最具体参数的优先级），而 :where() 的优先级为 0。
+- `:is()` 会计入整个选择器的优先级（它采用其最具体参数的优先级），而 `:where()` 的优先级为 0。
 
 #### 伪元素
 
 伪元素以类似方式表现，不过表现得是像你往标记文本中加入全新的 HTML 元素一样，而不是向现有的元素上应用类。伪元素开头为双冒号`::`。一些例子如下：
 
-- ::first-line -- 伪元素选择器会值得信赖地做到这件事——即使单词/字符的数目改变，它也只会选中第一行。  
-- ::first-letter -- 匹配元素的第一个字母。  
-- ::selection -- 匹配文档中被选择的那部分。  
+- `::first-line` -- 伪元素选择器会值得信赖地做到这件事——即使单词/字符的数目改变，它也只会选中第一行。  
+- `::first-letter` -- 匹配元素的第一个字母。  
+- `::selection` -- 匹配文档中被选择的那部分。  
 
 #### 生成带有::before 和::after 的内容
 
-::before 和 ::after 与 content属性一同使用，使用 CSS 将内容插入到你的文档中中。通常不会插入内容，而是插入图标或者图案
+`::before` 和 `::after` 与 `content` 属性一同使用，使用 CSS 将内容插入到你的文档中中。通常不会插入内容，而是插入图标或者图案
 
 ```css
 /* 这里是在元素前插入了一段内容 */
@@ -180,7 +181,7 @@ li[class^="a" i] {
 
 3. 邻接兄弟  
     邻接兄弟选择器（+）用来选中恰好处于另一个**在继承关系上同级的元素旁边的物件**。  
-    例如，选中所有紧随`<p>`元素之后的`<img>`元素：
+    例如，选中所有**紧随`<p>`元素之后的`<img>`元素**：
 
     ```css
      p + img {
@@ -201,7 +202,7 @@ li[class^="a" i] {
 
 ## 自定义属性（--*）：CSS 变量
 
-带有前缀 -- 的属性名，比如 --example--name，表示的是带有值的自定义属性，其可以通过 `var()` 函数在全文档范围内复用的。
+带有前缀 `--` 的属性名，比如 `--example--name`，表示的是带有值的自定义属性，其可以通过 `var()` 函数在全文档范围内复用的。
 
 例子：
 
@@ -266,33 +267,33 @@ CSS 为控制继承提供了五个特殊的通用属性值。每个 CSS 属性�
 > 否定（:not()）和任意匹配（:is()）伪类本身对优先级没有影响，但它们的参数则会带来影响。参数中，对优先级算法有贡献的参数的优先级的最大值将作为该伪类选择器的优先级。
 
 内联样式，即 style 属性内的样式声明，优先于所有普通的样式，无论其优先级如何。  
-少用 !important。
+少用 `!important`。
 
 ## CSS3 动画
 
 ### transform 属性
 
-- transform：none ； 默认值
-- transform：translate（）；移动  平移  单位是px
-- transform：rotate（）；旋转  单位是deg   deg度数
-- transform：scale（）；缩放  没有单位  默认值是1
-- transform：skew（）；倾斜   单位是deg
-- transform：matrix（）；矩阵
-- transform：perspective（）；景深   视距  单位是px
+- `transform：none` ； 默认值
+- `transform：translate（）`；移动  平移  单位是px
+- `transform：rotate（）`；旋转  单位是deg   deg度数
+- `transform：scale（）`；缩放  没有单位  默认值是1
+- `transform：skew（）`；倾斜   单位是deg
+- `transform：matrix（）`；矩阵
+- `transform：perspective（）`；景深   视距  单位是px
 
 ### transform-origin 属性
 
-transform-origin 属性表示在对元素进行变换的时候，设置围绕哪个点进行变化的。默认情况，变换的原点在元素的中心点，即是元素X轴和Y轴的50%处。X 轴和 Y 轴的起点为元素的左上角。
+`transform-origin` 属性表示在对元素进行变换的时候，设置围绕哪个点进行变化的。默认情况，变换的原点在元素的中心点，即是元素X轴和Y轴的50%处。X 轴和 Y 轴的起点为元素的左上角。
 
-用法：transform-origin: x-axis y-axis z-axis;  
+用法：`transform-origin: x-axis y-axis z-axis`;  
 取值为 `<length><percentage>`，或 `left, center, right, top, bottom`关键字中的一个。  
 如果取值为数值，那么是从元素的左上角开始算起。
 
 ### 使用动画
 
-1. 设置 keyframes  
-   @keyframes 规则内指定一个 CSS 样式和动画将逐步从目前的样式更改为新的样式。  
-   两种设置方式：1、使用 from、to； 2、使用百分比，尽量都设置0%和100%
+1. 设置 `keyframes`  
+   `@keyframes` 规则内指定一个 CSS 样式和动画将逐步从目前的样式更改为新的样式。  
+   两种设置方式：1、使用 `from、to`； 2、使用百分比，尽量都设置0%和100%
 
    ```css
     @keyframes myfirst
@@ -346,7 +347,8 @@ transform-origin 属性表示在对元素进行变换的时候，设置围绕哪
 
 ## CSS3 过渡
 
-CSS3 过渡是元素从一种样式逐渐改变为另一种的效果。  
+CSS3 过渡是元素从一种样式逐渐改变为另一种的效果。
+
 要设置的：1、指定要添加效果的CSS属性；2、指定效果的持续时间，如果没有指定持续时间，则过渡没有效果。  
 
 ```css
@@ -375,8 +377,8 @@ div:hover
 
 1. 流式布局
     流式布局就是百分比布局，也称非固定像素布局。它通过将盒子的宽度设置成百分比来根据屏幕的宽度来进行伸缩，不受固定像素的限制，内容向两侧填充。流式布局方式是移动web开发中使用的比较常见的布局方式。设置以下属性是为了保护文本内容无限制扩张或者页面收缩导致内容丢失。
-2. flex布局  
-3. meta媒体查询  
+2. `flex` 布局  
+3. `meta` 媒体查询  
     meta标签，通过媒体查询 按照不同手机的像素宽高不同，进行条件匹配
 
     ```css
@@ -386,9 +388,9 @@ div:hover
     ```
 
     搭配 rem 使用：rem适配布局
-    - em：子元素字体大小单位如果使用em是相对于父元素字体大小，而元素的width/height/padding/margin属性用em的话则是相对于该元素的font-size大小。
-    - rem：相对于根元素html。
-4. vw/vh布局  
+    - `em`：子元素字体大小单位如果使用em是相对于父元素字体大小，而元素的 `width/height/padding/margin` 属性用em的话则是相对于该元素的font-size大小。
+    - `rem`：相对于根元素 `html`。
+4. `vw/vh` 布局  
     vwl/vh是一个相对单位（类似em和rem相对单位)，所以不同视口（屏幕）下，宽高可以一起变化完成适配。  
     vw是viewport width：视口宽度单位；vh是viewport height：视口高度单位。  
     它们是相对视口的尺寸计算：1vw = 1/100视口宽度，1vh = 1/100视口高度。（固定分为100份）  
@@ -466,7 +468,7 @@ css
 
 ## @Media
 
-@media 规则可用于基于一个或多个媒体查询的结果来应用样式表的一部分。  
+`@media` 规则可用于基于一个或多个媒体查询的结果来应用样式表的一部分。  
 使用它，你可以指定一个媒体查询和一个 CSS 块，当且仅当该媒体查询与正在使用其内容的设备匹配时，该 CSS 块才能应用于该文档。
 
 例子：  
@@ -567,66 +569,66 @@ Flexbox 是 CSS 弹性盒子布局模块（Flexible Box Layout Module）的缩�
 
 #### 属性
 
-- flex-direction
+- `flex-direction`
   - 定义了主轴的方向
   - 默认值为 row。
-  - row：行；column：列；row-reverse：方向反的行；column-reverse：方向反的列
-- flex-warp
+  - `row`：行；`column`：列；`row-reverse`：方向反的行；`column-reverse`：方向反的列
+- `flex-warp`
   - 指定 flex 元素单行显示还是多行显示。如果允许换行，这个属性允许你控制行的堆叠方向。
-  - nowrap：默认值。flex 的元素被摆放到到一行，这可能导致 flex 容器溢出。
-  - wrap：flex 元素 被打断到多个行中。cross-start 会根据 flex-direction 的值等价于 start 或before。cross-end 为确定的 cross-start 的另一端。
-  - wrap-reverse：和 wrap 的行为一样，但是 cross-start 和 cross-end 互换。
-- flex-flow
+  - `nowrap`：默认值。flex 的元素被摆放到到一行，这可能导致 flex 容器溢出。
+  - `wrap`：flex 元素 被打断到多个行中。cross-start 会根据 flex-direction 的值等价于 start 或before。cross-end 为确定的 cross-start 的另一端。
+  - `wrap-reverse`：和 wrap 的行为一样，但是 cross-start 和 cross-end 互换。
+- `flex-flow`
   - 是 flex-direction 和 flex-wrap 的简写
   - 例子：`flex-flow: row wrap`;
-- flex-grow
+- `flex-grow`
   - 设置 flex 项 主尺寸 的 flex **增长**系数。（就是会变大的参数）
   - 属性规定为一个 number，负值无效，默认为 0
   - 这个属性规定了 flex-grow 项在 flex 容器中分配剩余空间的相对比例
   - 剩余空间是 flex 容器的大小减去所有 flex 项的大小加起来的大小。**如果所有的兄弟项目都有相同的 flex-grow 系数，那么所有的项目将剩余空间按相同比例分配**，否则将根据不同的 flex-grow 定义的比例进行分配。
-- flex-shrink
+- `flex-shrink`
   - 指定了 flex 元素的**收缩**规则。flex 元素**仅在默认宽度之和大于容器的时候才会发生收缩**，其收缩的大小是依据 flex-shrink 的值。
   - 属性规定为一个 number，负值无效，默认为 1
   - 数字越大，收缩得越厉害
-- flex-basic
+- `flex-basic`
   - 指定了 flex 元素在主轴方向上的**初始大小**
   - 当一个元素同时被设置了 flex-basis (除值为 auto 外) 和 width，flex-basis 具有更高的优先级。
   - 取值为 关键词 content 或者 <'width'>
-  - 默认值为 auto
-  - 取值为 content 时，可以取 content、fill、max-content、min-content、fit-content
-  - 取值为 width 时，输入具体的长度值或百分比
-- flex
+  - 默认值为 `auto`
+  - 取值为 `content` 时，可以取 content、fill、max-content、min-content、fit-content
+  - 取值为 `width` 时，输入具体的长度值或百分比
+- `flex`
   - 是 flex-grow、flex-shrink、flex-basic 的缩写
-- align-items
+- `align-items`
   - 控制 flex 项在**交叉轴**上的位置。
   - **默认的值是 stretch**，其会使所有 flex 项沿着交叉轴的方向拉伸以填充父容器。如果父容器在交叉轴方向上没有固定宽度（即高度），则所有 flex 项将变得与最长的 flex 项一样长（即高度保持一致）。
-  - center：使 flex 项保持其原有的高度，但是会在交叉轴居中。
-  - flex-start：元素向交叉轴起点对齐。
-  - flex-end：元素向交叉轴终点对齐。
-  - center：元素在交叉轴轴居中。如果元素在交叉轴轴上的高度高于其容器，那么在两个方向上溢出距离相同。
-  - baseline、first baseline、last baseline  
+  - `center`：使 flex 项保持其原有的高度，但是会在交叉轴居中。
+  - `flex-start`：元素向交叉轴起点对齐。
+  - `flex-end`：元素向交叉轴终点对齐。
+  - `center`：元素在交叉轴轴居中。如果元素在交叉轴轴上的高度高于其容器，那么在两个方向上溢出距离相同。
+  - `baseline、first baseline、last baseline`  
     沿着交叉轴方向，按照项目内的**文字**对齐
-- justify-content
+- `justify-content`
   - 控制 flex 项在主轴上的位置。
-  - **默认值是 flex-start**，这会使所有 flex 项都位于主轴的开始处。
-  - flex-end 让 flex 项到结尾处。
-  - center 可以让 flex 项在主轴居中。
-  - space-around 会使所有 flex 项沿着主轴均匀地分布，在任意一端都会留有一点空间。
-  - space-between，它和 space-around 非常相似，只是它不会在两端留下任何空间。
-- order
+  - **默认值是 `flex-start`**，这会使所有 flex 项都位于主轴的开始处。
+  - `flex-end` 让 flex 项到结尾处。
+  - `center` 可以让 flex 项在主轴居中。
+  - `space-around` 会使所有 flex 项沿着主轴均匀地分布，在任意一端都会留有一点空间。
+  - `space-between`，它和 space-around 非常相似，只是它不会在两端留下任何空间。
+- `order`
   - 给 flex 项排序
   - 所有 flex 项默认的 order 值是 0。
   - order 值大的 flex 项比 order 值小的在显示顺序中更靠后。
-- align-content
+- `align-content`
   - 定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。
   - 该属性对单行弹性盒子模型无效。（即：带有 flex-wrap: nowrap）。
-  - start：所有行从容器的起始边缘开始填充。
-  - end：所有行从容器的结束边缘开始填充。
-  - center：与交叉轴的中点对齐。
-  - space-between：所有行在容器中平均分布。相邻两行间距相等。容器的垂直轴起点边和终点边分别与第一行和最后一行的边对齐。
-  - space-around：所有行在容器中平均分布，相邻两行间距相等。容器的垂直轴起点边和终点边分别与第一行和最后一行的距离是相邻两行间距的一半。
-  - space-evenly：所有行沿垂直轴均匀分布在对齐容器内。每对相邻的项之间的间距，主开始边和第一项，以及主结束边和最后一项，都是完全相同的。
-  - stretch：拉伸所有行来填满剩余空间。剩余空间平均地分配给每一行。
+  - `start`：所有行从容器的起始边缘开始填充。
+  - `end`：所有行从容器的结束边缘开始填充。
+  - `center`：与交叉轴的中点对齐。
+  - `space-between`：所有行在容器中平均分布。相邻两行间距相等。容器的垂直轴起点边和终点边分别与第一行和最后一行的边对齐。
+  - `space-around`：所有行在容器中平均分布，相邻两行间距相等。容器的垂直轴起点边和终点边分别与第一行和最后一行的距离是相邻两行间距的一半。
+  - `space-evenly`：所有行沿垂直轴均匀分布在对齐容器内。每对相邻的项之间的间距，主开始边和第一项，以及主结束边和最后一项，都是完全相同的。
+  - ``stretch``：拉伸所有行来填满剩余空间。剩余空间平均地分配给每一行。
 
 ### Grid 布局（网格布局）
 
@@ -913,7 +915,7 @@ export default () => {
 
 ### 介绍
 
-CSS 的 Float（浮动），会使元素向左或向右移动，其周围的元素也会重新排列。
+CSS 的 `Float` （浮动），会使元素向左或向右移动，其周围的元素也会重新排列。
 
 - 元素的水平方向浮动，意味着元素只能左右移动而不能上下移动。
 - 一个浮动元素会尽量向左或向右移动，直到它的外边缘碰到包含框或另一个浮动框的边框为止。
