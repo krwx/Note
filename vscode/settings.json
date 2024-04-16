@@ -1,0 +1,48 @@
+{
+    "workbench.iconTheme": "vscode-icons",
+    "explorer.confirmDelete": false,
+    "files.eol": "\n",
+    "editor.fontSize": 18,
+    "editor.bracketPairColorization.enabled": false,
+    "editor.minimap.enabled": false,
+    "editor.fontVariations": false,
+    "editor.fontWeight": "bold",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "markdownlint.config": {
+        "MD033": {
+            "allowed_elements": [ "br" ]
+        },
+        "MD024": {
+            "siblings_only": true
+        },
+        "MD010": {
+            "code_blocks": false
+        }
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "liveServer.settings.donotShowInfoMsg": true,
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.codeActionsOnSave": {
+
+
+
+
+    },
+    "markdown-preview-enhanced.previewTheme": "github-light.css",
+    "markdown-preview-enhanced.codeBlockTheme": "github.css",
+    "markdown-preview-enhanced.revealjsTheme": "none.css",
+    "workbench.colorTheme": "Visual Studio Dark",
+    "workbench.editorAssociations": {
+        "*.pdf": "pdf.preview",
+        "*.md": "default"
+    },
+    "vscode-office.previewCode": false,
+    "editor.indentSize": "tabSize"
+}
