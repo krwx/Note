@@ -18,6 +18,9 @@
     - [基础配置](#基础配置)
     - [loader](#loader)
     - [source map](#source-map)
+  - [公共路径](#公共路径)
+    - [基于环境设置](#基于环境设置)
+    - [在运行时设置](#在运行时设置)
 
 ## 起步
 
@@ -462,4 +465,45 @@ module.exports = {
     // ...
     devtool: 'inline-source-map',
 };
+```
+
+## 公共路径
+
+通过 `publicPath` 配置选项来**指定应用程序中所有资源的基础路径**。
+
+### 基于环境设置
+
+- 正常情况
+  - 在开发环境中，我们通常有一个 `assets/` 文件夹，它与索引页面位于同一级别。这没太大问题
+- 使用 `publicPath` 的情况
+  - 如果我们将**所有静态资源**托管至 `CDN`，然后想在生产环境中使用呢？
+
+想要解决这个问题，可以直接使用一个有着悠久历史的 `environment variable`(环境变量)。假设我们有一个变量 `ASSET_PATH`：
+
+```js
+import webpack from 'webpack';
+
+// 尝试使用环境变量，否则使用根路径
+const ASSET_PATH = process.env.ASSET_PATH || '/';
+
+export default {
+  output: {
+    publicPath: ASSET_PATH,
+  },
+
+  plugins: [
+    // 这可以帮助我们在代码中安全地使用环境变量
+    new webpack.DefinePlugin({
+      'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
+    }),
+  ],
+};
+```
+
+### 在运行时设置
+
+另一个可能出现的情况是，需要在运行时设置 `publicPath`。`webpack` 暴露了一个名为 `__webpack_public_path__` 的全局变量。所以在应用程序的 `entry point` 中，可以直接如下设置：
+
+```js
+__webpack_public_path__ = process.env.ASSET_PATH;
 ```

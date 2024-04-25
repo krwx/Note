@@ -1,7 +1,11 @@
-# 介绍
+# vite.config.js 文件
+
+## 介绍
+
 仅 vue 3 项目生效
 
-# 基础配置
+## 基础配置
+
 > 必须引用 `'@dcloudio/vite-plugin-uni'` 并且添加到 `plugins` 中
 
 ```js
@@ -15,7 +19,8 @@ export default defineConfig({
 
 - 默认已经配置了 `@` 的别名，直接使用即可，不需要配置
 
-# 添加别名
+## 添加别名
+
 ```js
 	resolve: {
 		alias: {
@@ -24,7 +29,8 @@ export default defineConfig({
 	}
 ```
 
-# 发布时删除 console
+## 发布时删除 console
+
 ```js
 import { defineConfig } from 'vite';
 import uni from '@dcloudio/vite-plugin-uni';

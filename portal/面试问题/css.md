@@ -28,6 +28,8 @@
   - [24. flex布局怎么实现垂直居中。为什么 justify-content：center 可以实现](#24-flex布局怎么实现垂直居中为什么-justify-contentcenter-可以实现)
   - [25. css 自定义颜色的四种方法（包括RGB（百分比））](#25-css-自定义颜色的四种方法包括rgb百分比)
   - [26. 有一个字体文件很大,但是只需要其中几种字体,怎么处理](#26-有一个字体文件很大但是只需要其中几种字体怎么处理)
+  - [27. animation 有哪些相关的值](#27-animation-有哪些相关的值)
+  - [28. 怎么实现一个 div 水平向右再向左的动画](#28-怎么实现一个-div-水平向右再向左的动画)
 
 ## 1. 移动端布局有哪些 / 响应式布局是什么 / 响应式布局有哪些，怎么使用
 
@@ -357,3 +359,42 @@ font-spider index.html
 ```
 
 命令执行完会在原字体处生成一个新的字体文件，而旧的文件会保存在 `font-spider` 文件夹下，新生成的就是压缩后的字体文件。至此，工具的使用方法介绍完了。
+
+## 27. animation 有哪些相关的值
+
+- `@keyframes`：规定动画。
+- `animation`：所有动画属性的简写属性。
+- `animation-name`：规定 `@keyframes` 动画的名称。
+- `animation-duration`：规定动画完成一个周期所花费的秒或毫秒。默认是 0。
+- `animation-timing-function`：规定动画的速度曲线。默认是 "ease"。
+  - `linear`：动画从头到尾的速度是相同的。
+  - `ease`：默认。动画以低速开始，然后加快，在结束前变慢。
+  - `ease-in`：动画以低速开始。
+  - `ease-out`：动画以低速结束。
+  - `ease-in-out`：动画以低速开始和结束
+- `animation-fill-mode`：规定当动画不播放时（当动画完成时，或当动画有一个延迟未开始播放时），要应用到元素的样式。
+- `animation-delay`：规定动画何时开始。默认是 0。
+- `animation-iteration-count`：规定动画被播放的次数。默认是 1。持续播放设置为 infinite
+- `animation-direction`：规定动画是否在下一周期逆向地播放。默认是 "normal"。
+- `animation-play-state`：规定动画是否正在运行或暂停。默认是 "running"。
+
+## 28. 怎么实现一个 div 水平向右再向左的动画
+
+```html
+	<body>
+		<div class="ani">123</div>
+	</body>
+	<style>
+		@keyframes move {
+			50% {
+				transform: translate(100px);
+			}
+			100% {
+				transform: translate(0px);
+			}
+		}
+		.ani {
+			animation: move 5s;
+		}
+	</style>
+```
