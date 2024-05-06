@@ -20,6 +20,7 @@
     - [font-style](#font-style)
     - [font-weight](#font-weight)
   - [filter](#filter)
+  - [margin](#margin)
 
 ## display
 
@@ -511,3 +512,14 @@ CSS `filter` 属性将**模糊或颜色偏移**等图形效果应用于元素。
 - sepia()
   - 将图像转换为深褐色。值为 100% 则完全是深褐色的，值为 0% 图像无变化。
   - filter: sepia(100%);
+
+## margin
+
+```css
+margin-top: 5%; /* 相对于最近的块容器的宽度 */
+margin-right: 5%; /* 相对于最近的块级容器的宽度 */
+margin-bottom: 5%; /* 相对于最近的块容器的宽度 */
+margin-left: 5%; /* 相对于最近的块级容器的宽度 */
+```
+
+注意：**`margin` 设置百分比都是相对于最近的块级容器的宽度**

@@ -11,6 +11,11 @@
     - [2. 初始化 router](#2-初始化-router)
     - [3. App.vue 显示路由输出结果](#3-appvue-显示路由输出结果)
     - [4. 使用 router 插件](#4-使用-router-插件)
+  - [使用 vue-i18n](#使用-vue-i18n)
+    - [1. 安装包](#1-安装包-2)
+    - [2. 定义语言包、创建实例](#2-定义语言包创建实例)
+    - [3. 注册](#3-注册)
+    - [4. 组件使用](#4-组件使用)
 
 ## 创建项目
 
@@ -51,7 +56,7 @@ const str = ref("123");
 ### 1. 安装包
 
 ```shell
-  npm install element-plus --save
+npm install element-plus --save
 ```
 
 ### 2. 完整引入
@@ -99,6 +104,8 @@ export default defineConfig({
   ],
 })
 ```
+
+在 `vue` 文件直接使用元素即可，不用在 `script` 导入组件
 
 ## 使用 vue-router
 
@@ -169,4 +176,92 @@ const app = createApp(App)
 app.use(router)
 
 app.mount('#app')
+```
+
+## 使用 vue-i18n
+
+`Vue I18` 是 `Vue.js` 的国际化插件，它可以轻松地将一些本地化功能集成到应用程序中。
+
+插件基本思路：
+
+1. 定义语言包：需要几种语言展示，就定义几个语言包。
+2. 组合语言包对象：创建对象，对语言包进行组合，对象的 `key` 为语言包引用，值为语言包对象。
+3. 创建实例：创建 `vue-i18n` 类的对象，添加 `message` 和 `locale` 属性。
+4. 挂载：挂载创建的实例对象。
+
+### 1. 安装包
+
+```sh
+npm install vue-i18n@9
+```
+
+### 2. 定义语言包、创建实例
+
+新建 `lang` 文件夹，新建 `en.ts` 和 `zh-cn.ts` 文件，在文件里面定义语言。下面为 `zh-cn.ts` 文件的代码：
+
+```ts
+// src/langurage/zh.js
+// 定义中文语言包对象
+export default {
+  navigateBar: {
+    hotspot: '热点',
+    experience: '经验',
+    focus: '关注',
+    recommend: '推荐'
+  },
+  tabs: {
+    work: '作品',
+    private: '私密',
+    collect: '收藏',
+    like: '喜欢'
+  }
+}
+```
+
+在 `lang` 文件夹新建 `index.ts` 文件，声明组合的语言包。创建实例，并导出
+
+```ts
+import en from './en'
+import zh from './zh-cn'
+
+// 组合语言包对象
+const messages = {
+  en,
+  zh
+}
+
+// 创建实例对象
+const i18n = createI18n({
+  legacy: false, // 设置为 false，启用 composition API 模式
+  messages,
+  locale: 'zh-cn',
+  fallbackLocale: 'zh-cn' //如果出错，则默认的语言：中文简体
+})
+
+export default i18n
+```
+
+### 3. 注册
+
+在 `main.ts` 文件注册
+
+```ts
+// ...
+
+import i18n from '@/lang/index'
+
+const app = createApp(App)
+
+// 注册对象
+app.use(i18n)
+
+app.mount('#app')
+```
+
+### 4. 组件使用
+
+```vue
+<template>
+    <div>{{ $t("tabs.work") }}<div>
+</template>
 ```
