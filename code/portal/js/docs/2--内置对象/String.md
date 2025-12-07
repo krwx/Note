@@ -2,23 +2,21 @@
 
 - [方法](#方法)
   - [String.prototype.substr() （已弃用: 不再推荐使用该特性）](#stringprototypesubstr-已弃用-不再推荐使用该特性)
-    - [语法](#语法)
   - [String.prototype.slice()](#stringprototypeslice)
-    - [语法](#语法-1)
   - [String.prototype.substring()](#stringprototypesubstring)
-    - [语法](#语法-2)
     - [substring() 和 substr() 之间的区别](#substring-和-substr-之间的区别)
     - [substring() 和 slice() 之间的区别](#substring-和-slice-之间的区别)
     - [替换字符串的方法](#替换字符串的方法)
   - [String.prototype.replace()](#stringprototypereplace)
-    - [语法](#语法-3)
     - [指定函数为替换项](#指定函数为替换项)
+  - [padStart()](#padstart)
+  - [padEnd()](#padend)
 
 ## String.prototype.substr() （已弃用: 不再推荐使用该特性）
 
 String 值的 `substr()` 方法返回该字符串的一部分，从指定的索引开始，然后**扩展到给定数量的字符**。
 
-### 语法
+**语法**：
 
 ```js
 substr(start)
@@ -60,7 +58,7 @@ console.log(aString.substr(20, 2)); // ''
 
 `slice()` 方法提取字符串的一部分，并将其**作为新字符串返回**，而**不修改原始字符串**。
 
-### 语法
+**语法**：
 
 ```js
 slice(indexStart)
@@ -101,7 +99,7 @@ str1.slice(4, -1); // 'morning is upon us'
 
 String 的 `substring()` 方法返回该字符串**从起始索引到结束索引（不包括）的部分**，如果未提供结束索引，则返回到字符串末尾的部分。
 
-### 语法
+**语法**：
 
 ```js
 substring(indexStart)
@@ -188,7 +186,7 @@ function replaceString(oldS, newS, fullS) {
 - 该方法并不改变调用它的字符串本身，而是返回一个新的字符串。
 - **字符串模式只会被替换一次。要执行全局搜索和替换，请使用带有 g 标志的正则表达式或使用 `replaceAll()`**。
 
-### 语法
+**语法**：
 
 参数：  
 
@@ -235,3 +233,45 @@ function replacer(match, p1, p2, p3, offset, string) {
 const newString = "abc12345#$*%".replace(/([^\d]*)(\d*)([^\w]*)/, replacer);
 console.log(newString); // abc - 12345 - #$*%
 ```
+
+## padStart()
+
+`padStart()` 方法用另一个字符串填充当前字符串（如果需要会重复填充），直到达到给定的长度。填充是从当前字符串的开头开始的。
+
+语法：
+
+```js
+padStart(targetLength)
+padStart(targetLength, padString)
+```
+
+参数
+
+- targetLength
+  - 当前 str **填充后的长度**。
+  - 如果该值小于或等于 str.length，则会直接返回当前 str。
+
+- padString 可选
+  - 用于填充当前 str 的字符串。
+  - 如果 padString 太长，无法适应 targetLength，则会从末尾被截断。
+  - 默认值为 Unicode“空格”字符（U+0020）。
+
+返回值
+
+- 在开头填充 padString 直到达到给定的 targetLength 所形成的 String。
+
+例子：
+
+```js
+"abc".padStart(10); // "       abc"
+"abc".padStart(10, "foo"); // "foofoofabc"
+"abc".padStart(6, "123465"); // "123abc"
+"abc".padStart(8, "0"); // "00000abc"
+"abc".padStart(1); // "abc"
+```
+
+## padEnd()
+
+`padEnd()` 方法会将当前字符串从末尾开始填充给定的字符串（如果需要会重复填充），直到达到给定的长度。填充是从当前字符串的末尾开始的。
+
+语法与 `padStart()` 相同。
