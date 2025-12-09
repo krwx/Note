@@ -5,17 +5,19 @@ os 模块提供了非常丰富的方法用来处理文件和目录
 - [OS](#os)
   - [函数](#函数)
     - [os.getcwd()](#osgetcwd)
-    - [rename()](#rename)
-    - [mkdir(path)](#mkdirpath)
-    - [makedirs(name)](#makedirsname)
+    - [os.rename()](#osrename)
+    - [os.mkdir(path)](#osmkdirpath)
+    - [os.makedirs(name)](#osmakedirsname)
     - [os.scandir(path)](#osscandirpath)
     - [os.listdir(path='.')](#oslistdirpath)
-    - [remove()](#remove)
-    - [walk()](#walk)
-    - [stat()](#stat)
+    - [os.remove()](#osremove)
+    - [os.walk()](#oswalk)
+    - [os.stat()](#osstat)
   - [对象](#对象)
     - [DirEntry](#direntry)
     - [stat\_result](#stat_result)
+  - [进程参数](#进程参数)
+    - [os.environ](#osenviron)
   - [其他系统信息](#其他系统信息)
     - [os.sep](#ossep)
 
@@ -32,7 +34,7 @@ print(os.getcwd())
 # D:\Documents\Project\pythonTest
 ```
 
-### rename()
+### os.rename()
 
 语法：`os.rename(src, dst, *, src_dir_fd=None, dst_dir_fd=None)`
 
@@ -44,13 +46,13 @@ print(os.getcwd())
 os.rename("213.txt", "312.txt")
 ```
 
-### mkdir(path)
+### os.mkdir(path)
 
 创建一个名为 path 的目录。path 如果包含多级目录会报错
 
 `os.mkdir("folder")`
 
-### makedirs(name)
+### os.makedirs(name)
 
 递归目录创建函数。与 `mkdir()` 类似，但会自动创建到达最后一级目录所需要的中间目录。
 
@@ -101,7 +103,7 @@ for path in files:
     print(path)
 ```
 
-### remove()
+### os.remove()
 
 语法：`os.remove(path, *, dir_fd=None)`
 
@@ -117,7 +119,7 @@ import os
 os.remove(file_path)
 ```
 
-### walk()
+### os.walk()
 
 语法：`os.walk(top, topdown=True, onerror=None, followlinks=False)`
 
@@ -244,7 +246,7 @@ file:  abc.txt
 """
 ```
 
-### stat()
+### os.stat()
 
 语法：`os.stat(path, *, dir_fd=None, follow_symlinks=True)`
 
@@ -300,6 +302,25 @@ file:  abc.txt
 - `st_birthtime`
   - 以秒为单位的**文件创建时间**。
   - `st_birthtime_ns` ：以纳秒为单位。
+
+## 进程参数
+
+### os.environ
+
+一个 mapping 对象，其中键值是代表进程环境的字符串。 可以直接修改该对象来修改环境变量。
+
+> 在 Windows 上，这些键会被转换为**大写形式**。 这也会在获取、设备或删除条目时被应用。 例如，`environ['monty'] = 'python'` 会将键 `'MONTY'` 映射到值 `'python'`。
+
+```py
+import os
+
+# 获取环境变量
+path = os.environ.get('PATH')
+print(path)
+
+# 设置环境变量
+os.environ['MY_VAR'] = 'my_value'
+```
 
 ## 其他系统信息
 

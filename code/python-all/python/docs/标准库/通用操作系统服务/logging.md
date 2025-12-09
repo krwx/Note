@@ -26,6 +26,7 @@
     - [使用日志继承机制](#使用日志继承机制)
     - [使用第三方库](#使用第三方库)
   - [LogRecord 格式](#logrecord-格式)
+    - [LogRecord 添加自定义值](#logrecord-添加自定义值)
   - [handler](#handler-1)
 
 ## 概念
@@ -780,6 +781,21 @@ loguru
 |thread|`%(thread)d`|线程ID（如果可用）|
 |threadName|`%(threadName)s`|线程名（如果可用）|
 |taskName|`%(taskName)s`|asyncio.Task 名称（如果可用）。|
+
+### LogRecord 添加自定义值
+
+在创建时可使用此功能将你自己的值注入 LogRecord。 你可以使用以下模式:
+
+```py
+old_factory = logging.getLogRecordFactory()
+
+def record_factory(*args, **kwargs):
+    record = old_factory(*args, **kwargs)
+    record.custom_attribute = 0xdecafbad
+    return record
+
+logging.setLogRecordFactory(record_factory)
+```
 
 ## handler
 

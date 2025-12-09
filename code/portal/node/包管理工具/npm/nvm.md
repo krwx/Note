@@ -16,8 +16,17 @@
 选择 `nvm-setup.exe` 下载即可
 
 > 最好直接安装在C盘，那么就不要再配环境变量了
-***
-> 如果电脑之前已经下载了 node ，那么安装的时候有可能会卸载掉原来的 node
+
+如果电脑之前已经下载了 node ，那么安装的时候有可能会卸载掉原来的 node。
+
+但是可能没有卸载干净，运行 nvm 命令的时候会报错 `node is not recognized as an internal or external command`。解决方法
+
+1. 寻找这些文件夹并删除它们：
+    - C:\Program Files (x86)\Nodejs
+    - C:\Program Files\Nodejs
+    - C:\Users{User}\AppData\Roaming\npm(或%appdata%\npm)
+    - C:\Users{User}\AppData\Roaming\npm-cache(或%appdata%\npm-cache)
+2. 检查您的 `%PATH%` 环境变量以确保没有引用 `Nodejs` 或 `npm` 存在。
 
 ### 2.2 常用命令
 

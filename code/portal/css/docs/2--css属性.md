@@ -21,6 +21,8 @@
     - [font-weight](#font-weight)
   - [filter](#filter)
   - [margin](#margin)
+  - [color-scheme](#color-scheme)
+    - [与 prefers-color-scheme 的区别](#与-prefers-color-scheme-的区别)
 
 ## display
 
@@ -523,3 +525,75 @@ margin-left: 5%; /* 相对于最近的块级容器的宽度 */
 ```
 
 注意：**`margin` 设置百分比都是相对于最近的块级容器的宽度**
+
+## color-scheme
+
+`color-scheme` 是 CSS 的一个属性，用于**声明元素支持哪些颜色方案**，以便**浏览器**能够相应地调整元素的默认样式。
+
+`color-scheme` 只影响**浏览器默认样式**，不影响自定义样式
+
+语法：
+
+```css
+/* 关键字值 */
+color-scheme: normal;        /* 默认，使用浏览器的默认方案 */
+color-scheme: light;         /* 只支持亮色模式 */
+color-scheme: dark;          /* 只支持暗色模式 */
+color-scheme: light dark;    /* 支持亮色和暗色模式（推荐） */
+color-scheme: only light;    /* 强制亮色，不响应系统变化 */
+color-scheme: only dark;     /* 强制暗色，不响应系统变化 */
+
+/* 全局值 */
+color-scheme: inherit;
+color-scheme: initial;
+color-scheme: revert;
+color-scheme: revert-layer;
+color-scheme: unset;
+```
+
+使用示例：
+
+1、**全局设置（推荐）**
+
+```css
+:root {
+  color-scheme: light dark;
+}
+```
+
+2、**特定元素设置**
+
+```css
+/* 强制某个区域使用暗色 */
+.dark-section {
+  color-scheme: dark;
+}
+
+/* 表单使用系统颜色 */
+form {
+  color-scheme: light dark;
+}
+```
+
+### 与 prefers-color-scheme 的区别
+
+```css
+/* color-scheme: 告诉浏览器支持的方案 */
+:root {
+  color-scheme: light dark;
+}
+
+/* prefers-color-scheme: 根据用户偏好应用样式 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #ffffff;
+  }
+}
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}
+```

@@ -1,5 +1,9 @@
 # useStorage
 
+- [useStorage](#usestorage)
+  - [useLocalStorage](#uselocalstorage)
+  - [useSessionStorage](#usesessionstorage)
+
 `useStorage` 是一个 Vue 组合式函数，用于在 Vue 组件中方便地使用浏览器的本地存储（localStorage 或 sessionStorage）。
 
 `useStorage` 的核心是创建一个响应式引用（Ref）。当你修改这个Ref的值时，修改会自动、双向地同步到对应的 localStorage 中；反之，如果 localStorage 的值被其他方式（如另一个浏览器标签页）改变，这个Ref的值也会自动更新
@@ -28,7 +32,7 @@ const userSettings = useStorage('user-settings', { theme: 'light', volume: 80 })
 userSettings.value.theme = 'dark';
 ```
 
-`useLocalStorage` 通过 `options` 参数提供了强大的自定义能力。
+`useStorage` 通过 `options` 参数提供了强大的自定义能力。
 
 - `serializer`
   - 该参数用于自定义序列化
