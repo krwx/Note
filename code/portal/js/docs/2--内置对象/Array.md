@@ -22,6 +22,7 @@
     - [Array.prototype.flatMap()](#arrayprototypeflatmap)
     - [Array.prototype.reduce()](#arrayprototypereduce)
     - [Array.prototype.reduceRight()](#arrayprototypereduceright)
+    - [Array.prototype.concat()](#arrayprototypeconcat)
 
 ## 方法
 
@@ -152,7 +153,7 @@ console.log(numbers[3]); // undefined；多余的元素会被删除
 - Array.prototype.at()
   - 返回给定索引处的数组元素。接受从最后一项往回计算的负整数。
 
-- Array.prototype.concat()
+- [Array.prototype.concat()](#arrayprototypeconcat)
   - 返回一个新数组，该数组由被调用的数组与其他数组或值连接形成。
 
 - Array.prototype.copyWithin()
@@ -365,7 +366,7 @@ const removed = myFish.splice(2, 0, "drum", "guitar");
 // removed 是 []，没有元素被删除
 ```
 
-在索引 2 处移除 1 个元素，并插入“trumpet”
+在索引 3 处移除 1 个元素
 
 ```js
 const myFish = ["angel", "clown", "drum", "mandarin", "sturgeon"];
@@ -783,6 +784,7 @@ flat(depth)
 
 - `depth` 可选
   - 指定要提取嵌套数组的结构深度，默认值为 `1`。
+  - Infinity 作为最大深度，表示展开所有嵌套层级。
 
 返回值:
 
@@ -983,7 +985,7 @@ reduce(callbackFn, initialValue)
       - `currentValue` 在数组中的索引位置。在第一次调用时，如果指定了 `initialValue` 则为 0，否则为 1。
     - `array`
       - 调用了 `reduce()` 的数组本身。
-- initialValue 可选
+- `initialValue` 可选
   - 第一次调用回调时初始化 `accumulator` 的值。
   - 如果指定了 `initialValue`，则 `callbackFn` 从数组中的第一个值作为 `currentValue` 开始执行。
   - 如果没有指定 `initialValue`，则 `accumulator` 初始化为数组中的第一个值，并且 `callbackFn` 从数组中的第二个值作为 `currentValue` 开始执行。在这种情况下，如果数组为空（没有第一个值可以作为 accumulator 返回），则会抛出错误。
@@ -1029,7 +1031,7 @@ const getMax = (a, b) => Math.max(a, b);
 
 **示例**：
 
-- 展平嵌套数组
+1、展平嵌套数组
 
 ```js
 const flattened = [
@@ -1040,7 +1042,7 @@ const flattened = [
 // flattened 的值是 [0, 1, 2, 3, 4, 5]
 ```
 
-- 统计对象中值的出现次数
+2、统计对象中值的出现次数
 
 ```js
 const names = ["Alice", "Bob", "Tiff", "Bruce", "Alice"];
@@ -1056,7 +1058,9 @@ const countedNames = names.reduce((allNames, name) => {
 // { 'Alice': 2, 'Bob': 1, 'Tiff': 1, 'Bruce': 1 }
 ```
 
-- 使用 `reduce()` 来替代 `.filter().map()`
+3、使用 `reduce()` 来替代 `.filter().map()`
+
+原理：初始值为空数组 `[]`，然后在回调函数中检查每个值，如果满足条件就进行处理并添加到累加器数组中。
 
 ```js
 const numbers = [-5, 6, 2, 0];
@@ -1072,7 +1076,7 @@ const doubledPositiveNumbers = numbers.reduce((accumulator, currentValue) => {
 console.log(doubledPositiveNumbers); // [12, 4]
 ```
 
-- 使用函数组合实现管道
+4、使用函数组合实现管道
 
 ```js
 // 组合使用的构建块
@@ -1099,16 +1103,18 @@ multiply16(16); // 256
 multiply24(10); // 240
 ```
 
-- 在稀疏数组中使用 `reduce()`
-  - `reduce()` 会跳过稀疏数组中缺失的元素，但不会跳过 `undefined` 值。
+5、在稀疏数组中使用 `reduce()`
+
+`reduce()` 会跳过稀疏数组中缺失的元素，但不会跳过 `undefined` 值。
 
 ```js
 console.log([1, 2, , 4].reduce((a, b) => a + b)); // 7
 console.log([1, 2, undefined, 4].reduce((a, b) => a + b)); // NaN
 ```
 
-- 在非数组对象上调用 `reduce()`
-  - `reduce()` 方法读取 `this` 的 `length` 属性，然后访问每个整数索引。
+6、在非数组对象上调用 `reduce()`
+
+`reduce()` 方法读取 `this` 的 `length` 属性，然后访问每个整数索引。
 
 ```JS
 const arrayLike = {
@@ -1123,7 +1129,7 @@ console.log(Array.prototype.reduce.call(arrayLike, (x, y) => x + y));
 
 ### Array.prototype.reduceRight()
 
-`reduceRight()` 方法对累加器（`accumulator`）和数组的每个值（按**从右到左的顺序**）应用一个函数，并使其成为单个值。
+`reduceRight()` 与 `reduce()` 方法功能一样，但它是从数组的`最后一个`元素开始向前遍历数组。
 
 例子：
 
@@ -1151,4 +1157,74 @@ const right = a.reduceRight((prev, cur) => prev + cur);
 
 console.log(left); // "12345"
 console.log(right); // "54321"
+```
+
+### Array.prototype.concat()
+
+`Array.concat()` 是 JavaScript 数组方法，用于合并两个或多个数组，**返回一个新数组**，不会改变原数组。
+
+**基本语法**：
+
+```javascript
+const newArray = array1.concat(array2, array3, ..., arrayN)
+```
+
+**基本用法**：
+
+1、合并数组
+
+```javascript
+const arr1 = [1, 2, 3]
+const arr2 = [4, 5, 6]
+const arr3 = [7, 8, 9]
+
+const result = arr1.concat(arr2, arr3)
+console.log(result)  // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+console.log(arr1)    // [1, 2, 3] - 原数组不变
+```
+
+2、合并数组和值
+
+```javascript
+const arr = [1, 2, 3]
+const result = arr.concat(4, 5, 6)
+console.log(result)  // [1, 2, 3, 4, 5, 6]
+```
+
+3、嵌套数组处理
+
+```javascript
+const arr1 = [1, 2]
+const arr2 = [3, [4, 5]]
+const result = arr1.concat(arr2)
+console.log(result)  // [1, 2, 3, [4, 5]] - 不会展开嵌套数组
+
+const arr1 = [1, 2, [3, 4, [5, 6]]]
+const result1 = [].concat(...arr1)
+console.log(result1)  // [1, 2, 3, 4, [5, 6]]
+```
+
+**与扩展运算符比较**：
+
+```javascript
+// 使用 concat
+const arr1 = [1, 2]
+const arr2 = [3, 4]
+const result1 = arr1.concat(arr2)
+
+// 使用扩展运算符
+const result2 = [...arr1, ...arr2]
+
+// 两者结果相同：[1, 2, 3, 4]
+```
+
+**实际应用场景**：
+
+1、复制数组（浅拷贝）
+
+```javascript
+const original = [1, 2, 3]
+const copy = original.concat()
+console.log(copy)     // [1, 2, 3]
+console.log(copy === original)  // false - 新数组
 ```

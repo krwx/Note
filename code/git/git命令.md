@@ -17,6 +17,7 @@
       - [查看代理](#查看代理)
       - [取消代理](#取消代理)
   - [restore](#restore)
+  - [fetch](#fetch)
 
 ## clone
 
@@ -177,3 +178,14 @@ options 的取值：
   - `git restore --dry-run`
 - 恢复多个文件
   - `git restore file1.txt file2.txt`
+
+## fetch
+
+‌git fetch ‌是 Git 中用于从远程仓库同步代码的核心命令
+
+‌基础更新‌:
+
+```sh
+git fetch（默认拉取origin仓库所有分支更新）‌‌
+git fetch origin master（仅拉取指定分支）‌‌
+```
