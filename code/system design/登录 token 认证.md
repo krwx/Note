@@ -1,6 +1,6 @@
 # 登录 token 认证
 
-大概流程：
+单 token 认证大概流程：
 
 1. 用户登录成功后，服务器生成一个唯一的 token，并将其返回给客户端。这个 token 通常是一个加密的字符串，包含用户的身份信息和过期时间。
 2. 客户端收到 token 后，通常会将其存储在本地（如浏览器的 localStorage、sessionStorage 或 cookies 中），以便后续请求使用。

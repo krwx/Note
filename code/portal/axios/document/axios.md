@@ -19,6 +19,7 @@
     - [请求拦截器不推荐返回 Promise.reject()](#请求拦截器不推荐返回-promisereject)
       - [解决方案](#解决方案)
   - [错误处理](#错误处理)
+  - [取消请求](#取消请求)
 
 ## axios() 函数
 
@@ -657,3 +658,62 @@ axios.get('/user/12345')
     console.log(error.toJSON());
   });
 ```
+
+## 取消请求
+
+从 v0.22.0 开始，Axios 支持以 `fetch API` 方式—— `AbortController` 取消请求：
+
+```js
+const controller = new AbortController();
+
+axios.get('/foo/bar', {
+   signal: controller.signal
+}).then(function(response) {
+   //...
+});
+// 取消请求
+controller.abort()
+```
+
+vue 中使用，组件卸载时中断请求：
+
+```vue
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import axios from 'axios';
+
+const data = ref(null);
+let controller = null;
+
+onMounted(() => {
+  controller = new AbortController();
+
+  axios.get('https://api.example.com/data', {
+    signal: controller.signal
+  }).then(response => {
+    data.value = response.data;
+  }).catch(error => {
+    if (axios.isCancel(error)) {
+      console.log('请求被中断');
+    }
+  });
+});
+
+// // 组件卸载时中断请求
+onUnmounted(() => {
+  if (controller) {
+    controller.abort();
+  }
+});
+</script>
+```
+
+为什么需要取消请求：
+
+- 及时清理：在组件卸载或页面跳转时中断未完成的请求
+- 用户交互：在搜索框、标签切换等场景下中断之前的请求
+- 性能优化：避免不必要的请求继续占用网络资源
+
+注意事项：
+
+- 中断请求后，服务器可能仍然会处理请求，只是客户端不再等待响应
