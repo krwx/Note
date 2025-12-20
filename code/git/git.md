@@ -129,9 +129,12 @@ git commit --amend -m [message]
 
 ### pull
 
-- 改动完后，commit 后再 pull
-- 没改动完，先 stash 后再 pull
-  - pull 完 pop stash 后，如果有冲突不会删除 stash，会保留 stash；如果没有冲突则会删除 stash
+- 提交代码时，commit 后再 pull
+- 不提交代码时
+  - 当要 pull 下来的修改的文件没有本地修改的文件时，可以直接 pull
+  - 当要 pull 下来的修改的文件有本地修改的文件时
+    - 直接 pull 会报本地修改的文件和远端修改的文件冲突，无法 pull
+    - 所以先 stash 后再 pull，pull 完然后 pop stash，如果有冲突不会删除 stash，会保留 stash；如果没有冲突则会删除 stash
 
 ### 在 develop 分支改动完后的流程
 

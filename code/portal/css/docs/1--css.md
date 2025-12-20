@@ -310,7 +310,7 @@ div:hover
     - `em`：子元素字体大小单位如果使用em是相对于父元素字体大小，而元素的 `width/height/padding/margin` 属性用em的话则是相对于该元素的font-size大小。
     - `rem`：相对于根元素 `html`。
 4. `vw/vh` 布局  
-    vwl/vh是一个相对单位（类似em和rem相对单位)，所以不同视口（屏幕）下，宽高可以一起变化完成适配。  
+    vw/vh是一个相对单位（类似em和rem相对单位)，所以不同视口（屏幕）下，宽高可以一起变化完成适配。  
     vw是viewport width：视口宽度单位；vh是viewport height：视口高度单位。  
     它们是相对视口的尺寸计算：1vw = 1/100视口宽度，1vh = 1/100视口高度。（固定分为100份）  
     例如：当前视口宽度是520px，则1vw=5.2px。  
