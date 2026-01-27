@@ -156,6 +156,38 @@ var p = new Proxy(function () {}, {
 console.log(p(1, 2, 3)); // "called: 1, 2, 3"; outputs 6
 ```
 
+```js
+// 创建一个函数
+const sum = (a, b) => a + b;
+
+// 创建代理
+const proxySum = new Proxy(sum, {
+  apply(target, thisArg, argumentsList) {
+    console.log(`调用函数: ${target.name}`);
+    console.log(`参数: ${argumentsList}`);
+    console.log(`this: ${thisArg}`);
+    
+    // 可以修改参数
+    const modifiedArgs = argumentsList.map(arg => arg * 2);
+    
+    // 调用原始函数（可以修改返回值）
+    const result = target.apply(thisArg, modifiedArgs);
+    
+    console.log(`结果: ${result}`);
+    return result * 2; // 修改返回值
+  }
+});
+
+// 调用代理函数
+console.log(proxySum(2, 3)); 
+// 输出：
+// 调用函数: sum
+// 参数: 2,3
+// this: undefined
+// 结果: 10
+// 20
+```
+
 ### handler.construct()
 
 `handler.construct()` 方法用于拦截 `new` 操作符。为了使 `new` 操作符在生成的 `Proxy` 对象上生效，用于初始化代理的目标对象自身必须具有 `[[Construct]]` 内部方法（即 `new target` 必须是有效的）。
@@ -274,7 +306,9 @@ person.age = "young";
 
 person.age = 300;
 // 抛出异常：Uncaught RangeError: The age seems invalid
+```
 
+```js
 //例子2
 const monster1 = { eyeCount: 4 };
 const handler1 = {
@@ -293,51 +327,47 @@ const proxy1 = new Proxy(monster1, handler1);
 
 ### 扩展构造函数
 
-TODO：先去看 Object.getOwnPropertyDescriptor() 、Object.create()
+方法代理可以轻松地通过一个新构造函数来**扩展**一个已有的构造函数。（这里是扩展，而不是继承）
 
-方法代理可以轻松地通过一个新构造函数来**扩展**一个已有的构造函数。（这里是扩展，而不是继承，所以设置 `base.prototype` 不需要设置 `constructor` 属性）
+步骤：
+
+1. 调用 `new Proxy()` 创建一个代理构造函数。`target` 为要扩展的构造函数
+2. 在 `handler` 对象中定义 `construct()` 方法来拦截 new 操作符
+3. 在 `construct()` 方法中，调用 `Reflect.construct()` 来调用原始构造函数，对实例对象进行修改，并返回实例对象
 
 ```js
-function extend(sup, base) {
-  // 从构造函数的原型获取 构造函数 的属性描述符
-  var descriptor = Object.getOwnPropertyDescriptor(
-    base.prototype,
-    "constructor",
-  );
-  // 扩展原型
-  base.prototype = Object.create(sup.prototype);
-  var handler = {
-    construct: function (target, args) {
-      // 创建对象
-      var obj = Object.create(base.prototype);
-      // 调用下面的 apply 方法，设置初始属性
-      this.apply(target, obj, args);
-      return obj;
-    },
-    apply: function (target, that, args) {
-      sup.apply(that, args);
-      base.apply(that, args);
-    },
-  };
-  var proxy = new Proxy(base, handler);
-  // 给构造函数的属性描述符设置值，即设置构造函数
-  descriptor.value = proxy;
-  Object.defineProperty(base.prototype, "constructor", descriptor);
-  return proxy;
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+  greet() {
+    return `Hello, ${this.name}!`;
+  }
 }
 
-var Person = function (name) {
-  this.name = name;
-};
-
-var Boy = extend(Person, function (name, age) {
-  this.age = age;
+// 使用 Proxy 包装构造函数
+const ProxiedPerson = new Proxy(Person, {
+  // 拦截 new 操作
+  construct(target, args, newTarget) {
+    console.log(`Creating instance with args: ${args}`);
+    
+    // 调用原始构造函数
+    const instance = Reflect.construct(target, args, newTarget);
+    
+    // 可以修改实例
+    instance.createdAt = new Date();
+    
+    // 添加额外属性
+    instance.type = 'ProxiedPerson';
+    
+    return instance;
+  }
 });
 
-Boy.prototype.sex = "M";
-
-var Peter = new Boy("Peter", 13);
-console.log(Peter.sex); // "M"
-console.log(Peter.name); // "Peter"
-console.log(Peter.age); // 13
+// 使用示例
+const person = new ProxiedPerson('Alice'); // Creating instance with args: Alice
+console.log(person.name); // Alice
+console.log(person.createdAt); // Date对象
+console.log(person.type); // ProxiedPerson
+console.log(person.greet()); // Hello, Alice!
 ```

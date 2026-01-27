@@ -3,16 +3,19 @@
 - [组合式API](#组合式api)
   - [核心](#核心)
     - [ref()](#ref)
+      - [ref() 和 reactive() 的区别](#ref-和-reactive-的区别)
     - [shallowRef()](#shallowref)
     - [reactive()](#reactive)
     - [shallowReactive()](#shallowreactive)
     - [computed()](#computed)
     - [watch()](#watch)
     - [watchEffect()](#watcheffect)
+      - [与 watch 的对比](#与-watch-的对比)
     - [watchPostEffect()](#watchposteffect)
     - [watchSyncEffect()](#watchsynceffect)
   - [工具](#工具)
     - [toValue()](#tovalue)
+    - [toRefs()​](#torefs)
 
 ## 核心
 
@@ -20,7 +23,103 @@
 
 接受一个内部值，返回一个响应式的、可更改的 ref 对象，此对象只有一个指向其内部值的属性 .value。
 
-如果将一个对象赋值给 ref，那么这个对象将通过 reactive() 转为具有深层次响应式的对象。这也意味着如果对象中包含了嵌套的 ref，它们将被深层地解包。
+如果将一个对象赋值给 ref，那么这个对象将通过 `reactive()` 转为具有深层次响应式的对象。这也意味着如果对象中包含了嵌套的 ref，它们将被深层地解包。
+
+#### ref() 和 reactive() 的区别
+
+在 Vue 3 中，`ref()` 和 `reactive()` 都是用于创建响应式数据的函数，但它们有重要区别：
+
+1、**基本定义**
+
+- **`ref()`**：创建响应式**引用**，可包装任何类型的值
+  - **`ref()`** 内部使用 `reactive()` 包装对象
+- **`reactive()`**：创建响应式**对象**，只能包装对象类型
+
+> 使用 `reactive()` 的场景都可以使用 `ref()`，但是 `ref()` 包装基本类型时不能使用 `reactive()`。
+
+2、**核心区别**
+
+| 特性 | `ref()` | `reactive()` |
+| ------ | --------- | -------------- |
+| **接受类型** | 任何类型（基本类型、对象、数组等） | 仅对象类型（对象、数组、Map、Set） |
+| **访问方式** | 需要通过 `.value` 访问 | 直接访问属性 |
+| **模板中使用** | 自动解包（无需 `.value`） | 直接使用 |
+| **重新赋值** | 可以整个替换（赋值给 `.value`） | 不能直接替换整个对象 |
+| **响应性丢失** | 较少出现 | 解构/展开时可能丢失响应性 |
+
+3、**代码示例对比**
+
+3.1、基本使用
+
+```javascript
+// ref - 可以包装任何类型
+const count = ref(0)           // 基本类型 ✅
+const user = ref({ name: 'John' }) // 对象 ✅
+
+// reactive - 只能包装对象
+const state = reactive({
+  count: 0,                    // 对象属性 ✅
+  user: { name: 'John' }
+})
+```
+
+3.2、访问方式
+
+```javascript
+// ref - 需要 .value
+const count = ref(0)
+console.log(count.value)      // 0
+count.value = 1
+
+// reactive - 直接访问
+const state = reactive({ count: 0 })
+console.log(state.count)      // 0
+state.count = 1
+```
+
+3.3、模板中使用
+
+```vue
+<template>
+  <!-- ref - 自动解包 -->
+  <div>{{ count }}</div>      <!-- 无需 .value -->
+  
+  <!-- reactive - 直接使用 -->
+  <div>{{ state.count }}</div>
+</template>
+
+<script setup>
+const count = ref(0)           // 模板中自动解包
+const state = reactive({ count: 0 })
+</script>
+```
+
+4、**特性详解**
+
+4.1、**`ref()` 的特点**
+
+```javascript
+// 1. 重新赋值整个对象
+const user = ref({ name: 'Alice' })
+user.value = { name: 'Bob' }  // ✅ 完全替换
+
+// 2. 在 reactive 中自动解包
+const count = ref(0)
+const state = reactive({ count })
+console.log(state.count)      // 0 (自动解包)
+```
+
+4.2、**`reactive()` 的特点**
+
+```javascript
+// 1. 不能直接替换整个对象
+const state = reactive({ count: 0 })
+// state = { count: 1 }      // ❌ 会失去响应性
+
+// 2. 解构时可能丢失响应性
+const { count, name } = state // ❌ 丢失响应性
+const { count, name } = toRefs(state) // ✅ 保持响应性
+```
 
 ### shallowRef()
 
@@ -121,8 +220,35 @@ stop()
 
 ```js
 const count = ref(0)
-watchEffect(() => console.log(count.value))
+const stop = watchEffect(() => console.log(count.value))
+
+// 停止监听
+stop()
 ```
+
+清除副作用
+
+```js
+watchEffect((onCleanup) => {
+  const timer = setTimeout(() => {
+    console.log('做一些事情')
+  }, 1000)
+  
+  // 在重新运行或停止时清理
+  onCleanup(() => {
+    clearTimeout(timer)
+  })
+})
+```
+
+#### 与 watch 的对比
+
+|特性|watchEffect|watch|
+|--|--|--|
+|依赖收集|自动收集|需要显式指定|
+|立即执行|是|可配置|
+|获取新旧值|不能|可以|
+|使用场景|自动追踪多个依赖|精确监听特定数据源|
 
 ### watchPostEffect()
 
@@ -145,3 +271,53 @@ toValue(1) //       --> 1
 toValue(ref(1)) //  --> 1
 toValue(() => 1) // --> 1
 ```
+
+### toRefs()​
+
+将一个响应式对象转换为一个普通对象，这个普通对象的每个属性都是指向源对象相应属性的 `ref`。
+
+每个单独的 `ref` 都是使用 `toRef()` 创建的。
+
+**示例**:
+
+```js
+const state = reactive({
+  foo: 1,
+  bar: 2
+})
+
+const stateAsRefs = toRefs(state)
+/*
+stateAsRefs 的类型：{
+  foo: Ref<number>,
+  bar: Ref<number>
+}
+*/
+
+state.foo++
+console.log(stateAsRefs.foo.value) // 2
+
+stateAsRefs.foo.value++
+console.log(state.foo) // 3
+```
+
+当从 _组合式函数_ 中返回响应式对象时，使用 `toRefs` 可以解构返回的对象而不会失去响应性：
+
+```js
+function useFeatureX() {
+  const state = reactive({
+    foo: 1,
+    bar: 2
+  })
+
+  // ...基于状态的操作逻辑
+
+  // 在返回时都转为 ref
+  return toRefs(state)
+}
+
+// 可以解构而不会失去响应性
+const { foo, bar } = useFeatureX()
+```
+
+`toRefs` 在调用时只会为**源对象上可以枚举的属性**创建 `ref`。如果要为可能还不存在的属性创建 `ref`，请改用 `toRef`。

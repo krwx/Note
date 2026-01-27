@@ -18,6 +18,7 @@
   - [other](#other)
     - [python 程序与 JavaScript 程序跨语言实现消息通信](#python-程序与-javascript-程序跨语言实现消息通信)
     - [界面](#界面)
+      - [queue 操作](#queue-操作)
 
 ## 介绍
 
@@ -46,9 +47,9 @@ RabbitMQ基本结构
 |Connection（连接 ）|连接是生产者和消费者与RabbitMQ之间的连接。每个生产者和消费者都需要与RabbitMQ建立一个连接，以便发送和接收消息。连接通常是长连接，可以重用以提高性能和效率。|
 |Channel（信道）|Channel是连接（Connection）内的逻辑通道，用于完成大部分 `AMQP` 操作，如声明队列、发送和接收消息等。在 RabbitMQ 中引入 Channel（信道）的主要目的是为了提高系统的性能、灵活性和效率。使用 Channel 可以避免频繁地创建和销毁连接，因为一个连接可以包含多个 Channel。这样可以减少连接的开销，节省系统资源，并提高性能。|
 |Exchange（交换机）|交换机是消息的接收和分发中心，负责接收生产者发送的消息，并根据指定的路由规则发送到一个或多个队列中。（Exchange相当于Queue的代理，可以设置不同的写入策略，写入到对应的队列中。对于队列的写入，更加灵活）。交换机的类型有：fanout扇出、topic主题、direct直接|
-|Queue（队列） |队列是消息的缓存区，用于存储交换机发送的消息。生产者发送的消息最终会被存储在队列中，等待消费者进行消费。队列可以持久化到磁盘，以确保消息不会在RabbitMQ宕机或重启后丢失。|
-|Producer（生产者）| 生产者是发送消息到RabbitMQ的应用程序。生产者负责创建消息并将其发送到RabbitMQ的消息队列中。|
-|Consumer（消费者）| 消费者是从RabbitMQ队列中接收消息并进行处理的应用程序。消费者可以订阅一个或多个队列，并在消息到达队列时接收并处理它们。消费者负责监听队列中的消息，并将其取出进行处理。|
+|Queue（队列）|队列是消息的缓存区，用于存储交换机发送的消息。生产者发送的消息最终会被存储在队列中，等待消费者进行消费。队列可以持久化到磁盘，以确保消息不会在RabbitMQ宕机或重启后丢失。|
+|Producer（生产者）|生产者是发送消息到RabbitMQ的应用程序。生产者负责创建消息并将其发送到RabbitMQ的消息队列中。|
+|Consumer（消费者）|消费者是从RabbitMQ队列中接收消息并进行处理的应用程序。消费者可以订阅一个或多个队列，并在消息到达队列时接收并处理它们。消费者负责监听队列中的消息，并将其取出进行处理。|
 
 - `exchange type`：
   - `direct`
@@ -566,3 +567,25 @@ RabbitMQ 中‌ `Ready` ‌和‌ `Unacked` ‌是管理界面中的关键指标
 
 默认用户名：guest
 登录密码：guest
+
+#### queue 操作
+
+1、**Get messages**
+
+- Ack mode
+  - Nack message requeue true：不确认消息并重新放入队列
+  - Automatic ack：自动确认消息
+  - Reject requeue true：拒绝消息并重新放入队列
+  - Reject requeue false：拒绝消息并不重新放入队列
+- Messages
+  - 获取的消息数量
+
+点击 `Get Message(s)` 按钮获取消息
+
+2、**Delete**
+
+点击 `Delete Queue` 按钮删除队列
+
+3、**Purge**
+
+点击 `Purge Messages` 按钮清空队列中的消息

@@ -1,5 +1,11 @@
 # SSMS
 
+- [SSMS](#ssms)
+  - [创建脚本](#创建脚本)
+  - [删除表](#删除表)
+  - [导出数据](#导出数据)
+  - [修改列](#修改列)
+
 ## 创建脚本
 
 [官网指导](https://learn.microsoft.com/en-us/ssms/scripting/generate-and-publish-scripts-wizard?f1url=%3FappId%3DDev15IDEF1%26l%3Den-US%26k%3Dk(sql13.swb.generatescriptswizard.setscriptingoptions.f1)%26rd%3Dtrue)
@@ -54,3 +60,18 @@ step:
    1. 如果 `destination` 不存在该 `table`，会新建。
    2. 如果 `destination` 存在该 `table`，会追加数据。
 6. 点击下一步直到完成导出
+
+## 修改列
+
+1、修改 varchar 的长度从 50 改为 100，SSMS 会报错：
+
+```txt
+Saving changes is not permitted. The changes you have made require the following tables to be dropped and re-created. You have either made changes to a table that can't be re-created or enabled the option Prevent saving changes that require the table to be re-created.
+```
+
+直接执行 ALTER 语句就好
+
+```sql
+ALTER TABLE table_name
+ALTER COLUMN column_name VARCHAR(100) NULL;
+```

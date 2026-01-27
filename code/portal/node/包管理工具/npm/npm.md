@@ -9,25 +9,28 @@
     - [npm 并行 or 继发](#npm-并行-or-继发)
     - [钩子](#钩子)
     - [管道](#管道)
+  - [安全](#安全)
+    - [npm 投毒](#npm-投毒)
+    - [npm audit](#npm-audit)
 
 Node Package Manager，也就是Node包管理器。  
 配置文件为 package.json
 
 ## 版本号
 
-npm的包通常需要遵从semver版本规范
+npm 的包通常需要遵从 semver 版本规范
 
-semver版本规范是X.Y.Z ：
+semver 版本规范是 `X.Y.Z` ：
 
-- X主版本号（major）:当你做了不兼容的API修改（可能不兼容之前的版本）
-- Y次版本号（minor）:当你做了向下兼容的功能性新增（新功能增加，但是兼容之前的版本）
-- Z修订号（patch）:当你做了向下兼容的问题修正（没有新功能，修复了之前版本的bug）
+- X 主版本号（major）:当你做了不兼容的API修改（可能不兼容之前的版本）
+- Y 次版本号（minor）:当你做了向下兼容的功能性新增（新功能增加，但是兼容之前的版本）
+- Z 修订号（patch）:当你做了向下兼容的问题修正（没有新功能，修复了之前版本的bug）
 
-^和~的区别 ：
+^ 和 ~ 的区别 ：
 
 - x.y.z：表示一个明确的版本号
-- ^x.y.z：表示x是保持不变的，y和z永远安装最新的版本
-- ~x.y.z：表示x和y保持不变的，z永远安装最新的版本
+- ^x.y.z：表示 x 是保持不变的，y 和 z 永远安装最新的版本
+- ~x.y.z：表示 x 和 y 保持不变的，z 永远安装最新的版本
 
 > 安装包：  
 > 使用 `npm i` 依据 `package.json` 和 `packagelock.json` 的依赖声明安装项目依赖，不会下载最新的包  
@@ -155,3 +158,102 @@ npm 默认提供下面这些钩子。
 ```
 
 在这个例子中，`echo 'Hello World'` 输出了文本 `Hello World` ，然后通过管道（`|`）将这个输出传递给 `wc -w` 命令，后者是 `Unix` 系统中的单词计数命令。
+
+## 安全
+
+### npm 投毒
+
+npm 投毒（npm poisoning）是一种针对 JavaScript 生态系统（尤其是 npm 仓库）的恶意攻击行为。攻击者通过上传包含恶意代码的软件包，或劫持合法软件包，试图破坏开发者的项目、窃取敏感信息或传播恶意软件。以下是详细介绍：
+
+**1. 攻击方式**
+
+- **恶意软件包上传**  
+  攻击者创建名称与合法包相似（如拼写错误）的包，诱使开发者错误安装。
+- **劫持合法包**  
+  通过窃取维护者账户或利用漏洞，在合法包中注入恶意代码。
+- **依赖混淆攻击**  
+  上传与私有包同名的公共包，利用构建工具默认从公共仓库下载的特性植入恶意代码。
+- **供应链攻击**  
+  在包的依赖链中植入恶意代码，即使合法包也可能通过依赖被感染。
+
+**2. 典型案例**
+
+- **event-stream 事件**  
+  2018 年，流行的 `event-stream` 包被注入恶意代码，针对 Copay 比特币钱包窃取私钥。
+- **eslint-scope 攻击**  
+  攻击者通过窃取维护者账号，在 `eslint-scope` 中植入窃取 npm 凭证的代码。
+- **ua-parser-js 事件**  
+  2021 年，该包被劫持后植入恶意代码，用于窃取系统信息。
+
+**3. 防御措施**
+
+- **审核依赖**  
+  使用 `npm audit` 或第三方工具（如 Snyk、Sonatype）扫描漏洞。
+- **锁定依赖版本**  
+  通过 `package-lock.json` 或 `yarn.lock` 固定版本，避免意外更新。
+- **最小化依赖**  
+  减少不必要的包，降低攻击面。
+- **使用可信源**  
+  从官方 npm 仓库下载，避免使用未经验证的镜像。
+- **自动化监控**  
+  集成安全工具（如 GitHub Dependabot）实时检测风险。
+- **双因素认证（2FA）**  
+  为 npm 账户启用 2FA，防止账号劫持。
+
+### npm audit
+
+使用 `npm audit` 是防范 npm 投毒（供应链攻击）的关键步骤，它能扫描项目依赖中的已知安全漏洞。以下是具体使用方法。
+
+***
+
+**基础扫描与修复**
+
+在你的项目根目录（确保存在 `package.json` 和 `package-lock.json`）下运行命令：
+
+| 命令 | 作用与说明 |
+| :--- | :--- |
+| **`npm audit`** | **基本扫描**。检查并列出所有漏洞，包含路径、严重等级（低/中/高/致命）和建议。 |
+| **`npm audit fix`** | **自动修复**。自动安装兼容的更新来修复漏洞。这是最常用的修复命令。 |
+| **`npm audit fix --force`** | **强制修复**。当常规修复无效时，此命令会强制更新到安全版本，但**可能引入不兼容的变更**。使用前建议先测试。 |
+| **`npm audit fix --dry-run --json`** | **模拟修复**。预览修复将执行的操作，并以 JSON 格式输出计划，**不会实际修改文件**。 |
+
+***
+
+**`npm audit fix` 版本号说明**：
+
+`npm audit fix` 会修改 `package.json` 和 `package-lock.json` 中的版本号
+
+以 `axios` 包说明，`1.0.0` - `1.11.0` 有漏洞，修复版本为 `1.13.2`
+
+- 如果 `package.json` 中的版本号是 `"axios": "^1.0.0"`，**不会更改版本号**，因为 `^1.0.0` 已经包含了 `1.13.2`
+- 如果 `package.json` 中的版本号是 `"axios": "~1.0.0"` 或者 `"axios": "1.0.0"`，则会更新为 `"axios": "^1.13.2"`
+  - 因为 `package.json` 需要变更，所以要使用 `npm audit fix --force` 来强制更新
+
+***
+
+**例子**
+
+axios 包有风险：
+
+```sh
+$ npm audit
+
+# npm audit report
+axios  1.0.0 - 1.11.0
+Severity: high
+Axios Cross-Site Request Forgery Vulnerability - https://github.com/advisories/GHSA-wf5p-g6vw-rhxx
+Axios is vulnerable to DoS attack through lack of data size check - https://github.com/advisories/GHSA-4hjh-wcwx-xvwj
+axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL - https://github.com/advisories/GHSA-jr5f-v2jv-69x6
+fix available via `npm audit fix`
+node_modules/axios
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+```
+
+**注意**：
+
+- `npm audit` 的原理是将项目依赖树信息发送到 npm 官方服务器进行比对（信息会脱敏处理）。
+- 某些深层次或涉及重大变更的漏洞可能无法自动修复，需要你手动评估并更新 `package.json`。

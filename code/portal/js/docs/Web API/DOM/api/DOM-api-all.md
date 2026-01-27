@@ -21,6 +21,13 @@
       - [查找方法](#查找方法)
       - [事件方法](#事件方法)
       - [其他](#其他-1)
+    - [判断文本是否被截断](#判断文本是否被截断)
+  - [`offsetHeight` 和 `clientHeight`](#offsetheight-和-clientheight)
+    - [1. **clientHeight**](#1-clientheight)
+    - [2. **offsetHeight**](#2-offsetheight)
+    - [对比示例](#对比示例)
+    - [可视化对比](#可视化对比)
+    - [实际应用场景](#实际应用场景)
 
 ## 节点属性
 
@@ -277,4 +284,141 @@ Element.insertAdjacentHTML('afterEnd', htmlString); // 在该元素后插入
 
 Element.remove()  //用于将当前元素节点从DOM中移除
 Element.focus()   //用于将当前页面的焦点，转移到指定元素上
+```
+
+### 判断文本是否被截断
+
+我们通过比较元素的以下属性来判断文本是否被截断：
+
+```txt
+function isTextTruncated(element) {
+  return element.scrollWidth > element.clientWidth;
+}
+```
+
+- scrollWidth: 元素内容的总宽度，包括不可见部分
+- clientWidth: 元素可见内容的宽度（不含边框和滚动条）
+- 当 scrollWidth > clientWidth 时，说明文本内容溢出，已被截断
+
+## `offsetHeight` 和 `clientHeight`
+
+`offsetHeight` 和 `clientHeight` 都是 DOM 元素的重要尺寸属性，它们都表示元素的高度，但计算方式有所不同。
+
+### 1. **clientHeight**
+
+表示 **元素内部的可视高度（padding + content）**
+
+包含内容：
+
+- 元素的内容高度（content height）
+- **上下内边距（padding-top + padding-bottom）**
+- **不包含**滚动条高度
+- **不包含**边框（border）
+- **不包含**外边距（margin）
+
+公式：
+
+```js
+clientHeight = 内容高度 + padding-top + padding-bottom
+```
+
+特点：
+
+- 返回的是整数（像素值）
+- 只读属性
+- 如果元素被隐藏（`display: none`），返回 `0`
+
+### 2. **offsetHeight**
+
+表示 **元素的整体高度（border + padding + content + 滚动条）**
+
+包含内容：
+
+- 元素的内容高度（content height）
+- **上下内边距（padding-top + padding-bottom）**
+- **上下边框（border-top + border-bottom）**
+- **包含**水平滚动条高度（如果存在）
+
+公式：
+
+```js
+offsetHeight = 内容高度 + padding-top + padding-bottom + border-top + border-bottom
+```
+
+### 对比示例
+
+```html
+<div id="example" style="
+  height: 100px;
+  padding: 20px;
+  border: 5px solid black;
+  margin: 10px;
+  overflow: auto;
+">
+  内容区域
+</div>
+
+<script>
+const el = document.getElementById('example');
+
+console.log(el.clientHeight);  // 140 (100 + 20 + 20)
+console.log(el.offsetHeight);  // 150 (100 + 20 + 20 + 5 + 5)
+</script>
+```
+
+注意：`offsetHeight` 和 `clientHeight` 都没有包含 `margin`
+
+### 可视化对比
+
+```txt
+┌─────────────────────────────────┐ 
+│          margin-top             │
+│  ┌───────────────────────────┐  │ ← border-top
+│  │      padding-top          │  │
+│  │  ┌─────────────────────┐  │  │
+│  │  │                     │  │  │
+│  │  │     内容区域         │  │  │ ← clientHeight
+│  │  │    (content)        │  │  │    = content + padding
+│  │  │                     │  │  │
+│  │  └─────────────────────┘  │  │
+│  │      padding-bottom       │  │
+│  └───────────────────────────┘  │ ← offsetHeight
+│          border-bottom          │    = content + padding + border
+│          margin-bottom          │
+└─────────────────────────────────┘
+```
+
+### 实际应用场景
+
+1、**判断内容是否溢出**
+
+```javascript
+// 判断元素内容是否出现垂直滚动条
+function hasVerticalScroll(element) {
+  return element.scrollHeight > element.clientHeight;
+}
+```
+
+2、**计算滚动条位置**
+
+```javascript
+// 计算滚动百分比
+const scrollPercentage = element.scrollTop / (element.scrollHeight - element.clientHeight);
+```
+
+3、**获取视口内高度**
+
+```javascript
+// 获取元素在视口内可见的高度
+function getVisibleHeight(element) {
+  const rect = element.getBoundingClientRect();
+  return Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+}
+```
+
+4、**响应式布局计算**
+
+```javascript
+// 计算可用空间
+const availableHeight = window.innerHeight - element.offsetHeight;
 ```

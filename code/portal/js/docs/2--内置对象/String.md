@@ -1,18 +1,22 @@
 # 方法
 
 - [方法](#方法)
-  - [String.prototype.substr() （已弃用: 不再推荐使用该特性）](#stringprototypesubstr-已弃用-不再推荐使用该特性)
-  - [String.prototype.slice()](#stringprototypeslice)
-  - [String.prototype.substring()](#stringprototypesubstring)
+  - [substr() （已弃用: 不再推荐使用该特性）](#substr-已弃用-不再推荐使用该特性)
+  - [slice()](#slice)
+  - [substring()](#substring)
     - [substring() 和 substr() 之间的区别](#substring-和-substr-之间的区别)
     - [substring() 和 slice() 之间的区别](#substring-和-slice-之间的区别)
     - [替换字符串的方法](#替换字符串的方法)
-  - [String.prototype.replace()](#stringprototypereplace)
-    - [指定函数为替换项](#指定函数为替换项)
+  - [replace()](#replace)
+    - [替换项为字符串](#替换项为字符串)
+      - [特殊替换模式](#特殊替换模式)
+    - [替换项为函数](#替换项为函数)
+  - [replaceAll()](#replaceall)
+    - [`replace()` 和 `replaceAll()` 的主要区别](#replace-和-replaceall-的主要区别)
   - [padStart()](#padstart)
   - [padEnd()](#padend)
 
-## String.prototype.substr() （已弃用: 不再推荐使用该特性）
+## substr() （已弃用: 不再推荐使用该特性）
 
 String 值的 `substr()` 方法返回该字符串的一部分，从指定的索引开始，然后**扩展到给定数量的字符**。
 
@@ -54,7 +58,7 @@ console.log(aString.substr(-20, 2)); // 'Mo'
 console.log(aString.substr(20, 2)); // ''
 ```
 
-## String.prototype.slice()
+## slice()
 
 `slice()` 方法提取字符串的一部分，并将其**作为新字符串返回**，而**不修改原始字符串**。
 
@@ -95,7 +99,7 @@ str1.slice(0, -1); // 'The morning is upon us'
 str1.slice(4, -1); // 'morning is upon us'
 ```
 
-## String.prototype.substring()
+## substring()
 
 String 的 `substring()` 方法返回该字符串**从起始索引到结束索引（不包括）的部分**，如果未提供结束索引，则返回到字符串末尾的部分。
 
@@ -178,7 +182,7 @@ function replaceString(oldS, newS, fullS) {
 // 2. 使用 String.prototype.replace() 函数
 ```
 
-## String.prototype.replace()
+## replace()
 
 - `replace()` 方法返回一个新字符串，其中一个、多个或所有匹配的 `pattern` 被替换为 `replacement`。
 - `pattern` 可以是字符串或 `RegExp`，`replacement` 可以是字符串或一个在每次匹配时调用的**函数**。
@@ -204,25 +208,117 @@ function replaceString(oldS, newS, fullS) {
 "xxx".replace("", "_"); // "_xxx"
 ```
 
-### 指定函数为替换项
+### 替换项为字符串
+
+`pattern` 是字符串：
+
+```js
+const str = "Hello world!";
+const newstr = str.replace("world", "there");
+console.log(newstr); // Hello there!
+```
+
+`pattern` 是正则表达式：
+
+```js
+const str = "Twas the night before Xmas...";
+const newstr = str.replace(/xmas/i, "Christmas");
+console.log(newstr); // Twas the night before Christmas...
+```
+
+***
+
+#### 特殊替换模式
+
+特殊替换模式可以让你在替换字符串中使用匹配到的内容。以下是最常用的几种：
+
+**1. 特殊替换字符**
+
+`$&` - 插入匹配的子串
+
+```javascript
+let str = "Hello World";
+console.log(str.replace("World", "$&!!!")); 
+// 输出: "Hello World!!!"
+// $& 代表匹配到的 "World"
+
+console.log(str.replace(/o/g, "$&$&")); 
+// 输出: "Helloo Woorld"
+// 将每个 o 替换为两个 o
+```
+
+`` $` `` - 插入匹配项左边的内容
+
+```javascript
+let str = "JavaScript is fun";
+console.log(str.replace("is", "$`")); 
+// 输出: "JavaScript JavaScript  fun"
+// $` 代表 "is" 左边的 "JavaScript "
+```
+
+`$'` - 插入匹配项右边的内容
+
+```javascript
+let str = "JavaScript is fun";
+console.log(str.replace("is", "$'")); 
+// 输出: "JavaScript  fun fun"
+// $' 代表 "is" 右边的 " fun"
+```
+
+`$$` - 插入美元符号
+
+```javascript
+let str = "Price: 100";
+console.log(str.replace(/\d+/, "$$$&")); 
+// 输出: "Price: $100"
+// $$ 表示实际的 $ 字符
+```
+
+**2. 捕获组替换**
+
+`$n` - 第 n 个捕获组（n=1-9）
+
+```javascript
+// 重排日期格式
+let date = "2024-01-15";
+console.log(date.replace(/(\d{4})-(\d{2})-(\d{2})/, "$2/$3/$1"));
+// 输出: "01/15/2024"
+
+// 姓名格式转换
+let name = "Doe, John";
+console.log(name.replace(/(\w+), (\w+)/, "$2 $1"));
+// 输出: "John Doe"
+```
+
+`$<name>` - 命名捕获组（ES2018+）
+
+```javascript
+let str = "John:30";
+console.log(str.replace(/(?<name>\w+):(?<age>\d+)/, "Name: $<name>, Age: $<age>"));
+// 输出: "Name: John, Age: 30"
+```
+
+### 替换项为函数
 
 ```js
 function replacer(match, p1, p2, /* …, */ pN, offset, string, groups) {
   return replacement;
 }
+
+let result = testStr.replace(/\w+/, replacer);
 ```
 
 该函数的参数如下所示：
 
-- match
+- `match`
   - 匹配的子字符串。（对应于上面的 $&。）
-- p1, p2, …, pN
+- `p1, p2, …, pN`
   - 如果 replace() 的第一个参数是 RegExp 对象，则为捕获组（包括命名捕获组）找到的第 n 个字符串。（对应于上面的 $1、$2 等。）例如，如果 pattern 是 /(\d+)(\w+)/，则 p1 是 \a+ 的匹配项，p2 是 \b+ 的匹配项。如果该组是分支的一部分（例如 "abc".replace(/(a)|(b)/, Replacer)），则不匹配的替代项将为 undefined。
-- offset
+- `offset`
   - 原始字符串中匹配子字符串的偏移量。例如，如果整个字符串是 'abcd'，而匹配的子字符串是 'bc'，那么这个参数将是 1。
-- string
+- `string`
   - 正在检查的原始字符串。
-- groups
+- `groups`
   - 一个捕获组命名组成的对象，值是匹配的部分（如果没有匹配，则为 undefined）。仅在 pattern 包含至少一个命名捕获组时才存在。
 
 ```js
@@ -232,6 +328,63 @@ function replacer(match, p1, p2, p3, offset, string) {
 }
 const newString = "abc12345#$*%".replace(/([^\d]*)(\d*)([^\w]*)/, replacer);
 console.log(newString); // abc - 12345 - #$*%
+```
+
+## replaceAll()
+
+### `replace()` 和 `replaceAll()` 的主要区别
+
+主要区别在于：
+
+1、**默认替换范围不同**
+
+```javascript
+const str = "apple apple apple";
+
+// replace() 默认只替换第一个匹配项
+str.replace("apple", "orange"); // "orange apple apple"
+
+// replaceAll() 默认替换所有匹配项
+str.replaceAll("apple", "orange"); // "orange orange orange"
+```
+
+2、**参数行为不同**
+
+2.1、**当第一个参数是字符串时**
+
+```javascript
+const str = "hello world world";
+
+// replace() - 只替换第一个
+str.replace("world", "earth"); // "hello earth world"
+
+// replaceAll() - 替换所有
+str.replaceAll("world", "earth"); // "hello earth earth"
+```
+
+2.2、**当第一个参数是正则表达式时**
+
+```javascript
+const str = "test1 test2 test3";
+
+// replace() 可以用正则，但需要 g 标志才全局替换
+str.replace(/test/, "exam"); // "exam1 test2 test3"
+str.replace(/test/g, "exam"); // "exam1 exam2 exam3"
+
+// replaceAll() 使用正则时必须带 g 标志，否则报错
+str.replaceAll(/test/g, "exam"); // "exam1 exam2 exam3"
+str.replaceAll(/test/, "exam"); // TypeError: 非全局正则表达式
+```
+
+示例对比
+
+```javascript
+const text = "cat dog cat bird cat";
+
+// 相同效果的不同写法
+text.replace(/cat/g, "rabbit"); // "rabbit dog rabbit bird rabbit"
+text.replaceAll("cat", "rabbit"); // "rabbit dog rabbit bird rabbit"
+text.replaceAll(/cat/g, "rabbit"); // "rabbit dog rabbit bird rabbit"
 ```
 
 ## padStart()

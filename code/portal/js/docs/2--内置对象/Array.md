@@ -1,7 +1,6 @@
 # 数组
 
 - [数组](#数组)
-  - [方法](#方法)
   - [构造函数](#构造函数)
     - [语法](#语法)
     - [示例](#示例)
@@ -9,50 +8,21 @@
     - [length](#length)
       - [截断数组](#截断数组)
   - [静态方法](#静态方法)
+    - [Array.from()](#arrayfrom)
   - [实例方法](#实例方法)
-    - [Array.prototype.slice()](#arrayprototypeslice)
+    - [slice()](#slice)
       - [在类数组对象上调用 slice()](#在类数组对象上调用-slice)
-    - [Array.prototype.splice()](#arrayprototypesplice)
-    - [Array.prototype.sort()](#arrayprototypesort)
-    - [Array.prototype.shift()](#arrayprototypeshift)
-    - [Array.prototype.unshift()](#arrayprototypeunshift)
-    - [Array.prototype.map()](#arrayprototypemap)
+    - [splice()](#splice)
+    - [sort()](#sort)
+    - [shift()](#shift)
+    - [unshift()](#unshift)
+    - [map()](#map)
       - [将 parseInt() 与 map() 一起使用](#将-parseint-与-map-一起使用)
-    - [Array.prototype.flat()](#arrayprototypeflat)
-    - [Array.prototype.flatMap()](#arrayprototypeflatmap)
-    - [Array.prototype.reduce()](#arrayprototypereduce)
-    - [Array.prototype.reduceRight()](#arrayprototypereduceright)
-    - [Array.prototype.concat()](#arrayprototypeconcat)
-
-## 方法
-
-- `join()`：用指定的分隔符将数组每一项拼接为字符串
-- `push()` ：向数组的末尾添加新元素
-- `pop()`：删除数组的最后一项
-- `shift()`：删除数组的第一项
-- `unshift()`：向数组首位添加新元素
-- `slice()`：按照条件查找出其中的部分元素
-- `splice()`：对数组进行增删改
-- `fill()`: 方法能使用特定值填充数组中的一个或多个元素
-- `filter()`:“过滤”功能
-- `concat()`：用于连接两个或多个数组
-- indexOf()：检测当前值在数组中第一次出现的位置索引
-- lastIndexOf()：检测当前值在数组中最后一次出现的位置索引
-- every()：判断数组中每一项都是否满足条件
-- some()：判断数组中是否存在满足条件的项
-- includes()：判断一个数组是否包含一个指定的值
-- sort()：对数组的元素进行排序
-- reverse()：对数组进行倒序
-- forEach()：ES5 及以下循环遍历数组每一项
-- map()：ES6 循环遍历数组每一项
-- copyWithin():用于从数组的指定位置拷贝元素到数组的另一个指定位置中
-- find():返回匹配的值
-- findIndex():返回匹配位置的索引
-- toLocaleString()、toString():将数组转换为字符串
-- flat()、flatMap()：扁平化数组
-- entries() 、keys() 、values():遍历数组
-
-注意：**漏了 reduce、reduceRight 方法**
+    - [flat()](#flat)
+    - [flatMap()](#flatmap)
+    - [reduce()](#reduce)
+    - [reduceRight()](#reduceright)
+    - [concat()](#concat)
 
 ## 构造函数
 
@@ -148,123 +118,142 @@ console.log(numbers[3]); // undefined；多余的元素会被删除
 - `Array.of()`
   - : 创建一个新的 `Array` 实例，具有可变数量的参数，而不管参数的数量或类型。
 
+### Array.from()
+
+`Array.from()` 可以从类数组对象或可迭代对象创建一个新的数组实例。
+
+**基本语法**
+
+```javascript
+Array.from(arrayLike[, mapFn[, thisArg]])
+```
+
+- **arrayLike**: 要转换为数组的类数组或可迭代对象
+- **mapFn** (可选): 映射函数，对每个元素进行处理
+- **thisArg** (可选): 执行 `mapFn` 时的 `this` 值
+
+**主要用途**
+
+1、将类数组对象转换为数组
+
+```javascript
+// 将 arguments 转换为数组
+function sum() {
+    const argsArray = Array.from(arguments);
+    return argsArray.reduce((acc, curr) => acc + curr, 0);
+}
+console.log(sum(1, 2, 3)); // 6
+
+// 将 NodeList 转换为数组
+const divs = document.querySelectorAll('div');
+const divArray = Array.from(divs);
+```
+
+2、将可迭代对象转换为数组
+
+```javascript
+// Set 转数组
+const set = new Set([1, 2, 3, 3]);
+const arrayFromSet = Array.from(set);
+console.log(arrayFromSet); // [1, 2, 3]
+
+// Map 转数组
+const map = new Map([[1, 'one'], [2, 'two']]);
+const arrayFromMap = Array.from(map);
+console.log(arrayFromMap); // [[1, 'one'], [2, 'two']]
+
+// 字符串转数组
+const str = 'hello';
+const arrayFromStr = Array.from(str);
+console.log(arrayFromStr); // ['h', 'e', 'l', 'l', 'o']
+```
+
+3、使用映射函数
+
+```javascript
+// 对每个元素进行转换
+const numbers = [1, 2, 3];
+const doubled = Array.from(numbers, x => x * 2);
+console.log(doubled); // [2, 4, 6]
+
+// 结合类数组对象使用
+const arrayLike = {0: 1, 1: 2, 2: 3, length: 3};
+const squared = Array.from(arrayLike, x => x * x);
+console.log(squared); // [1, 4, 9]
+```
+
+4、创建指定范围的数组
+
+```javascript
+// 创建 0-9 的数组
+const range = Array.from({length: 10}, (_, index) => index);
+console.log(range); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+// 创建 1-5 的数组
+const range2 = Array.from({length: 5}, (_, i) => i + 1);
+console.log(range2); // [1, 2, 3, 4, 5]
+```
+
+**与扩展运算符的区别**
+
+```javascript
+// Array.from() 可以处理任何有 length 属性的对象
+const arrayLike = {0: 'a', 1: 'b', length: 2};
+const arr1 = Array.from(arrayLike); // ['a', 'b']
+
+// 扩展运算符只能处理可迭代对象
+// const arr2 = [...arrayLike]; // 报错
+
+// 但对于可迭代对象，两者都可以
+const set = new Set([1, 2, 3]);
+const arr3 = Array.from(set); // [1, 2, 3]
+const arr4 = [...set]; // [1, 2, 3]
+```
+
+**注意事项**
+
+1. **浅拷贝**: `Array.from()` 创建的是新数组，但对于嵌套对象，复制的是引用
+2. **稀疏数组**: 对于稀疏数组，空缺位置会用 `undefined` 填充
+3. **性能**: 在需要处理大量数据时，直接使用循环可能更高效
+
 ## 实例方法
 
-- Array.prototype.at()
-  - 返回给定索引处的数组元素。接受从最后一项往回计算的负整数。
+- `join()`：用指定的分隔符将数组每一项拼接为字符串
+- `push()` ：向数组的末尾添加新元素
+- `pop()`：删除数组的最后一项
+- `shift()`：删除数组的第一项
+- `unshift()`：向数组首位添加新元素
+- `slice()`：按照条件查找出其中的部分元素
+- `splice()`：对数组进行增删改
+- `toSpliced()`: 对数组进行增删改并返回新数组，不改变原始数组
+- `fill()`: 方法能使用特定值填充数组中的一个或多个元素
+- `filter()`: 返回一个新数组，其中包含调用所提供的筛选函数返回为 true 的所有数组元素。
+- `concat()`：用于连接两个或多个数组
+- `indexOf()`：检测当前值在数组中第一次出现的位置索引
+- `lastIndexOf()`：检测当前值在数组中最后一次出现的位置索引
+- `every()`：判断数组中每一项都是否满足条件
+- `some()`：判断数组中是否存在满足条件的项
+- `includes()`：判断一个数组是否包含一个指定的值
+- `sort()`：对数组的元素进行排序，改变原数组
+- `reverse()`：对数组进行倒序，改变原数组
+- `toSorted()`: 对数组进行排序并返回新数组，不改变原始数组
+- `toReversed()`: 对数组进行倒序并返回新数组，不改变原始数组
+- `forEach()`: ES5 及以下循环遍历数组每一项
+- `map()`: ES6 循环遍历数组每一项
+- `copyWithin()`:用于从数组的指定位置拷贝元素到数组的另一个指定位置中
+- `find()`:返回匹配的值
+- `findIndex()`:返回匹配位置的索引
+- `findLast()`: 返回数组中满足提供的测试函数的最后一个元素的值
+- `findLastIndex()`: 返回数组中满足所提供测试函数的最后一个元素的索引
+- `toLocaleString()`、`toString()`:将数组转换为字符串
+- `flat()`、`flatMap()`: 扁平化数组
+- `entries()` 、`keys()` 、`values()`:遍历数组
+- `at()`: 返回给定索引处的数组元素。接受从最后一项往回计算的负整数
+- `reduce()`: 对数组的每个元素（从左到右）执行用户提供的“reducer”回调函数，将其简化为单个值。
+- `reduceRight()`: 对数组的每个元素（从右到左）执行用户提供的“reducer”回调函数，将其简化为单个值。
+- `with()`: 返回一个新数组，其中给定索引处的元素替换为给定值，而不改变原始数组。
 
-- [Array.prototype.concat()](#arrayprototypeconcat)
-  - 返回一个新数组，该数组由被调用的数组与其他数组或值连接形成。
-
-- Array.prototype.copyWithin()
-  - 在数组内复制数组元素序列。
-
-- Array.prototype.entries()
-  - 返回一个新的数组迭代器对象，其中包含数组中每个索引的键/值对。
-
-- Array.prototype.every()
-  - 如果调用数组中的每个元素都满足测试函数，则返回 true。
-
-- Array.prototype.fill()
-  - 用静态值填充数组中从开始索引到结束索引的所有元素。
-
-- Array.prototype.filter()
-  - 返回一个新数组，其中包含调用所提供的筛选函数返回为 true 的所有数组元素。
-
-- Array.prototype.find()
-  - 返回数组中满足提供的测试函数的第一个元素的值，如果没有找到合适的元素，则返回 undefined。
-
-- Array.prototype.findIndex()
-  - 返回数组中满足提供的测试函数的第一个元素的索引，如果没有找到合适的元素，则返回 -1。
-
-- Array.prototype.findLast()
-  - 返回数组中满足提供的测试函数的最后一个元素的值，如果没有找到合适的元素，则返回 undefined。
-
-- Array.prototype.findLastIndex()
-  - 返回数组中满足所提供测试函数的最后一个元素的索引，如果没有找到合适的元素，则返回 -1。
-
-- [Array.prototype.flat()](#arrayprototypeflat)
-  - 返回一个新数组，所有子数组元素递归地连接到其中，直到指定的深度。
-
-- [Array.prototype.flatMap()](#arrayprototypeflatmap)
-  - 对调用数组的每个元素调用给定的回调函数，然后将结果展平一层，返回一个新数组。
-
-- Array.prototype.forEach()
-  - 对调用数组中的每个元素调用给定的函数。
-
-- Array.prototype.includes()
-  - 确定调用数组是否包含一个值，根据情况返回 true 或 false。
-
-- Array.prototype.indexOf()
-  - 返回在调用数组中可以找到给定元素的第一个（最小）索引。
-
-- Array.prototype.join()
-  - 将数组的所有元素连接为字符串。
-
-- Array.prototype.keys()
-  - 返回一个新的数组迭代器，其中包含调用数组中每个索引的键。
-
-- Array.prototype.lastIndexOf()
-  - 返回在调用数组中可以找到给定元素的最后一个（最大）索引，如果找不到则返回 -1。
-
-- [Array.prototype.map()](#arrayprototypemap)
-  - 返回一个新数组，其中包含对调用数组中的每个元素调用函数的结果。
-
-- Array.prototype.pop()
-  - 从数组中移除最后一个元素并返回该元素。
-
-- Array.prototype.push()
-  - 在数组末尾添加一个或多个元素，并返回数组新的 length。
-
-- [Array.prototype.reduce()](#arrayprototypereduce)
-  - 对数组的每个元素（从左到右）执行用户提供的“reducer”回调函数，将其简化为单个值。
-
-- [Array.prototype.reduceRight()](#arrayprototypereduceright)
-  - 对数组的每个元素（从右到左）执行用户提供的“reducer”回调函数，将其简化为单个值。
-
-- Array.prototype.reverse()
-  - 就地反转数组中元素的顺序。（前面变成后面，后面变成前面。）
-
-- [Array.prototype.shift()](#arrayprototypeshift)
-  - 从数组中移除第一个元素并返回该元素。
-
-- [Array.prototype.slice()](#arrayprototypeslice)
-  - 提取调用数组的一部分并返回一个新数组。
-
-- Array.prototype.some()
-  - 如果调用数组中至少有一个元素满足提供的测试函数，则返回 true。
-
-- [Array.prototype.sort()](#arrayprototypesort)
-  - 对数组的元素进行排序并返回该数组。
-
-- [Array.prototype.splice()](#arrayprototypesplice)
-  - 从数组中添加和/或删除元素。
-
-- Array.prototype.toLocaleString()
-  - 返回一个表示调用数组及其元素的本地化字符串。重写 Object.prototype.toLocaleString() 方法。
-
-- Array.prototype.toReversed()
-  - 返回一个新数组，该数组的元素顺序被反转，但不改变原始数组。
-
-- Array.prototype.toSorted()
-  - 返回一个新数组，其中元素按升序排序，而不改变原始数组。
-
-- Array.prototype.toSpliced()
-  - 返回一个新数组，在给定索引处删除和/或替换了一些元素，而不改变原始数组。
-
-- Array.prototype.toString()
-  - 返回一个表示调用数组及其元素的字符串。重写 Object.prototype.toString() 方法。
-
-- [Array.prototype.unshift()](#arrayprototypeunshift)
-  - 在数组的前面添加一个或多个元素，并返回数组新的 length。
-
-- Array.prototype.values()
-  - 返回一个新的数组迭代器对象，该对象包含数组中每个索引的值。
-
-- Array.prototype.with()
-  - 返回一个新数组，其中给定索引处的元素替换为给定值，而不改变原始数组。
-
-### Array.prototype.slice()
+### slice()
 
 `slice()` 方法返回一个新的数组对象，这一对象是一个由 `start` 和 `end` 决定的原数组的**浅拷贝**（**包括 start，不包括 end**），其中 `start` 和 `end` 代表了数组元素的索引。原始数组不会被改变。
 
@@ -320,7 +309,7 @@ console.log(Array.prototype.slice.call(arrayLike, 1, 3));
 // [ 3, 4 ]
 ```
 
-### Array.prototype.splice()
+### splice()
 
 `splice()` 方法通过移除或者替换已存在的元素和/或添加新元素就地改变一个数组的内容。语法如下：
 
@@ -416,7 +405,7 @@ const removed = myFish.splice();
 // removed 是 []
 ```
 
-### Array.prototype.sort()
+### sort()
 
 `sort()` 方法 **就地** 对数组的元素进行排序，**并返回对相同数组的引用**。
 
@@ -450,11 +439,11 @@ sort(compareFn)
     - b：第二个用于比较的元素。不会是 undefined。
   - 如果省略该函数，数组元素会被转换为字符串，然后根据每个字符的 `Unicode` 码位值进行排序。
 
-|compareFn(a, b) 返回值 |排序顺序|
+|compareFn(a, b) 返回值|排序顺序|
 |--|--|
-|`> 0` |a 在 b 后，如 [b, a]|
-|`< 0` |a 在 b 前，如 [a, b]|
-|`=== 0` |保持 a 和 b 原来的顺序|
+|`> 0`|a 在 b 后，如 [b, a]|
+|`< 0`|a 在 b 前，如 [a, b]|
+|`=== 0`|保持 a 和 b 原来的顺序|
 
 比较函数形式如下：
 
@@ -479,7 +468,7 @@ function compareFn(a, b) {
 
 **示例**：
 
-- 创建、显示及排序数组
+1、创建、显示及排序数组
 
 ```js
 const stringArray = ["Blue", "Humpback", "Beluga"];
@@ -507,9 +496,10 @@ mixedNumericArray.sort(); // [1, 200, 40, 5, '700', '80', '9']
 mixedNumericArray.sort(compareNumbers); // [1, 5, '9', 40, '80', 200, '700']
 ```
 
-- 使用 `map` 改善排序  
-  - `compareFn` 可能会在数组中的每个元素上调用多次，如果 `compareFn` 执行的工作更多，需要排序的元素更多，性能损耗会很严重。
-  - 解决：先遍历数组一次，将用于排序的实际值提取到一个临时数组中（通过 `map` 实现），对临时数组进行排序，然后遍历临时数组以获得正确的顺序。
+2、使用 `map` 改善排序
+
+- `compareFn` 可能会在数组中的每个元素上调用多次，如果 `compareFn` 执行的工作更多，需要排序的元素更多，性能损耗会很严重。
+- 解决：先遍历数组一次，将用于排序的实际值提取到一个临时数组中（通过 `map` 实现），对临时数组进行排序，然后遍历临时数组以获得正确的顺序。
 
 ```js
 // 需要被排序的数组
@@ -534,15 +524,17 @@ mapped.sort((a, b) => {
 const result = mapped.map((v) => data[v.i]);
 ```
 
-- 在稀疏数组上使用 `sort()`
-  - 空槽会被移动到数组的末尾。
+3、在稀疏数组上使用 `sort()`
+
+- 稀疏数组在使用 `sort()` 方法后仍然是稀疏的。
+- 空槽会被移动到数组的末尾。
 
 ```js
 console.log(["a", "c", , "b"].sort()); // ['a', 'b', 'c', empty]
 console.log([, undefined, "a", "b"].sort()); // ["a", "b", undefined, empty]
 ```
 
-### Array.prototype.shift()
+### shift()
 
 `shift()` 方法从数组中删除`第一个`元素，并`返回该元素的值`。此方法`更改数组的长度`。
 
@@ -558,7 +550,7 @@ console.log(firstElement);
 // Expected output: 1
 ```
 
-### Array.prototype.unshift()
+### unshift()
 
 `unshift()` 方法将指定元素**添加到数组的开头**，并**返回数组的新长度**。
 
@@ -583,7 +575,7 @@ console.log(array1);
 // Expected output: Array [4, 5, 1, 2, 3]
 ```
 
-### Array.prototype.map()
+### map()
 
 `map()` 方法创建一个新数组，这个新数组由原数组中的每个元素都调用一次提供的函数后的返回值组成。
 
@@ -769,7 +761,7 @@ console.log(numbers);
 // 因为最后一次迭代是 parseInt("10", 2); "10" 以二进制解析结果为 2
 ```
 
-### Array.prototype.flat()
+### flat()
 
 `flat()` 方法创建一个新的数组，并根据指定深度递归地将所有子数组元素拼接到新的数组中。
 
@@ -850,7 +842,7 @@ console.log(Array.prototype.flat.call(arrayLike));
 // [ 1, 2, { '0': 3, '1': 4, length: 2 }, 5 ]
 ```
 
-### Array.prototype.flatMap()
+### flatMap()
 
 `flatMap()` 方法对数组中的每个元素应用给定的回调函数，然后将结果展开一级，返回一个新数组。
 
@@ -958,7 +950,7 @@ console.log(
 // [ { '0': 1, length: 1 }, { '0': 2, length: 1 }, { '0': 3, length: 1 } ]
 ```
 
-### Array.prototype.reduce()
+### reduce()
 
 `reduce()` 方法对数组中的每个元素按序执行一个提供的 `reducer` 函数，每一次运行 `reducer` 会将先前元素的计算结果作为参数传入，最后将其结果汇总为单个返回值。
 
@@ -1127,7 +1119,7 @@ console.log(Array.prototype.reduce.call(arrayLike, (x, y) => x + y));
 // 9
 ```
 
-### Array.prototype.reduceRight()
+### reduceRight()
 
 `reduceRight()` 与 `reduce()` 方法功能一样，但它是从数组的`最后一个`元素开始向前遍历数组。
 
@@ -1159,7 +1151,7 @@ console.log(left); // "12345"
 console.log(right); // "54321"
 ```
 
-### Array.prototype.concat()
+### concat()
 
 `Array.concat()` 是 JavaScript 数组方法，用于合并两个或多个数组，**返回一个新数组**，不会改变原数组。
 
