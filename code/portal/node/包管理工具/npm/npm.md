@@ -3,7 +3,10 @@
 - [npm](#npm)
   - [版本号](#版本号)
   - [package.json文件](#packagejson文件)
+    - [type](#type)
+    - [types](#types)
     - [dependencies 和 devDependencies 的区别](#dependencies-和-devdependencies-的区别)
+  - [peerDependency](#peerdependency)
   - [package-lock.json文件](#package-lockjson文件)
   - [scripts](#scripts)
     - [npm 并行 or 继发](#npm-并行-or-继发)
@@ -57,18 +60,158 @@ semver 版本规范是 `X.Y.Z` ：
 - main - main 字段指定了程序的主入口文件，require('moduleName') 就会加载这个文件。这个字段的默认值是模块根目录下面的 index.js。
 - keywords - 关键字
 
-### dependencies 和 devDependencies 的区别
+### type
 
-运行 `npm install` 会同时下载 `dependencies` 和 `devDependencies` 的包
+**1.作用**
+
+`type` 字段告诉 `Node.js` **以何种模块系统来解析该项目中的 `.js` 文件**（指定 `JavaScript` 模块格式）。它决定了在项目中使用 `import/export`（ES 模块）还是 `require/module.exports`（CommonJS）。
+
+**2.取值**
+
+- `"commonjs"`（默认） —— `.js` 文件均被当作 CommonJS 模块处理。
+- `"module"` —— `.js` 文件均被当作 ES 模块处理。
+
+> **注意**：此设置仅影响 **`.js` 文件**，对显式扩展名的文件有更明确的规则：
+>
+> - `.mjs` 始终当作 ES 模块
+> - `.cjs` 始终当作 CommonJS 模块
+> - `.js` 取决于 `package.json` 中 `type` 字段
+
+**3.示例**
+
+**3.1 项目以 ES 模块运行**
+
+```json
+// package.json
+{
+  "name": "my-es-package",
+  "type": "module",
+  "main": "index.js"
+}
+```
+
+此时 `index.js` 可以使用 `import/export`：
+
+```js
+// index.js
+import { readFile } from 'fs/promises';
+export const value = 42;
+```
+
+**3.2 项目以 CommonJS 运行（默认）**
+
+```json
+{
+  "name": "my-cjs-package"
+  // 未设置 type，或显式设为 "commonjs"
+}
+```
+
+```js
+// index.js
+const fs = require('fs');
+module.exports = { value: 42 };
+```
+
+### types
+
+**1. 作用**
+
+`types` 字段（历史别名 `typings`）用于**指定包的 TypeScript 类型声明文件（`.d.ts`）**。当其他 TypeScript 项目导入此包时，TypeScript 编译器会依据该字段找到对应的类型定义，从而提供代码补全、类型检查等功能。
+
+**2. 用法**
+
+直接在 `package.json` 中指定类型文件的路径：
+
+```json
+{
+  "name": "my-package",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts"
+}
+```
+
+此时若 `my-package` 被安装，TypeScript 会读取 `./lib/index.d.ts` 作为类型定义。
+
+### dependencies 和 devDependencies 的区别
 
 官方解释：
 
 - `"dependencies"`: Packages required by your application in production.
 - `"devDependencies"`: Packages that are only needed for local development and testing.
 
-对于开发网站或应用，差别不大，因为使用 `webpack` 打包会把 `js` 或 `ts` 文件引入的包都一起打包。
+区别：
 
-**它们的区别在发布一个 `npm package` 时出现**。发布包是不会把 `devDependencies` 的包打包进来，因为别的项目使用这个发布的包是不需要这个包开发或测试需要的包，只需要它生产环境下需要的包，即 `dependencies` 。
+- `dependencies`: 生产运行时需要的依赖
+  - 应用在生产环境运行时必须有
+  - 别人安装你的 npm 包时会被安装
+- `devDependencies`: 仅开发/测试/构建需要的依赖（如打包、测试、lint 工具），
+  - 生产运行不需要
+  - 别人安装你的 npm 包时不会安装
+
+场景说明：
+
+- 前端打包（`webpack/vite/rollup`）：
+  - 默认 `npm install` 会装两者；生产环境可用 `npm install --omit=dev` 或 `npm install --production` 跳过 `devDependencies`。
+  - 打包工具只会**打包被入口依赖链实际引用到的模块**。如果你在 `dependencies` 中安装了一个包，但没有在代码中引用它，那么它不会被打包进生产环境的构建结果中。
+- `Node` 服务端打包/发布：
+  - 发布到 `npm` 的包只包含你发布的文件和 `package.json` 等元数据，不会把 `dependencies` 的代码打进包里；使用方安装你的包时，`npm` 会根据 `dependencies` 去下载并安装这些依赖。
+
+## peerDependency
+
+**peerDependency（同伴依赖）** 是 npm、yarn、pnpm 等包管理器中一种特殊的依赖关系声明。它表示**当前包需要一个特定版本的“宿主”包，但这个宿主包不会由当前包自动安装，而是要求使用当前包的环境（例如最终应用）已经提供了该宿主包**。
+
+简单说：**“我是一个插件，你需要先装上我这个插件依赖的平台/框架，我才能工作。”**
+
+---
+
+**1. 为什么需要 peerDependency？**
+
+假设你开发了一个 React 组件库 `my-ui`，它依赖于 `react` 和 `react-dom`。
+
+- 如果把这些依赖写在 `dependencies` 里，当用户安装 `my-ui` 时，npm 会安装它自己的 `react` 副本。这可能导致用户项目中同时存在两个 `react` 版本（用户自己用的 + `my-ui` 用的），引发错误（如 Hooks 规则破坏、上下文丢失）。
+- **真正合理的方式**：你的组件库**复用**用户项目中的 `react`，而不是私有一份。
+
+**peerDependency 正是为了这种“复用宿主依赖”的场景而生的。**
+
+---
+
+**2. 如何声明 peerDependency？**
+
+在 `package.json` 中，使用 `peerDependencies` 字段：
+
+```json
+{
+  "name": "my-ui",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  }
+}
+```
+
+这里的版本范围通常比较宽松，以兼容宿主环境可能使用的不同版本。
+
+---
+
+**3. peerDependenciesMeta：更细粒度的控制**
+
+从 npm v7 开始支持 `peerDependenciesMeta`，用于标记某个 peerDependency 是否为可选的：
+
+```json
+{
+  "peerDependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true   // 表示如果没有 react-dom，组件库也可以降级工作
+    }
+  }
+}
+```
 
 ## package-lock.json文件
 
@@ -204,7 +347,7 @@ npm 投毒（npm poisoning）是一种针对 JavaScript 生态系统（尤其是
 
 使用 `npm audit` 是防范 npm 投毒（供应链攻击）的关键步骤，它能扫描项目依赖中的已知安全漏洞。以下是具体使用方法。
 
-***
+---
 
 **基础扫描与修复**
 
@@ -217,7 +360,7 @@ npm 投毒（npm poisoning）是一种针对 JavaScript 生态系统（尤其是
 | **`npm audit fix --force`** | **强制修复**。当常规修复无效时，此命令会强制更新到安全版本，但**可能引入不兼容的变更**。使用前建议先测试。 |
 | **`npm audit fix --dry-run --json`** | **模拟修复**。预览修复将执行的操作，并以 JSON 格式输出计划，**不会实际修改文件**。 |
 
-***
+---
 
 **`npm audit fix` 版本号说明**：
 
@@ -229,7 +372,7 @@ npm 投毒（npm poisoning）是一种针对 JavaScript 生态系统（尤其是
 - 如果 `package.json` 中的版本号是 `"axios": "~1.0.0"` 或者 `"axios": "1.0.0"`，则会更新为 `"axios": "^1.13.2"`
   - 因为 `package.json` 需要变更，所以要使用 `npm audit fix --force` 来强制更新
 
-***
+---
 
 **例子**
 
