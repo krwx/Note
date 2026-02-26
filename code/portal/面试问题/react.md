@@ -24,6 +24,7 @@
   - [21. 了解 redux 怎么进行异步的状态管理（就是需要发送异步请求获取状态）](#21-了解-redux-怎么进行异步的状态管理就是需要发送异步请求获取状态)
   - [22. 了解 redux-saga 吗](#22-了解-redux-saga-吗)
   - [23. redux 实际开发中有用过哪些异步方案](#23-redux-实际开发中有用过哪些异步方案)
+  - [24. React开发中，组件重复渲染的问题怎么解决？](#24-react开发中组件重复渲染的问题怎么解决)
 
 ## 1. 你知道Hook是什么吗？有哪些
 
@@ -392,3 +393,13 @@ useLayoutEffect 是 useEffect 的一个版本，**在浏览器重新绘制屏幕
 - redux-observable/redux-observable
 - redux-loop/redux-loop
 - jeffbski/redux-logic
+
+## 24. React开发中，组件重复渲染的问题怎么解决？
+
+使用 React.memo、 浅比较组件props、类组件中实现 PureComponent 、函数组件中用 useMemo 缓存计算结果、 useCallback 缓存函数引用
+
+预防手段：
+
+- 避免在渲染函数中定义新函数/新对象
+- 合理拆分组件，缩小重渲染影响范围
+- 利用 Context 分层管理状态，避免全局状态频繁更新
