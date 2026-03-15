@@ -90,41 +90,37 @@ curryingAdd(1)(2)   // 3
 
 主要概念就是让函数返回一个function可以接受第二个（或者更多）括号里的参数并输出期望值。
 
-实现 sum 函数，实现 sum(1)(2)(3)() === 6 和 sum(1,2,3)() === 6
+实现 sum 函数，实现 `sum(1)(2)(3)() === 6` 和 `sum(1,2,3)() === 6`
+
+```txt
+核心思路是 “闭包 + 递归式链式调用 + 空调用作为结束信号”：
+
+1. sum(...args) 先接收第一批参数，并用 reduce 算出初始 total。
+2. sum 返回内部函数 adder(...nextArgs)，这就是后续每一层 (...) 实际调用的函数。
+3. adder 里分两种情况：
+   - nextArgs.length === 0：说明调用了 ()，表示结束，直接返回累计值 total。
+   - 否则：把这次参数和加到 total，再返回 adder 本身，继续支持下一次链式调用。
+4. 因为 total 定义在 sum 作用域里，adder 每次调用都能访问并更新它，这就是闭包的作用。
+```
 
 ```js
-function sumWithES6(...rest) {
-    var _args = rest;
+function sum(...args) {
+	let total = args.reduce((acc, num) => acc + num, 0);
 
-    var _adder = function (...innerRest) {
-        _args.push(...innerRest); // 这里使用的是ES6数组的解构
-        return _adder;
-    };
+	function adder(...nextArgs) {
+		if (nextArgs.length === 0) {
+			return total;
+		}
 
-    _adder.toString = function () {
-        let sum = _args.reduce(function (a, b) {
-            return a + b;
-        });
-        return sum;
-    };
-    return _adder;
+		total += nextArgs.reduce((acc, num) => acc + num, 0);
+		return adder;
+	}
+
+	return adder;
 }
-console.log(sumWithES6(1)(2)(3)); // 6
 
-function sum(...rest) {
-    var arr = rest;
-    var _adder = function (...innerRest) {
-        arr.push(...innerRest);
-        return _adder;
-    };
-
-    _adder.toString = function() {
-        let sum = arr.reduce((a,b) => a+b);
-        return sum;
-    }
-
-    return _adder;
-}
+console.log(sum(1)(2)(3)()) // 6
+console.log(sum(1,2,3)()) // 6
 ```
 
 ## 2. let 和 const 为什么不像 var 能在变量声明赋值前被使用

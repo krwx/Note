@@ -361,7 +361,8 @@ IE盒模型和W3C标准盒模型的区别：
 
 设置 `align-items: center;`
 
-因为主轴的 direction 为 row ？
+因为主轴的 direction 为 row ？ ❌  
+因为主轴的 direction 为 column ✅
 
 ## 25. css 自定义颜色的四种方法（包括RGB（百分比））
 

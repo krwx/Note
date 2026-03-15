@@ -16,6 +16,10 @@
   - [工具](#工具)
     - [toValue()](#tovalue)
     - [toRefs()​](#torefs)
+    - [isProxy()](#isproxy)
+    - [isReactive()](#isreactive)
+  - [进阶](#进阶)
+    - [markRaw()](#markraw)
 
 ## 核心
 
@@ -213,6 +217,7 @@ stop()
 
 第二个参数是**一个可选的选项**，可以用来调整副作用的刷新时机或调试副作用的依赖。
 
+- 默认值：`'pre'`
 - 默认情况下，侦听器将在组件渲染之前执行。设置 `flush: 'post'` 将会**使侦听器延迟到组件渲染之后再执行**。
 - 在某些特殊情况下 (例如要使缓存失效)，可能有必要**在响应式依赖发生改变时立即触发侦听器**。这可以通过设置 `flush: 'sync'` 来实现。然而，该设置应谨慎使用，因为如果有多个属性同时更新，这将导致一些性能和数据一致性的问题。
 
@@ -321,3 +326,44 @@ const { foo, bar } = useFeatureX()
 ```
 
 `toRefs` 在调用时只会为**源对象上可以枚举的属性**创建 `ref`。如果要为可能还不存在的属性创建 `ref`，请改用 `toRef`。
+
+### isProxy()
+
+检查一个对象是否是由 `reactive()`、`readonly()`、`shallowReactive()` 或 `shallowReadonly()` 创建的代理。
+
+```js
+const obj = reactive({})
+console.log(isProxy(obj)) // true
+console.log(isProxy({})) // false
+```
+
+### isReactive()
+
+检查一个对象是否是由 `reactive()` 或 `shallowReactive()` 创建的代理。
+
+```js
+const obj = reactive({})
+console.log(isReactive(obj)) // true
+console.log(isReactive({})) // false
+```
+
+## 进阶
+
+### markRaw()
+
+将一个对象标记为不可被转为代理。返回该对象本身。
+
+一旦对象被 `markRaw` 标记，它永远无法再被转换为响应式，即使你后续尝试用 `reactive()` 包装它，返回的仍然是原始对象。
+
+```js
+const foo = markRaw({})
+console.log(isReactive(reactive(foo))) // false
+
+// 也适用于嵌套在其他响应性对象，它仍然不是响应式代理
+const bar = reactive({ foo })
+console.log(isReactive(bar.foo)) // false
+```
+
+**为什么不用 readonly？**
+
+`readonly` 会创建一个**只读的响应式代理**，依然会进行依赖追踪和代理包装。markRaw 则是完全绕过响应式系统，性能更好，也适用于那些不适合被代理的场景。

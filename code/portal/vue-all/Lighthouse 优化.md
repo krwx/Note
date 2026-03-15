@@ -31,7 +31,7 @@
 1. `v-if` 里面的组件
 2. `dialog` 组件和 `dialog` 里面的组件
 
-参考 [异步组件](./vue/docs/guide/2--深入组件.md#异步组件) 章节。
+参考 [异步组件](./vue/docs/guide/2--深入组件/8--异步组件.md) 。
 
 ### 图片懒加载
 
@@ -77,6 +77,8 @@ const filteredList = computed(() => {
 ```
 
 3、虚拟滚动优化长列表
+
+参考 [虚拟列表 vue3 实现](../js/usage/虚拟列表.md#vue3-实现) 章节。
 
 ## vite 优化
 
