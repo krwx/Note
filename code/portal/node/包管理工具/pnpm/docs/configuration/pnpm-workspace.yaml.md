@@ -1,5 +1,10 @@
 # pnpm-workspace.yaml
 
+- [pnpm-workspace.yaml](#pnpm-workspaceyaml)
+  - [onlyBuiltDependencies](#onlybuiltdependencies)
+  - [peerDependencyRules](#peerdependencyrules)
+    - [peerDependencyRules.allowedVersions](#peerdependencyrulesallowedversions)
+
 ## onlyBuiltDependencies
 
 `onlyBuiltDependencies` 选项允许你指定一个包列表，这些包在安装过程中会执行 `preinstall`、`install` 和/或 `postinstall` 脚本。这个选项对于那些需要在安装时进行特定构建步骤的包非常有用，确保它们能够正确地构建和安装。
