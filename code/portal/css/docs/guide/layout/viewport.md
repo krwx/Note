@@ -3,15 +3,16 @@
 - [视口](#视口)
   - [视口（Viewport）](#视口viewport)
     - [主要视口类型](#主要视口类型)
-      - [布局视口和视觉视口取值的说明](#布局视口和视觉视口取值的说明)
-        - [桌面端](#桌面端)
-        - [移动端](#移动端)
+    - [布局视口和视觉视口取值的说明](#布局视口和视觉视口取值的说明)
+      - [桌面端](#桌面端)
+      - [移动端](#移动端)
     - [视口 Meta 标签](#视口-meta-标签)
     - [常见应用场景](#常见应用场景)
   - [CSS 的 vw 和 vh 单位](#css-的-vw-和-vh-单位)
     - [`svh/lvh/dvh`](#svhlvhdvh)
     - [注意事项和常见问题](#注意事项和常见问题)
     - [最佳实践建议](#最佳实践建议)
+  - [获取视口信息的例子](#获取视口信息的例子)
 
 ## 视口（Viewport）
 
@@ -53,9 +54,9 @@ window.visualViewport?.height
 - 设备理想的显示宽度
 - 通过设置 `<meta name="viewport">` 实现
 
-#### 布局视口和视觉视口取值的说明
+### 布局视口和视觉视口取值的说明
 
-##### 桌面端
+#### 桌面端
 
 在桌面端，**布局视口**和**视觉视口**的大小是一样的
 
@@ -92,7 +93,7 @@ document.documentElement.clientWidth = 2400 // 1200/0.5 = 2400
 window.innerWidth = 2400                    // 也变为2400
 ```
 
-##### 移动端
+#### 移动端
 
 > js 取值方式与桌面端一样
 
@@ -224,11 +225,11 @@ const observer = new ResizeObserver(entries => {
 
 1. **vw (Viewport Width)**
     - **含义**：视口宽度的百分比
-    - **1vw** = 视口宽度的 1%
+    - **1vw** = 视口宽度的 1% 。例如：当前视口宽度是 `520px` ，则 `1vw=5.2px` 。  
     - **100vw** = 视口宽度的 100%
 2. **vh (Viewport Height)**
     - **含义**：视口高度的百分比
-    - **1vh** = 视口高度的 1%
+    - **1vh** = 视口高度的 1% 。例如：当前视口高度是 `800px` ，则 `1vh=8px` 。  
     - **100vh** = 视口高度的 100%
 
 **使用示例**:
@@ -375,3 +376,79 @@ const observer = new ResizeObserver(entries => {
      font-size: clamp(16px, 4vw, 32px);
    }
    ```
+
+## 获取视口信息的例子
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <style>
+        .info-box {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            font-family: monospace;
+            z-index: 1000;
+        }
+        
+        .test-box {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .content {
+            height: 200vh; /* 让页面可滚动 */
+            width: 200vw;  /* 让页面可水平滚动 */
+        }
+    </style>
+</head>
+<body>
+    <div class="info-box" id="viewportInfo">
+        加载中...
+    </div>
+    
+    <div class="content">
+        <div class="test-box">
+            这是 100vw × 100vh 的区域
+        </div>
+    </div>
+
+    <script>
+        function updateViewportInfo() {
+            const info = `
+            布局视口: ${document.documentElement.clientWidth} × ${document.documentElement.clientHeight}px
+            视觉视口: ${window.visualViewport?.width || 'N/A'} × ${window.visualViewport?.height || 'N/A'}px
+            窗口尺寸: ${window.innerWidth} × ${window.innerHeight}px
+            屏幕尺寸: ${screen.width} × ${screen.height}px
+            设备像素比: ${window.devicePixelRatio}
+            CSS vw/vh: ${window.innerWidth} × ${window.innerHeight}px
+            `;
+            
+            document.getElementById('viewportInfo').innerHTML = info;
+        }
+        
+        // 初始更新
+        updateViewportInfo();
+        
+        // 监听变化
+        window.addEventListener('resize', updateViewportInfo);
+        window.addEventListener('scroll', updateViewportInfo);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', updateViewportInfo);
+            window.visualViewport.addEventListener('scroll', updateViewportInfo);
+        }
+    </script>
+</body>
+</html>
+```

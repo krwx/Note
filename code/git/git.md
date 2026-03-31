@@ -21,6 +21,7 @@
     - [查看系统级别的配置](#查看系统级别的配置)
     - [查看特定配置项的值](#查看特定配置项的值)
   - [设置](#设置)
+  - [git merge 和 git cherry-pick 的区别](#git-merge-和-git-cherry-pick-的区别)
 
 ## 概念
 
@@ -260,3 +261,42 @@ ssh -T git@git.int.com
 
 ssh -T git@gitlab.aws.int.kn
 ```
+
+## git merge 和 git cherry-pick 的区别
+
+`git merge` 和 `git cherry-pick` 是 Git 中两种不同的代码合并方式，核心区别在于作用范围、历史记录处理和适用场景。
+
+核心区别
+
+- 作用对象不同  
+  - `git merge`：合并整个分支的所有提交到当前分支。  
+  - `git cherry-pick`：仅复制指定的单个或多个提交到当前分支。
+
+- 提交历史处理不同  
+  - `git merge`：保留原始提交历史，生成一个合并提交（merge commit），清晰体现分支结构。  
+  - `git cherry-pick`：创建新的提交（SHA 值不同），原提交历史不被保留，可能造成重复提交。
+
+- 适用场景不同  
+  - 使用 `merge` 的情况：  
+    - 功能开发完成，需将整个 `feature` 分支合并到 `main`。  
+    - 团队重视完整历史追溯，遵循 Git Flow 等工作流。  
+  - 使用 `cherry-pick` 的情况：  
+    - 只需将某个紧急 bug 修复从发布分支同步到开发分支。  
+    - 不想引入目标分支的其他未完成或无关改动。
+
+示例命令
+
+- 合并分支：
+
+  ```bash
+  git checkout main
+  git merge feature/login
+  ```
+
+- 精选特定提交：
+
+  ```bash
+  git checkout main
+  git cherry-pick a1b2c3d  应用单个提交
+  git cherry-pick a1b2c3d e4f5g6h  应用多个提交
+  ```

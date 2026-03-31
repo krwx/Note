@@ -202,6 +202,9 @@ shutdown_timeout = 0
 <!-- 启动服务 -->
 .\gitlab-runner.exe start
 
+<!-- 以窗口模式运行 runner -->
+.\gitlab-runner.exe run
+
 <!-- 重启服务 -->
 .\gitlab-runner.exe restart
 

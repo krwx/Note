@@ -35,3 +35,5 @@ develop 分支用来整合各个 feature 分支。开发中的版本的源代码
 ## GitFlow 工作流程
 
 ![GitFlow](./img/GitFlow.png)
+
+![GitFlow](./img/gitflow-2.webp)
