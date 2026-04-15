@@ -9,6 +9,7 @@
       - [截断数组](#截断数组)
   - [静态方法](#静态方法)
     - [Array.from()](#arrayfrom)
+    - [Array.of()](#arrayof)
   - [实例方法](#实例方法)
     - [slice()](#slice)
       - [在类数组对象上调用 slice()](#在类数组对象上调用-slice)
@@ -116,7 +117,7 @@ console.log(numbers[3]); // undefined；多余的元素会被删除
 - `Array.isArray()`
   - : 如果参数是数组则返回 true ，否则返回 false 。
 - `Array.of()`
-  - : 创建一个新的 `Array` 实例，具有可变数量的参数，而不管参数的数量或类型。
+  - : 创建一个新的 `Array` 实例，具有可变数量的参数，而不管参数的数量或类型，**且每个参数都会成为数组的一个元素**。
 
 ### Array.from()
 
@@ -216,6 +217,28 @@ const arr4 = [...set]; // [1, 2, 3]
 2. **稀疏数组**: 对于稀疏数组，空缺位置会用 `undefined` 填充
 3. **性能**: 在需要处理大量数据时，直接使用循环可能更高效
 
+### Array.of()
+
+`Array.of()` 方法创建一个新的 `Array` 实例，具有可变数量的参数，而不管参数的数量或类型，**且每个参数都会成为数组的一个元素**。
+
+```js
+Array.of(1, 2, 3)        // [1, 2, 3]
+Array.of(7)              // [7]
+Array.of('hello')        // ['hello']
+Array.of(undefined)      // [undefined]
+Array.of()               // []
+```
+
+与 `Array()` 的区别：
+
+- 当使用 `Array` 构造函数时，单个数字参数会被解释为数组长度，而不是数组元素
+- 而 `Array.of()` 无论参数是什么，都直接作为数组元素
+
+```js
+Array(7)                 // [empty × 7]
+Array.of(7)              // [7]
+```
+
 ## 实例方法
 
 - `join()`：用指定的分隔符将数组每一项拼接为字符串
@@ -252,6 +275,8 @@ const arr4 = [...set]; // [1, 2, 3]
 - `reduce()`: 对数组的每个元素（从左到右）执行用户提供的“reducer”回调函数，将其简化为单个值。
 - `reduceRight()`: 对数组的每个元素（从右到左）执行用户提供的“reducer”回调函数，将其简化为单个值。
 - `with()`: 返回一个新数组，其中给定索引处的元素替换为给定值，而不改变原始数组。
+
+会修改原数组的方法：`push()`、`pop()`、`shift()`、`unshift()`、`splice()`、`sort()`、`reverse()`、`fill()`、`copyWithin()`
 
 ### slice()
 

@@ -1,41 +1,27 @@
 # pnpm workspace
 
 - [pnpm workspace](#pnpm-workspace)
-  - [一、什么是 pnpm workspace？](#一什么是-pnpm-workspace)
-  - [二、为什么需要 workspace？](#二为什么需要-workspace)
-  - [三、核心特性](#三核心特性)
-  - [四、如何配置 pnpm workspace？](#四如何配置-pnpm-workspace)
+  - [1. 介绍](#1-介绍)
+  - [2. 如何配置 pnpm workspace？](#2-如何配置-pnpm-workspace)
     - [1. 创建仓库结构](#1-创建仓库结构)
-    - [2. 编写 pnpm-workspace.yaml](#2-编写-pnpm-workspaceyaml)
-    - [3. 根目录 package.json 可选](#3-根目录-packagejson-可选)
-    - [4. 通过别名引用 workspace 中的包](#4-通过别名引用-workspace-中的包)
+    - [2. 创建 pnpm-workspace.yaml](#2-创建-pnpm-workspaceyaml)
+    - [3. 修改 package.json](#3-修改-packagejson)
+    - [4. 引用 workspace 中的包](#4-引用-workspace-中的包)
+      - [4.1 通过别名引用](#41-通过别名引用)
+      - [4.2 使用 pnpm add 命令](#42-使用-pnpm-add-命令)
     - [5. 发布 workspace 包](#5-发布-workspace-包)
-  - [五、常用命令与工作流](#五常用命令与工作流)
-  - [六、与其他工具的对比](#六与其他工具的对比)
-  - [七、适用场景](#七适用场景)
-  - [八、总结](#八总结)
+  - [配置](#配置)
+    - [linkWorkspacePackages](#linkworkspacepackages)
 
-pnpm 的 workspace 是一项原生支持**单仓库多包（Monorepo）**的强大功能。它允许你在一个仓库中管理多个项目（包），并自动处理它们之间的依赖关系，同时利用 pnpm 独有的硬链接与符号链接机制，极大地节省磁盘空间并提升安装速度。
+## 1. 介绍
 
-## 一、什么是 pnpm workspace？
+**定义：**
 
-pnpm workspace 是 pnpm 内置的对 Monorepo 架构的支持。通过在仓库根目录定义 `pnpm-workspace.yaml` 文件，你可以声明哪些子目录是独立的工作包。pnpm 会将这些包视为独立的项目，但又能将它们相互链接，实现本地包之间的即时引用，而不必先发布到 NPM。
+pnpm 的 workspace 是一项原生支持**单仓库多包（Monorepo）**的强大功能。它允许你在一个仓库中管理多个项目（包），并自动处理它们之间的依赖关系，同时利用 pnpm 独有的硬链接与符号链接机制，极大地节省磁盘空间并提升安装速度。通过在仓库根目录定义 `pnpm-workspace.yaml` 文件，你可以声明哪些子目录是独立的工作包。
 
-## 二、为什么需要 workspace？
+***
 
-在开发多个相互依赖的 npm 包时（例如 UI 组件库、工具函数库、主应用），传统方案通常是：
-
-- 分别维护多个仓库，通过 `npm link` 手动链接调试，流程繁琐。
-- 或者将所有代码放到一个仓库，但使用 npm/yarn 简单平铺安装，会导致依赖重复、版本冲突等问题。
-
-pnpm workspace 通过**中心化依赖管理**和**自动软链接**解决了这些问题：
-
-- **本地包相互引用**：`"@my-project/utils": "workspace:*"` 自动指向本地源码。
-- **依赖去重**：所有包的公共依赖会被提升到根 `node_modules`，避免重复下载。
-- **节省磁盘**：pnpm 使用内容寻址存储，相同版本的依赖只保存一份物理文件。
-- **严格的隔离**：即使使用 Workspace，每个包的 `node_modules` 结构依然遵循 pnpm 的严格原则，防止非法访问未声明的依赖。
-
-## 三、核心特性
+**核心特性：**
 
 1. **基于内容寻址的存储**  
    所有依赖都存储在全局 store 中，项目中的 `node_modules` 只是这些文件的硬链接。不同项目使用同版本依赖时，磁盘上仅存一份。
@@ -49,7 +35,7 @@ pnpm workspace 通过**中心化依赖管理**和**自动软链接**解决了这
 4. **workspace 协议**  
    在 `package.json` 的依赖声明中，可以使用 `"workspace:*"`、`"workspace:^1.2.3"` 等语法，pnpm 在发布时会自动将这些引用转换为真实的版本号。
 
-## 四、如何配置 pnpm workspace？
+## 2. 如何配置 pnpm workspace？
 
 ### 1. 创建仓库结构
 
@@ -67,7 +53,7 @@ my-monorepo/
 └── package.json (根目录)
 ```
 
-### 2. 编写 pnpm-workspace.yaml
+### 2. 创建 pnpm-workspace.yaml
 
 ```yaml
 packages:
@@ -77,13 +63,55 @@ packages:
   - '!**/test/**'
 ```
 
-### 3. 根目录 package.json 可选
+### 3. 修改 package.json
 
-根目录可以不设 `private: true`，但推荐设置以阻止意外发布。你还可以在根目录定义共用的开发依赖，如 `typescript`、`eslint` 等，通过 `-w` 标志安装。
+根目录 `package.json`：
 
-### 4. 通过别名引用 workspace 中的包
+- 删除 `main`、`test` 属性
+- 清空 `scripts` 里面的命令，或者删除 `scripts` 属性
+- 根目录可以不设 `private: true`，但推荐设置以阻止意外发布
+- 还可以在根目录定义共用的 `devDependencies`，如 `typescript`、`eslint` 等，通过 `-w` 标志安装。
 
-在子包的 `package.json` 中，可以使用 workspace 协议引用其他本地包：
+示例：
+
+```json
+{
+  "name": "my-monorepo",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "eslint": "^7.0.0"
+  },
+  "license": "ISC",
+  "packageManager": "pnpm@10.25.0"
+}
+```
+
+***
+
+包 `package.json`：
+
+- 设置 `name` 为包的名称
+- 设置 `type` 为 `module`
+- 设置 `main` 为入口的 js 文件（例如 `dist/index.js`）
+
+示例：
+
+```json
+{
+  "name": "@my-project/utils",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "license": "ISC"
+}
+```
+
+### 4. 引用 workspace 中的包
+
+#### 4.1 通过别名引用
+
+在 `package.json` 中，可以使用 `workspace` 协议引用其他本地包：
 
 ```json
 {
@@ -94,6 +122,12 @@ packages:
 ```
 
 发布后，pnpm 会自动将 `workspace:*` 替换为实际版本号，确保依赖关系正确：`"@my-project/utils": "npm:1.0.0"`。
+
+#### 4.2 使用 pnpm add 命令
+
+- `pnpm add <pkg>@workspace:*`
+- `pnpm add <pkg> --workspace`
+- `pnpm add <pkg>`（需要 `linkWorkspacePackages` 配置为 `true`，才会自动链接工作区中的包）
 
 ### 5. 发布 workspace 包
 
@@ -131,34 +165,30 @@ packages:
 }
 ```
 
-## 五、常用命令与工作流
+## 配置
 
-| 命令 | 说明 |
-| ------ | ------ |
-| `pnpm install` | 在根目录执行，为所有 workspace 包安装依赖，并自动链接本地包 |
-| `pnpm add -w typescript` | 为根目录添加公共开发依赖 |
-| `pnpm --filter utils add lodash` | 仅为 `utils` 包添加 `lodash` 依赖 |
-| `pnpm run --filter web dev` | 运行 `web` 包的 `dev` 脚本 |
-| `pnpm publish -r` | 按拓扑顺序发布所有有更新的包 |
+下面的配置都在 `.npmrc` 文件中进行设置。
 
-## 六、与其他工具的对比
+`.npmrc` 文件可以放在**项目根目录**，也可以放在用户目录（`~/.npmrc`）中，后者会被所有项目共享。
 
-| 工具 | 特点 |
-| ------ | ------ |
-| **npm/yarn classic** | 不支持原生 workspace，依赖平铺，重复率高 |
-| **Yarn 2+ (Berry)** | 自带 workspace，但依赖安装在 `.yarn/cache`，相对较重 |
-| **Lerna** | 专为发布管理设计，常与 yarn/pnpm 配合，非包管理器 |
-| **pnpm workspace** | 结合了包管理器与 workspace，性能卓越，磁盘占用极低 |
+### linkWorkspacePackages
 
-相比 Yarn 或 npm 的 workspace，pnpm 的 workspace **不会将依赖扁平化**，因此能防止幽灵依赖；同时 pnpm 独有的存储方式让多个 Monorepo 项目共享同一份依赖副本，**磁盘效率更高**。
+- 默认值： `false`
+- 类型：`true`、`false`、`deep`
 
-## 七、适用场景
+示例：`linkWorkspacePackages = true`
 
-- 开发组件库 + 演示项目（Storybook）
-- 后端服务 + 共享的业务逻辑层
-- 微前端子应用集合
-- 工具函数集合 + CLI 工具
+说明：
 
-## 八、总结
+- 设置为 `true` 后，本地可用的软件包将被链接到 `node_modules` 中而不是从注册源下载。
+  - `pnpm add pkg`：会链接工作区中的 `pkg` 包。
+  - `pnpm add pkg@workspace:*`：同样会链接工作区中的 `pkg` 包。
+- 设置为 `deep` 后，子依赖项也会链接到本地包。
+- 设置为 `false` 后，将从注册源下载并安装软件包。但是 `workspace` 仍然可以通过使用 `workspace:` 范围协议进行链接。
+  - `pnpm add pkg`：会从 `npm registry` 安装最新版本的 `pkg`。
+  - `pnpm add pkg@workspace:*`：才会链接工作区中的 `pkg` 包。
 
-pnpm workspace 是目前 Monorepo 方案中**轻量、快速、严谨**的选择。它不需要额外工具（如 Lerna）即可完成本地包管理、依赖安装、构建与发布。如果你的团队正在寻找一款现代化的 Monorepo 解决方案，pnpm workspace 非常值得尝试。
+> 版本说明：
+>
+> - pnpm v9 及以上：默认值为 `false`，不再自动链接工作区包。
+> - pnpm v8 及以下：默认值为 `true`，会自动链接工作区包。

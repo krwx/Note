@@ -9,6 +9,7 @@
   - [5. 100000000 变成 100，000，000的正则表达式](#5-100000000-变成-100000000的正则表达式)
   - [6. 以下哪个表达式的结果为 true](#6-以下哪个表达式的结果为-true)
   - [7. 写出以下表达式的结果](#7-写出以下表达式的结果)
+  - [8. typeof (function(){})()](#8-typeof-function)
 
 ## 1. typeof (function* f() { yield f })().next().next()
 
@@ -86,4 +87,12 @@ console.log(str.replace(reg,","));
   Function instanceof Object; // true
   Object instanceof Function; // true
   typeof Function; // 'function'
+```
+
+## 8. typeof (function(){})()
+
+`(function(){})()` 是一个立即执行函数表达式，该函数没有显式返回值，因此返回 `undefined`。`typeof undefined` 的结果是字符串 `"undefined"`
+
+```js
+typeof (function(){})() // 'undefined'
 ```

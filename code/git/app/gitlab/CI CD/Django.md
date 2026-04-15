@@ -5,6 +5,7 @@
     - [更新 git 文件](#更新-git-文件)
       - [1. 设置 Runner 服务的账号为 git 账号](#1-设置-runner-服务的账号为-git-账号)
       - [2. git 命令添加安全目录](#2-git-命令添加安全目录)
+      - [3. 使用 PAT 执行 git 操作](#3-使用-pat-执行-git-操作)
     - [更新 conda 环境](#更新-conda-环境)
   - [构建（收集 static 文件）](#构建收集-static-文件)
   - [部署（重启 apache）](#部署重启-apache)
@@ -30,7 +31,7 @@ default:
 
 ### 更新 git 文件
 
-因为 Runner 的账号为 SYSTEM 账号，与 git 账号不一样，所以执行 git 命令时都会报 `fatal: detected dubious ownership in repository` 错误
+因为 Runner 的账号为 SYSTEM 账号，与 git 账号不一样，所以执行 git 命令时都会报 `fatal: detected dubious ownership in repository` 错误，错误信息如下：
 
 ```log
 $ git pull
@@ -46,6 +47,7 @@ To add an exception for this directory, call:
 
 1. 设置 Runner 服务的账号为 git 账号
 2. 在 yml 文件里执行 `git config --global --add safe.directory 'C:/Projects/django-project'` 命令，添加安全目录。
+3. 使用 PAT 执行 git 操作
 
 #### 1. 设置 Runner 服务的账号为 git 账号
 
@@ -62,6 +64,8 @@ update_git:
   script:
     - git pull
 ```
+
+> 以窗口模式运行 `Runner` 服务，执行 `git` 操作时会用本机的账号，所以不会报 `fatal: detected dubious ownership in repository` 错误。`script` 也是可以直接调用 `git pull`。
 
 #### 2. git 命令添加安全目录
 
@@ -117,6 +121,32 @@ update_git:
     - 'git -c safe.directory="$env:PROJECT_DIR" remote set-url origin https://$env:GIT_HTTP_USER:$env:beDeployToken@gitlab.aws.int.kn/kevin.chen/searatesviewwebbetest.git'
     - 'git -c safe.directory="$env:PROJECT_DIR" pull'
 ```
+
+#### 3. 使用 PAT 执行 git 操作
+
+做法：
+
+1. 在 GitLab 项目的 `Settings > CI/CD > Variables` 新增一个变量，
+   1. 变量名可为 `GITLAB_PAT`，变量值为 PAT（PAT 至少要有 `read_repository` 权限）
+   2. Visibility 选择 `Masked and hidden`，保护变量
+2. 在 `job` 里通过环境变量使用它，不要把 `token` 写死在 `.gitlab-ci.yml`
+
+```yml
+update_git:
+  stage: update
+  script:
+    - '$pair = "oauth2:$env:GITLAB_PAT"'
+    - '$basicAuth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))'
+    - 'git -c safe.directory="$env:PROJECT_DIR" -c http.extraHeader="Authorization: Basic $basicAuth" pull origin $env:CI_COMMIT_REF_NAME'
+```
+
+说明：
+
+- `oauth2` 是 GitLab 用 PAT 做 HTTPS 认证时常用的用户名
+  - 不需要改成拥有 PAT 的账户的用户名，没有关系
+- `$env:GITLAB_PAT` 是你在 GitLab CI/CD Variables 里配置的 PAT
+- `http.extraHeader` 只对这一次命令生效，不会把 token 写入本地 git 配置
+- `$env:CI_COMMIT_REF_NAME` 会拉当前 pipeline 对应的分支
 
 ### 更新 conda 环境
 
@@ -201,10 +231,17 @@ default:
     - 'if (-Not (Test-Path "$env:PROJECT_DIR")) { throw "PROJECT_DIR not found: $env:PROJECT_DIR" }'
     - 'Set-Location "$env:PROJECT_DIR"'
 
+# update_git:
+#   stage: update
+#   script:
+#     - git pull
+
 update_git:
   stage: update
   script:
-    - git pull
+    - '$pair = "oauth2:$env:GITLAB_PAT"'
+    - '$basicAuth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))'
+    - 'git -c safe.directory="$env:PROJECT_DIR" -c http.extraHeader="Authorization: Basic $basicAuth" pull origin $env:CI_COMMIT_REF_NAME'
 
 update_conda_env:
   stage: update

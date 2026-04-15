@@ -3,6 +3,7 @@
 - [前端 CI/CD](#前端-cicd)
   - [安装依赖](#安装依赖)
     - [Windows 删除 node\_modules 问题](#windows-删除-node_modules-问题)
+    - [Runner 没有缓存的问题](#runner-没有缓存的问题)
   - [构建项目](#构建项目)
   - [部署项目](#部署项目)
   - [完整 yml 文件](#完整-yml-文件)
@@ -69,6 +70,40 @@ install-job:
 
 1. 启用 git 长路径，运行命令：`git config --system core.longpaths true`
 
+### Runner 没有缓存的问题
+
+Runner 没有指定缓存的类型，导致 Runner 不知道要使用哪个缓存，会报错，但是不影响执行 job。
+
+报错信息：`ERROR: Could not create cache adapter   error=cache factory not found: factory for cache adapter "" was not registered`
+
+解决方法：
+
+1. 在 `config.toml` 文件中指定缓存的类型，例如：
+
+    ```toml
+    [session_server]
+      session_timeout = 1800
+    [[runners]]
+      name = "test"
+      url = "http://gitlab.example.com/"
+      token = "xxxx"
+      executor = "shell"
+      [runners.cache]
+        Type = "s3"
+        Path = "cache/"
+        Shared = true
+        [runners.cache.s3]
+          ServerAddress = "s3.amazonaws.com"
+          AccessKey = "xxxx"
+          SecretKey = "xxxx"
+          BucketName = "gitlab-cache"
+          BucketLocation = "us-east-1"
+    ```
+
+2. 不使用缓存，直接删除 pipeline 的 `cache` 配置
+   - 单机 `Windows shell runner`，不需要跨机器共享缓存，可以不使用缓存
+   - `s3`、`gcs` 和 `azure` 这三种都是远程缓存，适用于分布式 Runner 共享缓存的场景
+
 ## 构建项目
 
 因为安装依赖我们没有缓存 node_modules 目录，所以构建项目时需要重新安装依赖。
@@ -96,16 +131,24 @@ build-job:
 思路：
 
 1. 定义部署阶段的 job，设置 `environment` 为 `production`，并且设置 `dependencies` 为构建阶段的 job，这样部署阶段就能使用构建阶段的产物。
-2. 删除 `DEPLOY_DIR` 目录下的所有文件，确保部署目录是干净的。
-3. 确保 `DEPLOY_DIR` 目录存在，如果不存在则创建该目录。
-4. 使用 `robocopy` 命令复制 `dist` 目录下的文件到 `DEPLOY_DIR` 目录。
-   1. `robocopy` 只要有复制/跳过/额外文件等情况，就会返回非 0 的退出码（例如 1、2、3…），`GitLab Runner` 会把 任何非 0 当作失败，所以 `deploy-job` 结束时报 `exit status 1`。
-   2. 因为`GitLab Runner` 的 `PowerShell` 执行器会把每一行命令的非 0 退出码当作失败并立刻结束脚本，所以把 `robocopy` 和退出码判断放到同一行命令里，让这一行最终返回 0。
+2. 在部署阶段的脚本中，先检查部署目录的父目录是否存在，如果不存在则创建父目录。
+3. 删除临时部署目录（`DEPLOY_STAGING_DIR`、`DEPLOY_BACKUP_DIR`）。
+   - `DEPLOY_STAGING_DIR` 是用来存放构建产物的临时目录，`DEPLOY_BACKUP_DIR` 是用来备份当前线上版本的临时目录。
+4. 创建一个新的 `staging` 目录。
+5. 使用 `robocopy` 命令复制 `dist` 目录下的文件到 `staging` 目录。
+6. 将 `live` 目录重命名为 `backup` 目录，将 `staging` 目录重命名为 `live` 目录，这样就完成了部署。
+7. 如果部署过程中出现任何错误，则回滚到之前的版本。删除 `live` 目录，将 `backup` 目录重命名为 `live` 目录。
+
+`robocopy` 命令的注意事项：
+
+1. `robocopy` 只要有复制/跳过/额外文件等情况，就会返回非 0 的退出码（例如 1、2、3…），`GitLab Runner` 会把任何非 0 当作失败，所以命令结束后的同一行需设置 `exit code` 为 0
 
 ```yml
 variables:
   DIST_DIR: "dist"
-  DEPLOY_DIR: "C:\\fe\\dist"
+  DEPLOY_LIVE_DIR: "D:\\deploy\\fe\\live"
+  DEPLOY_STAGING_DIR: "D:\\deploy\\fe\\live__staging"
+  DEPLOY_BACKUP_DIR: "D:\\deploy\\fe\\live__backup"
 
 deploy-job:
   stage: deploy
@@ -113,41 +156,68 @@ deploy-job:
   dependencies:
     - build-job
   script:
-    - echo "Clean target directory"
-    - if (Test-Path "$env:DEPLOY_DIR") { Remove-Item -Path "$env:DEPLOY_DIR\\*" -Recurse -Force }
-    - echo "Ensure target directory exists"
-    - if (-Not (Test-Path "$env:DEPLOY_DIR")) { New-Item -ItemType Directory -Path "$env:DEPLOY_DIR" | Out-Null }
-    - echo "Copy dist to target folder"
-    - cmd /c 'robocopy "%DIST_DIR%" "%DEPLOY_DIR%" /MIR /FFT /R:2 /W:5 & if %errorlevel% leq 7 (exit /b 0) else (exit /b %errorlevel%)'
+    - echo "Check parent directory"
+    - $deployParentDir = Split-Path -Path "$env:DEPLOY_LIVE_DIR" -Parent
+    - if (-Not (Test-Path "$deployParentDir")) { New-Item -ItemType Directory -Path "$deployParentDir" -Force | Out-Null }
+    - echo "Clean old staging and backup directories"
+    - if (Test-Path "$env:DEPLOY_STAGING_DIR") { Remove-Item -Path "$env:DEPLOY_STAGING_DIR" -Recurse -Force }
+    - if (Test-Path "$env:DEPLOY_BACKUP_DIR") { Remove-Item -Path "$env:DEPLOY_BACKUP_DIR" -Recurse -Force }
+    - echo "Copy dist to staging folder"
+    - New-Item -ItemType Directory -Path "$env:DEPLOY_STAGING_DIR" -Force | Out-Null
+    - |
+        & robocopy "$env:DIST_DIR" "$env:DEPLOY_STAGING_DIR" /MIR /FFT /R:2 /W:5
+          if ($LASTEXITCODE -le 7) {
+            $global:LASTEXITCODE = 0
+          }
+          else {
+            throw "Robocopy to staging failed with exit code $LASTEXITCODE"
+          }
+    - echo "Swap live folder with staging folder"
+    - |
+      try {
+        if (Test-Path "$env:DEPLOY_LIVE_DIR") {
+          Rename-Item -Path "$env:DEPLOY_LIVE_DIR" -NewName ([System.IO.Path]::GetFileName($env:DEPLOY_BACKUP_DIR)) -Force
+        }
+        Rename-Item -Path "$env:DEPLOY_STAGING_DIR" -NewName ([System.IO.Path]::GetFileName($env:DEPLOY_LIVE_DIR)) -Force
+        echo "Deploy completed successfully"
+      }
+      catch {
+        echo "Deploy switch failed, start rollback"
+        if (Test-Path "$env:DEPLOY_LIVE_DIR") {
+          Remove-Item -Path "$env:DEPLOY_LIVE_DIR" -Recurse -Force
+        }
+        if (Test-Path "$env:DEPLOY_BACKUP_DIR") {
+          Rename-Item -Path "$env:DEPLOY_BACKUP_DIR" -NewName ([System.IO.Path]::GetFileName($env:DEPLOY_LIVE_DIR)) -Force
+          echo "Rollback completed"
+        }
+        throw
+      }
 ```
 
 ## 完整 yml 文件
 
 ```yml
 stages:
-  - install
   - build
   - deploy
 
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
+
 variables:
   DIST_DIR: "dist"
-  DEPLOY_DIR: "C:\\fe\\dist"
+  DEPLOY_LIVE_DIR: "D:\\deploy\\fe\\live"
+  DEPLOY_STAGING_DIR: "D:\\deploy\\fe\\live__staging"
+  DEPLOY_BACKUP_DIR: "D:\\deploy\\fe\\live__backup"
 
 default:
   tags:
     - windows
   before_script:
     - $ErrorActionPreference = "Stop"
-
-cache:
-  key: "pnpm-${CI_COMMIT_REF_SLUG}"
-  paths:
-    - $LOCALAPPDATA/pnpm/store
-
-install-job:
-  stage: install
-  script:
-    - pnpm install
 
 build-job:
   stage: build
@@ -165,10 +235,40 @@ deploy-job:
   dependencies:
     - build-job
   script:
-    - echo "Clean target directory"
-    - if (Test-Path "$env:DEPLOY_DIR") { Remove-Item -Path "$env:DEPLOY_DIR\\*" -Recurse -Force }
-    - echo "Ensure target directory exists"
-    - if (-Not (Test-Path "$env:DEPLOY_DIR")) { New-Item -ItemType Directory -Path "$env:DEPLOY_DIR" | Out-Null }
-    - echo "Copy dist to target folder"
-    - cmd /c 'robocopy "%DIST_DIR%" "%DEPLOY_DIR%" /MIR /FFT /R:2 /W:5 & if %errorlevel% leq 7 (exit /b 0) else (exit /b %errorlevel%)'
+    - echo "Check parent directory"
+    - $deployParentDir = Split-Path -Path "$env:DEPLOY_LIVE_DIR" -Parent
+    - if (-Not (Test-Path "$deployParentDir")) { New-Item -ItemType Directory -Path "$deployParentDir" -Force | Out-Null }
+    - echo "Clean old staging and backup directories"
+    - if (Test-Path "$env:DEPLOY_STAGING_DIR") { Remove-Item -Path "$env:DEPLOY_STAGING_DIR" -Recurse -Force }
+    - if (Test-Path "$env:DEPLOY_BACKUP_DIR") { Remove-Item -Path "$env:DEPLOY_BACKUP_DIR" -Recurse -Force }
+    - echo "Copy dist to staging folder"
+    - New-Item -ItemType Directory -Path "$env:DEPLOY_STAGING_DIR" -Force | Out-Null
+    - |
+        & robocopy "$env:DIST_DIR" "$env:DEPLOY_STAGING_DIR" /MIR /FFT /R:2 /W:5
+          if ($LASTEXITCODE -le 7) {
+            $global:LASTEXITCODE = 0
+          }
+          else {
+            throw "Robocopy to staging failed with exit code $LASTEXITCODE"
+          }
+    - echo "Swap live folder with staging folder"
+    - |
+      try {
+        if (Test-Path "$env:DEPLOY_LIVE_DIR") {
+          Rename-Item -Path "$env:DEPLOY_LIVE_DIR" -NewName ([System.IO.Path]::GetFileName($env:DEPLOY_BACKUP_DIR)) -Force
+        }
+        Rename-Item -Path "$env:DEPLOY_STAGING_DIR" -NewName ([System.IO.Path]::GetFileName($env:DEPLOY_LIVE_DIR)) -Force
+        echo "Deploy completed successfully"
+      }
+      catch {
+        echo "Deploy switch failed, start rollback"
+        if (Test-Path "$env:DEPLOY_LIVE_DIR") {
+          Remove-Item -Path "$env:DEPLOY_LIVE_DIR" -Recurse -Force
+        }
+        if (Test-Path "$env:DEPLOY_BACKUP_DIR") {
+          Rename-Item -Path "$env:DEPLOY_BACKUP_DIR" -NewName ([System.IO.Path]::GetFileName($env:DEPLOY_LIVE_DIR)) -Force
+          echo "Rollback completed"
+        }
+        throw
+      }
 ```

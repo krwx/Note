@@ -1,12 +1,14 @@
 # gitlab
 
-## 搜索代码
+- [gitlab](#gitlab)
+  - [vscode 插件](#vscode-插件)
 
-要在项目中搜索代码：
+## vscode 插件
 
-1. 在左侧边栏中选择 **搜索或前往** 并找到您的项目。
-2. 再次选择 **搜索或前往** 并输入您要搜索的代码。
-3. 按 Enter 键进行搜索，或从列表中选择。
+在插件市场搜索 GitLab，安装同名插件。
 
-代码搜索仅显示文件中的第一个结果。  
-可以在 Project 选择 Any 搜索全部项目的代码
+使用步骤：
+
+1. 点击 `authenticate`，选择或输入 GitLab 服务器地址
+2. 如果没有 PAT，点击 `generate token` 跳转到 GitLab 创建 PAT 的页面，创建后复制 PAT
+3. 回到 vscode，输入 PAT，完成认证

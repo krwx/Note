@@ -185,6 +185,15 @@ gain: 80%%
 
 当 `interpolation` 设为 `None` 时，解析器会简单地返回 `%(my_dir)s/Pictures` 作为 `my_pictures` 的值，并返回 `%(home_dir)s/lumberjack` 作为 `my_dir` 的值。
 
+```py
+config = configparser.ConfigParser(interpolation=None)
+config.read('example.ini')
+print(config['Paths']['my_pictures'])
+# '%(my_dir)s/Pictures'
+print(config['Paths']['my_dir'])
+# '%(home_dir)s/lumberjack'
+```
+
 ## 函数
 
 ### read()

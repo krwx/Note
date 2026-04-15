@@ -7,10 +7,11 @@
     - [2. 创建 `.gitlab-ci.yml` 文件](#2-创建-gitlab-ciyml-文件)
     - [3. 测试并查看 pipeline](#3-测试并查看-pipeline)
   - [Runner](#runner)
-    - [配置多个 Runner](#配置多个-runner)
     - [Command](#command)
+    - [配置多个 Runner](#配置多个-runner)
     - [配置](#配置)
     - [工作目录](#工作目录)
+    - [启动 Runner](#启动-runner)
   - [CI\_PROJECT\_DIR](#ci_project_dir)
   - [搭配 jekins 使用](#搭配-jekins-使用)
 
@@ -33,8 +34,33 @@
          .\gitlab-runner.exe start
          ```
 
-   3. 修改 `config.toml` 文件
-      - `shell` 默认为填成 `pwsh`，需要改成 `powershell`
+   - 安装后的文件夹：
+    ![gitlab-runner-folder](../../../img/gitlab-runner-folder.png)
+
+3. `gitlab` 项目创建 `runner`
+   1. 导航到项目的主页面
+   2. 点击左侧边栏中的 `Settings` 菜单，然后选择 `CI / CD`。点击 `Runners` 部分
+      - `Project runners`：配置给当前 Project 的 runner。也可以看到其他 Project 配置的 runner，可以使用这些 runner。
+      - `Group runners`：配置给当前 Group 的 runner
+        ![gitlab-runner-folder](../../../img/gitlab-runner.png)
+   3. 点击 `Create project runner` 按钮创建 runner
+      - `tags`: runner 的标签，可以在 `.gitlab-ci.yml` 文件中指定使用哪个 runner 进行构建。
+      - `Run untagged jobs`: 是否允许未标记的 job 使用该 runner 进行构建。
+      - `description`: runner 的描述信息，方便识别不同的 runner。
+      - `Lock to current project`: 是否将该 runner 锁定到当前项目，防止其他项目使用该 runner。
+      - `Paused`
+      - `Protected`: 只有在 protected 分支上运行的 job 才能使用该 runner。
+      ![gitlab-runner-create](../../../img/gitlab-runner-create.png)
+4. 创建好后选择 Platform 为 `windows`，并复制 `Step1` 中的注册命令
+    ![gitlab-runner-register](../../../img/gitlab-runner-register.png)
+5. 在本地 runner 安装目录（`C:\GitLab-Runner`）打开命令行，运行复制的命令
+   1. 输入 GitLab instance URL。这里输入你的 gitlab 实例地址，例如 `http://gitlab.example.com/`
+   2. 输入 runner 的名字
+   3. 输入 executor，选择 `shell`
+   ![gitlab-runner-register-cmd](../../../img/gitlab-runner-cmd.png)
+
+6. 修改 `config.toml` 文件
+   - `shell` 默认为填成 `pwsh`，需要改成 `powershell`
 
         ```toml
         concurrent = 1
@@ -62,29 +88,7 @@
             [runners.cache.azure]
         ```
 
-   - 安装后的文件夹：
-    ![gitlab-runner-folder](../../../img/gitlab-runner-folder.png)
-
-3. `gitlab` 项目创建 `runner`
-   1. 导航到项目的主页面
-   2. 点击左侧边栏中的 `Settings` 菜单，然后选择 `CI / CD`。点击 `Runners` 部分
-      - `Project runners`：配置给当前 Project 的 runner。也可以看到其他 Project 配置的 runner，可以使用这些 runner。
-      - `Group runners`：配置给当前 Group 的 runner
-        ![gitlab-runner-folder](../../../img/gitlab-runner.png)
-   3. 点击 `Create project runner` 按钮创建 runner
-      - `tags`: runner 的标签，可以在 `.gitlab-ci.yml` 文件中指定使用哪个 runner 进行构建。
-      - `Run untagged jobs`: 是否允许未标记的 job 使用该 runner 进行构建。
-      - `description`: runner 的描述信息，方便识别不同的 runner。
-      - `Lock to current project`: 是否将该 runner 锁定到当前项目，防止其他项目使用该 runner。
-      ![gitlab-runner-create](../../../img/gitlab-runner-create.png)
-4. 创建好后选择 Platform 为 `windows`，并复制 `Step1` 中的注册命令
-    ![gitlab-runner-register](../../../img/gitlab-runner-register.png)
-5. 在本地 runner 安装目录（`C:\GitLab-Runner`）打开命令行，运行复制的命令
-   1. 输入 GitLab instance URL。这里输入你的 gitlab 实例地址，例如 `http://gitlab.example.com/`
-   2. 输入 runner 的名字
-   3. 输入 executor，选择 `shell`
-   ![gitlab-runner-register-cmd](../../../img/gitlab-runner-cmd.png)
-6. 注册成功后，可以在 `gitlab` 界面看到注册的 runner
+7. 注册成功后，可以在 `gitlab` 界面看到注册的 runner
     ![gitlab-runner-created](../../../img/gitlab-runner-created.png)
 
 ### 2. 创建 `.gitlab-ci.yml` 文件
@@ -145,6 +149,34 @@ tags:
 
 ## Runner
 
+### Command
+
+要用管理员身份打开 CMD，然后导航到 `C:\GitLab-Runner` 目录，运行以下命令来管理 runner：
+
+```cmd
+<!-- 停止服务 -->
+.\gitlab-runner.exe stop
+
+<!-- 启动服务 -->
+.\gitlab-runner.exe start
+
+<!-- 以窗口模式运行 runner -->
+.\gitlab-runner.exe run
+
+<!-- 重启服务 -->
+.\gitlab-runner.exe restart
+
+<!-- 验证服务 -->
+.\gitlab-runner.exe verify
+
+<!-- 查看所有 Runner -->
+.\gitlab-runner.exe list
+
+<!-- 删除无效 Runner -->
+<!-- 如果 Gitlab 已经删除了 runner，这个命令会运行错误，直接删除 config.toml 里面的 runner 配置就好 -->
+.\gitlab-runner.exe unregister --name "runner-name"
+```
+
 ### 配置多个 Runner
 
 可以在本地创建多个 runner 来处理不同的任务。重复上面的注册步骤就能在本地创建多个 runner。 `name` 需要不一样。
@@ -191,34 +223,6 @@ shutdown_timeout = 0
     [runners.cache.azure]
 ```
 
-### Command
-
-要用管理员身份打开 CMD，然后导航到 `C:\GitLab-Runner` 目录，运行以下命令来管理 runner：
-
-```cmd
-<!-- 停止服务 -->
-.\gitlab-runner.exe stop
-
-<!-- 启动服务 -->
-.\gitlab-runner.exe start
-
-<!-- 以窗口模式运行 runner -->
-.\gitlab-runner.exe run
-
-<!-- 重启服务 -->
-.\gitlab-runner.exe restart
-
-<!-- 验证服务 -->
-.\gitlab-runner.exe verify
-
-<!-- 查看所有 Runner -->
-.\gitlab-runner.exe list
-
-<!-- 删除无效 Runner -->
-<!-- 如果 Gitlab 已经删除了 runner，这个命令会运行错误，直接删除 config.toml 里面的 runner 配置就好 -->
-.\gitlab-runner.exe unregister --name "runner-name"
-```
-
 ### 配置
 
 buidls_dir: 用于指定构建目录的位置。默认情况下，GitLab Runner 会在其安装目录下创建一个名为 `builds` 的文件夹来存储构建文件。如果你希望将构建文件存储在其他位置，可以通过修改 `config.toml` 文件中的 `builds_dir` 参数来实现。例如：
@@ -242,6 +246,40 @@ buidls_dir: 用于指定构建目录的位置。默认情况下，GitLab Runner 
 
 1. **项目根目录**：Runner 会自动克隆代码到构建目录，然后进入该项目目录
 2. **目录结构**：通常是 `C:\GitLab-Runner\builds\<runner-token>\<project-name>`
+
+### 启动 Runner
+
+**1. 以服务方式运行**
+
+默认情况下，GitLab Runner 是以 Windows 服务的形式运行的。这意味着它会在后台持续运行，并在系统启动时自动启动。你可以通过以下命令来管理服务：
+
+```sh
+.\gitlab-runner.exe start    # 启动服务
+.\gitlab-runner.exe stop     # 停止服务
+.\gitlab-runner.exe restart  # 重启服务
+```
+
+**2. 以窗口方式运行**
+
+如果你希望以窗口模式运行 GitLab Runner，可以使用以下命令：
+
+```sh
+.\gitlab-runner.exe run
+```
+
+如果需要在用户登录的时候启动 Runner，可以创建一个批处理文件 `my-start-runner.bat`，然后在 `Task scheduler` 创建一个 `task`，`task` 的 `trigger` 设置为 `at log on`，`task` 的 `action` 设置为运行这个 `bat` 文件（需要在 `gitlab-runner.exe` 所在目录下运行）, `bat` 内容如下：
+
+```bat
+start "GitLab Runner" .\gitlab-runner.exe run
+```
+
+> 使用 `start` 命令可以在新的窗口中运行 Runner，这样即使关闭当前窗口，Runner 仍然会继续运行。
+> ***
+> 标题问题：需要给窗口设置一个标题，如果没设置，那么 Node 在运行的时候会报错。例如使用以下命令启动 Runner：
+>
+> `start "" .\gitlab-runner.exe run`
+>
+> 此时在 Runner 里面执行 `vite build` 的时候会报错： `Assertion failed: process_title, file src\win\util.c, Line 412`
 
 ## CI_PROJECT_DIR
 

@@ -9,6 +9,7 @@
     - [JIRA 类](#jira-类)
       - [`__init__()`](#__init__)
       - [current\_user()](#current_user)
+      - [search\_users()](#search_users)
       - [search\_issue()](#search_issue)
       - [create\_issue()](#create_issue)
       - [add\_attachment()](#add_attachment)
@@ -63,6 +64,34 @@ jira = JIRA(server=jira_url, token_auth=token)
 
 ```py
 print(jira.current_user())
+```
+
+#### search_users()
+
+作用：搜索用户
+
+语法：`search_users(user: str | None = None, startAt: int = 0, maxResults: int = 50, includeActive: bool = True, includeInactive: bool = False, query: str | None = None) → ResultList[User]`
+
+- `user`
+  - 用户名、显示名称或电子邮件地址的一部分。
+- `startAt`
+  - 从哪个索引开始返回用户列表。默认值为 0。
+- `maxResults`
+  - 返回的用户数量。默认值为 50。
+- `includeActive`
+  - 是否包含活动用户。默认值为 True。
+- `includeInactive`
+  - 是否包含非活动用户。默认值为 False。
+
+注意事项：
+
+- `maxResults` 设置超过 100 的值，最终结果也只返回 100 条数据。如果想要的结果不在这 100 条数据，只能收窄搜索条件
+- `startAt` 也只能设置在 100 以内，超过 100 会搜索不到数据
+
+例子：
+
+```py
+result = jira.search_users(user='someone')
 ```
 
 #### search_issue()

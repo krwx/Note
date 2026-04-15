@@ -25,6 +25,13 @@
 git clone `[url]`
 ```
 
+克隆远程仓库后，自动切换到指定的分支，从该分支开始工作：
+
+```sh
+git clone --branch <branch_name> <repository_url>
+git clone -b <branch_name> <repository_url>
+```
+
 ## status
 
 ```shell

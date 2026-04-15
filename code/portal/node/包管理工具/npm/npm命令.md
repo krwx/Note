@@ -21,25 +21,31 @@
 
 ## 安装包
 
-- npm install （安装所有包）
-  - 生产环境
-    - npm i -S <包名>
-    - npm i --save <包名>
-  - 开发环境
-    - npm i -D <包名>
-    - npm i --save-dev <包名>
+- `npm install` （安装所有包）
+- `npm install <pkg>`（安装指定包）
+  - `dependencies`
+    - `npm i -P <pkg>`
+    - `npm i --save-prod <pkg>`
+  - `devDependencies`
+    - `npm i -D <pkg>`
+    - `npm i --save-dev <pkg>`
+  - `optionalDependencies`
+    - `npm i -O <pkg>`
+    - `npm i --save-optional <pkg>`
   - 全局安装
-    - npm i -g <包名>
+    - `npm i -g <pkg>`
   - 安装指定版本
     - `npm i jquery@1.11.2`
 
+`npm install <pkg>` 默认将包保存到 `dependencies` 中，并且自动修改 `package.json` 文件。
+
 ## 删除包
 
-- npm uninstall <包名>
+- `npm uninstall <pkg>`
 - `npm uninstall [<@scope>/]<pkg>...`
   - 别名: `unlink, remove, rm, r, un`
   - 全局删除
-    - npm remove -g nodemon
+    - `npm remove -g nodemon`
 
 ## 更新包
 

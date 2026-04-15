@@ -24,8 +24,6 @@
 - ✅ **轻松升级**：改一处配置等于改所有包，极大降低维护成本。
 - ✅ **消灭合并冲突**：升级依赖不再改动 `package.json`，多人协作时 Git 冲突归零。
 
----
-
 ## 二、如何在 `pnpm-workspace.yaml` 中定义 Catalog？
 
 Catalogs 定义在 `pnpm-workspace.yaml` 中，支持两种形式：**默认 Catalog** 和 **具名 Catalogs**。
