@@ -37,6 +37,8 @@ Refresh Token（长期令牌）
    - 提供独立的 `/refresh` 接口
    - 只接受 `Refresh Token` 作为凭证
    - 返回新的 `Access Token`（不返回新的 `Refresh Token`）
+   - 如果 `Refresh Token` 过期或无效，要求用户重新登录
+
 **安全设计要点：**
 
 - **分离职责**：`Access Token` 用于业务，`Refresh Token` 仅用于刷新
