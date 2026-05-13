@@ -47,14 +47,14 @@ To add an exception for this directory, call:
 
 1. 设置 Runner 服务的账号为 git 账号
 2. 在 yml 文件里执行 `git config --global --add safe.directory 'C:/Projects/django-project'` 命令，添加安全目录。
-3. 使用 PAT 执行 git 操作
+3. 使用 PAT 执行 git 操作（**推荐**）
 
 #### 1. 设置 Runner 服务的账号为 git 账号
 
 1. 打开 `services.msc`，找到 `GitLab Runner` 服务，右键选择 `属性`。
 2. 切换到 `Log On` 标签页，选择 `This account`，输入 git 账号的用户名和密码，点击 `OK`。
 
-![gitlab-service](../../../img/gitlab-service.png)
+![gitlab-service](../../../img/gitlab/gitlab-service.png)
 
 yml 文件直接调用 `git pull`：
 
@@ -104,9 +104,9 @@ ERROR: Job failed: exit status 1
 
 1. 在 GitLab 上创建一个 Deploy Token，给这个 Deploy Token 赋予 `read_repository` 权限
    1. 主界面：
-    ![gitlab-deploy-token](../../../img/gitlab-deploy-token.png)
+    ![gitlab-deploy-token](../../../img/gitlab/gitlab-deploy-token.png)
    2. 创建 Deploy Token：
-    ![gitlab-create-deploy-token](../../../img/gitlab-deploy-token-create.png)
+    ![gitlab-create-deploy-token](../../../img/gitlab/gitlab-deploy-token-create.png)
     `Name` 可以随便取。`Scopes` 勾选 `read_repository` 权限。创建后会显示这个 `Deploy Token` 的用户名和密码，记下来。
 
 2. 然后在 yml 文件里设置 `GIT_HTTP_USER` 变量（`Deploy Token` 的 `Username`），使用 `HTTPS` 和 `Deploy Token` 来执行 `git pull`。
@@ -143,7 +143,7 @@ update_git:
 说明：
 
 - `oauth2` 是 GitLab 用 PAT 做 HTTPS 认证时常用的用户名
-  - 不需要改成拥有 PAT 的账户的用户名，没有关系
+  - 不需要改成拥有 PAT 的账户的用户名，它们之间没有任何关系
 - `$env:GITLAB_PAT` 是你在 GitLab CI/CD Variables 里配置的 PAT
 - `http.extraHeader` 只对这一次命令生效，不会把 token 写入本地 git 配置
 - `$env:CI_COMMIT_REF_NAME` 会拉当前 pipeline 对应的分支
@@ -223,6 +223,12 @@ variables:
   CONDA_ACTIVATE: "C:\\Users\\CurrentUser\\AppData\\Local\\miniforge3\\Scripts\\activate.bat"
   CONDA_ENV: "CondaEnvName"
   APACHE_HTTPD: "C:\\Apache24\\bin\\httpd.exe"
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
 
 default:
   tags:

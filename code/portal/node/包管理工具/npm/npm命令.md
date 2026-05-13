@@ -14,6 +14,7 @@
   - [发布](#发布)
   - [搜索包](#搜索包)
   - [查看全局安装包的位置](#查看全局安装包的位置)
+  - [audit](#audit)
 
 ## 查看安装的包
 
@@ -36,6 +37,10 @@
     - `npm i -g <pkg>`
   - 安装指定版本
     - `npm i jquery@1.11.2`
+  - 安装指定 tag 的版本
+    - `npm i express@latest`
+    - `npm i express@beta`
+    - `npm i vuedraggable@next`
 
 `npm install <pkg>` 默认将包保存到 `dependencies` 中，并且自动修改 `package.json` 文件。
 
@@ -91,8 +96,19 @@
 
 ## 搜索包
 
-- npm s [包名]
+- `npm search <pkg>`
+- `npm s <pkg>`
 
 ## 查看全局安装包的位置
 
 - npm root -g
+
+## audit
+
+查看安全漏洞：
+
+- npm audit
+
+修复安全漏洞：
+
+- npm audit fix

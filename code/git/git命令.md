@@ -18,6 +18,7 @@
       - [取消代理](#取消代理)
   - [restore](#restore)
   - [fetch](#fetch)
+  - [remote](#remote)
 
 ## clone
 
@@ -195,4 +196,36 @@ options 的取值：
 ```sh
 git fetch（默认拉取origin仓库所有分支更新）‌‌
 git fetch origin master（仅拉取指定分支）‌‌
+```
+
+## remote
+
+查看远程仓库：
+
+```sh
+git remote -v
+
+# 输出示例
+origin  https://github.com/user/repo.git (fetch)
+origin  https://github.com/user/repo.git (push)
+```
+
+修改远端 URL：
+
+```sh
+# 语法
+git remote set-url <remote-name> <new-url>
+
+# 例子
+git remote set-url origin https://new-url.com/repo.git
+```
+
+`set-url` 子命令会同时改变 `fetch` 和 `push` 的 URL，如果需要分别设置 `fetch` 和 `push` 的 URL，可以使用以下命令：
+
+```sh
+# 设置 push URL
+git remote set-url --push origin https://new-url.com/repo.git
+
+# 设置 fetch URL
+git remote set-url --fetch origin https://new-url.com/repo.git
 ```

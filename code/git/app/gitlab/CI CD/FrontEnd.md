@@ -35,7 +35,7 @@ install-job:
 注意的点：
 
 1. 不要缓存 `node_modules` 目录，因为 `node_modules` 目录可能会因为平台不同而不兼容（例如：Windows 和 Linux）。如果缓存了 `node_modules` 目录，可能会导致构建失败或者运行时错误。
-   1. Windows 环境问题：
+   - Windows 环境问题：
       1. 路径过长：大量依赖层级深，文件路径超过 Windows 默认限制，Runner 读取/打包时报 Incorrect function 或删除失败。
       2. 文件数量太多：上万文件会让压缩/上传极慢，容易超时或中断。
       3. 文件名/符号链接兼容性：部分包包含符号链接或特殊文件名，Windows 处理不稳定。
@@ -139,9 +139,19 @@ build-job:
 6. 将 `live` 目录重命名为 `backup` 目录，将 `staging` 目录重命名为 `live` 目录，这样就完成了部署。
 7. 如果部署过程中出现任何错误，则回滚到之前的版本。删除 `live` 目录，将 `backup` 目录重命名为 `live` 目录。
 
+***
+
+`robocopy` 命令的参数说明：
+
+- `/MIR`：镜像同步目录
+- `/FFT`：放宽时间戳精度，兼容不同文件系统
+- `/R:2`：失败最多重试 2 次
+- `/W:5`：每次重试等待 5 秒
+
 `robocopy` 命令的注意事项：
 
-1. `robocopy` 只要有复制/跳过/额外文件等情况，就会返回非 0 的退出码（例如 1、2、3…），`GitLab Runner` 会把任何非 0 当作失败，所以命令结束后的同一行需设置 `exit code` 为 0
+1. `robocopy` 只要有复制/跳过/额外文件等情况，就会返回非 0 的退出码（例如 1、2、3…），`0` 到 `7` 都可以视为成功或可接受状态；大于 `7` 才认为真正失败。
+2. `GitLab Runner` 会把任何非 0 当作失败，所以 `robocopy` 命令结束后的同一行需设置 `exit code` 为 0
 
 ```yml
 variables:
@@ -195,6 +205,10 @@ deploy-job:
 ```
 
 ## 完整 yml 文件
+
+- `before_script: $ErrorActionPreference = "Stop"`
+  - 作用是让 PowerShell 在遇到任何错误时立即停止执行脚本，并且返回非 0 的退出码，这样 GitLab Runner 就能正确地识别部署失败的情况并触发回滚机制。
+  - `before_script` 会在执行 script 前运行
 
 ```yml
 stages:

@@ -181,6 +181,10 @@ XMLHttpRequest.open()
 
 - Set-Cookie
   - Set-Cookie HTTP 响应标头用于将 cookie 由服务器发送到用户代理，以便用户代理在后续的请求中可以将其发送回服务器。要发送多个 cookie，则应在同一响应中发送多个 Set-Cookie 标头。
+- `Server`
+  - Server HTTP 响应标头包含了一个描述服务器软件信息的字符串，通常包含服务器名称和版本号。
+  - 例如：`Server: nginx/1.18.0`
+  - 安全考量：信息泄露的风险。一旦攻击者知道服务器是某个特定版本（如 `Apache/2.4.1`），攻击者就可以直接查找该版本已知的安全漏洞（如CVE）进行定向攻击。所以 **禁用或精简 `Server` 头**
 - 设置跨域
   - Access-Control-Allow-Credentials: true
   - Access-Control-Allow-Origin: *

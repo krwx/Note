@@ -25,6 +25,11 @@
   - [22. 了解 redux-saga 吗](#22-了解-redux-saga-吗)
   - [23. redux 实际开发中有用过哪些异步方案](#23-redux-实际开发中有用过哪些异步方案)
   - [24. React开发中，组件重复渲染的问题怎么解决？](#24-react开发中组件重复渲染的问题怎么解决)
+  - [25. 讲一下 react 的渲染过程。数据是怎么渲染到页面上的](#25-讲一下-react-的渲染过程数据是怎么渲染到页面上的)
+  - [26. react 有双向绑定吗](#26-react-有双向绑定吗)
+  - [27. react 如何实现双向绑定](#27-react-如何实现双向绑定)
+  - [28. react 怎么给表单控件绑定值](#28-react-怎么给表单控件绑定值)
+  - [29. react 了解类组件和函数式组件吗](#29-react-了解类组件和函数式组件吗)
 
 ## 1. 你知道Hook是什么吗？有哪些
 
@@ -403,3 +408,93 @@ useLayoutEffect 是 useEffect 的一个版本，**在浏览器重新绘制屏幕
 - 避免在渲染函数中定义新函数/新对象
 - 合理拆分组件，缩小重渲染影响范围
 - 利用 Context 分层管理状态，避免全局状态频繁更新
+
+## 25. 讲一下 react 的渲染过程。数据是怎么渲染到页面上的
+
+React 的渲染过程，我会从首次渲染和更新渲染两个场景来讲。
+
+**首次渲染**时，我们的 JSX 会被 Babel 转成 `React.createElement` 调用，生成一个描述页面的虚拟 DOM 树。React 会基于它构建 Fiber 树，然后由 React DOM 渲染器遍历 Fiber 节点，依次创建真实 DOM 并挂载到容器上，最终展示页面。
+
+**当数据发生变化**，比如调用 `setState`，React 会做几件事：首先，把这次更新加入队列，并由调度器根据优先级决定执行时机。接着进入 **Render 阶段**——React 会重新执行组件函数，得到新的虚拟 DOM，然后与旧的虚拟 DOM 进行 **Diff**，找出哪些节点需要增、删、改，并在对应的 Fiber 节点上打上‘副作用’标记。这个阶段是可中断的，所以不会阻塞浏览器的高优先级任务。
+
+之后进入 **Commit 阶段**，React 会拿到 Render 阶段标记的副作用，同步地把这些操作应用到真实 DOM 上（比如删除旧节点、更新属性、插入新节点）。等 DOM 变更完成后，会执行 `componentDidUpdate` 或者 `useEffect` 这类副作用函数。
+
+## 26. react 有双向绑定吗
+
+React 本身没有双向绑定的概念。数据流是单向的，从父组件流向子组件。
+
+## 27. react 如何实现双向绑定
+
+思路：父组件状态传递给子组件，子组件通过回调函数更新父组件的状态。
+
+**数据流向说明：**
+
+1. **父组件 → 子组件**：父组件将自己的状态 `data` 通过 `value` 属性传递给子组件。
+2. **子组件 → 父组件**：当子组件的输入框内容变化时，触发 `onChange` 回调，将新值通过 `handleDataChange` 传回父组件，父组件调用 `setData` 更新状态。
+3. **状态同步**：父组件状态更新后，重新渲染，并将新值再次传给子组件，子组件显示最新值。这样就形成了一个闭环，实现了“双向”的数据同步效果。
+
+```jsx
+import React, { useState } from 'react';
+
+// 子组件：接收 value 和 onChange 回调
+function ChildInput({ value, onChange }) {
+  const handleChange = (e) => {
+    onChange(e.target.value); // 调用父组件传递过来的更新函数
+  };
+
+  return (
+    <div>
+      <label>子组件输入框：</label>
+      <input value={value} onChange={handleChange} />
+      <p>子组件当前值：{value}</p>
+    </div>
+  );
+}
+
+// 父组件
+function Parent() {
+  const [data, setData] = useState('');
+
+  const handleDataChange = (newValue) => {
+    setData(newValue);
+  };
+
+  return (
+    <div>
+      <h2>父组件</h2>
+      <p>父组件当前值：{data}</p>
+      <ChildInput value={data} onChange={handleDataChange} />
+    </div>
+  );
+}
+
+export default Parent;
+```
+
+## 28. react 怎么给表单控件绑定值
+
+步骤：
+
+1. 在 `state` 中定义存储值的变量。
+2. 给表单控件设置 `value={stateValue}`。
+3. 添加 `onChange` 事件处理函数，从事件对象中获取新值并更新 `state`。
+
+示例（函数组件）：
+
+```jsx
+import { useState } from 'react';
+
+function MyForm() {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  return <input type="text" value={inputValue} onChange={handleChange} />;
+}
+```
+
+## 29. react 了解类组件和函数式组件吗
+
+是的，我非常熟悉。类组件是 React 早期定义组件的主要方式，基于 ES6 Class；函数式组件最初是纯函数、无状态的，但从 React 16.8 引入 Hooks 后，函数式组件已经能够完全替代类组件，并且成为官方推荐的主流写法。

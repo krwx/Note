@@ -3,12 +3,12 @@
 - [Celery](#celery)
   - [总体思路](#总体思路)
   - [更新](#更新)
-    - [更新 git](#更新-git)
-    - [更新 conda 环境](#更新-conda-环境)
+    - [1. 更新 git](#1-更新-git)
+    - [2. 更新 conda 环境](#2-更新-conda-环境)
   - [检查](#检查)
-    - [创建 job](#创建-job)
-    - [检查 Celery 是否在执行 task](#检查-celery-是否在执行-task)
-    - [停止 Celery worker](#停止-celery-worker)
+    - [1. 检查 Celery 是否在执行 task](#1-检查-celery-是否在执行-task)
+    - [2. 触发子 pipeline](#2-触发子-pipeline)
+    - [3. 停止 Celery worker](#3-停止-celery-worker)
   - [部署（重启 celery）](#部署重启-celery)
   - [重启（重启 apache）](#重启重启-apache)
   - [完整 yml 文件](#完整-yml-文件)
@@ -30,9 +30,9 @@
 
 ## 更新
 
-### 更新 git
+### 1. 更新 git
 
-yml 文件直接调用 `git pull`：
+runner 服务设置用户账号或者以窗口形式运行 runner，yml 文件直接调用 `git pull`：
 
 ```yml
 update_git:
@@ -41,7 +41,18 @@ update_git:
     - git pull
 ```
 
-### 更新 conda 环境
+项目创建 PAT 变量，使用 PAT 进行认证来执行 `git pull`：
+
+```yml
+update_git:
+  stage: update
+  script:
+    - '$pair = "oauth2:$env:GITLAB_PAT"'
+    - '$basicAuth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))'
+    - 'git -c safe.directory="$env:PROJECT_DIR" -c http.extraHeader="Authorization: Basic $basicAuth" pull origin $env:CI_COMMIT_REF_NAME'
+```
+
+### 2. 更新 conda 环境
 
 思路：
 
@@ -64,13 +75,13 @@ update_conda_env:
 
 ## 检查
 
-### 创建 job
+### 1. 检查 Celery 是否在执行 task
 
-思路：
+**job 设计思路：**
 
-1. 创建 job，调用 `check_celery_tasks.py` 脚本检查 `Celery` 是否在执行 `task`，并且把检查结果写入 `celery_status.env` 文件和 `child-ci.yml` 文件。
+1. 运行 `ci_check_celery_tasks.py` 脚本检查 `Celery` 是否在执行 `task`，把检查结果写入 `celery_status.env` 文件，把子 `pipeline` 配置写入 `child-ci.yml` 文件。
 2. `celery_status.env` 文件会被 `GitLab` 识别为 `dotenv` 报告，里面的变量会被自动注入到后续的 `job` 中，可以在后续的 `job` 中通过环境变量获取检查结果。
-3. `child-ci.yml` 文件会被后续的 `trigger` 直接使用，作为子 `pipeline` 的配置文件。
+3. `child-ci.yml` 文件会被后续的 `trigger_celery_pipeline` job 直接使用，作为子 `pipeline` 的配置文件。
 
 ```yml
 variables:
@@ -84,7 +95,7 @@ check_celery:
     - job: update_conda_env
       optional: true
   script:
-    - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/check_celery_tasks.py --write-dotenv celery_status.env --write-child child-ci.yml"'
+    - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/ci_check_celery_tasks.py --write-dotenv celery_status.env --write-child child-ci.yml"'
   artifacts:
     when: always
     reports:
@@ -93,14 +104,16 @@ check_celery:
       - child-ci.yml
 ```
 
-### 检查 Celery 是否在执行 task
+***
 
-思路：
+**`ci_check_celery_tasks.py` 实现思路：**
 
-1. 创建 `check_celery_tasks.py`，通过 `celery` 的 `inspect` API 检查 `Celery` 是否在执行 `task`。
+1. 创建 `ci_check_celery_tasks.py`，通过 `celery` 的 `inspect` API 检查 `Celery` 是否在执行 `task`。
 2. 把检查结果写入 `celery_status.env` 文件和 `child-ci.yml` 文件。
-   1. `celery_status.env` 文件包含 `CELERY_HAS_TASKS`、`CELERY_TASK_TOTAL`、`CELERY_TASK_ACTIVE`、`CELERY_TASK_RESERVED`、`CELERY_TASK_SCHEDULED` 等变量，供后续的 `job` 使用。
-   2. `child-ci.yml` 文件根据是否有正在执行的 `task` 来决定是生成自动重启 `Celery` 的配置还是生成手动重启 `Celery` 的配置。
+   - `celery_status.env` 文件包含 `CELERY_HAS_TASKS`、`CELERY_TASK_TOTAL`、`CELERY_TASK_ACTIVE`、`CELERY_TASK_RESERVED`、`CELERY_TASK_SCHEDULED` 等变量，供后续的 `job` 使用。
+   - `child-ci.yml` 文件根据是否有正在执行的 `task` 来决定是生成自动重启 `Celery` 的配置还是生成手动重启 `Celery` 的配置。
+   - 写入的文件的路径需要设置在 `CI_PROJECT_DIR` 目录下，这样后续的 `job` 才能正确地找到这些文件。
+3. 将 `child-ci.yml` 文件作为构建产物上传，这样后续的 `trigger_celery_pipeline` job 就可以直接使用这个文件来触发子 `pipeline` 了。
 
 ```py
 import argparse
@@ -128,7 +141,7 @@ stop_celery_manual:
     stage: check
     when: manual
     script:
-        - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/stop_celery_workers.py --timeout-seconds 120"'
+        - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/ci_stop_celery_workers.py --timeout-seconds 120"'
 
 start_celery_manual:
     stage: deploy
@@ -153,7 +166,7 @@ stages:
 stop_celery_auto:
     stage: check
     script:
-        - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/stop_celery_workers.py --timeout-seconds 120"'
+        - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/ci_stop_celery_workers.py --timeout-seconds 120"'
 
 start_celery_auto:
     stage: deploy
@@ -191,7 +204,7 @@ def inspect_tasks(timeout: int) -> Tuple[bool, dict]:
 
     return total > 0, {"counts": counts, "total": total}
 
-
+# 获取 Runner 的工作目录，dotenv 和 child-ci.yml 文件都写入这个目录，这样后续的 job 才能正确地找到这些文件
 def _resolve_ci_path(path: str) -> str:
     base_dir = os.environ.get("CI_PROJECT_DIR") or os.getcwd()
     return os.path.abspath(os.path.join(base_dir, path))
@@ -247,22 +260,40 @@ def main() -> int:
         return 0
     except Exception as exc:
         print(f"Celery inspect failed: {exc}")
-        if args.dotenv:
-            write_dotenv(args.dotenv, True, {"active": 0, "reserved": 0, "scheduled": 0}, 0, True)
-        if args.child_ci:
-            write_child_ci(args.child_ci, True)
-        return 0
+        # 报错了直接返回 1，终止 job
+        return 1
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
 ```
 
-### 停止 Celery worker
+### 2. 触发子 pipeline
+
+创建 `trigger_celery_pipeline` job，设计思路：
+
+1. 依赖 `check_celery` job，并且需要 `check_celery` job 的产物 `child-ci.yml`。
+2. 通过 `trigger` 来触发子 `pipeline`，子 `pipeline` 的配置直接使用 `check_celery` job 产出的 `child-ci.yml` 文件。
+3. `strategy: depend` 表示子 `pipeline` 全部成功执行后，`trigger_celery_pipeline` job 才算成功，如果子 `pipeline` 失败了，那么 `trigger_celery_pipeline` job 也算失败了。
+
+```yml
+trigger_celery_pipeline:
+  stage: check
+  needs:
+    - job: check_celery
+      artifacts: true
+  trigger:
+    include:
+      - artifact: child-ci.yml
+        job: check_celery
+    strategy: depend
+```
+
+### 3. 停止 Celery worker
 
 思路：
 
-1. 创建 `stop_celery_workers.py`，通过 `celery` 的 `control` API 停止 `Celery worker`。
+1. 创建 `ci_stop_celery_workers.py`，通过 `celery` 的 `control` API 停止 `Celery worker`。
 2. 如果仍有 worker 在工作，则通过 process API 强制杀死 worker 进程。
 
 ```py
@@ -444,7 +475,7 @@ def start_celery_worker(worker_name, config):
             "-Command",
             powershell_command,
         ],
-        cwd=working_dir,
+        cwd=working_dir, # 设置在项目根目录下启动，确保 celery 能正确加载项目模块
         creationflags=creationflags,
     )
 
@@ -461,16 +492,19 @@ if __name__ == "__main__":
 
 思路：
 
-1. 依赖收集 `static` 文件的 `job`
+1. 依赖 `update_git` 和 `trigger_celery_pipeline` job
+   - 因为 `trigger_celery_pipeline` job 里面会执行重启 `Celery` 的脚本，所以 `restart_apache` job 需要依赖 `trigger_celery_pipeline` job 来确保 `Celery` 已经被重启了。
 2. 执行重启 `apache` 的命令：`httpd.exe -k restart`
 
 ```yml
-APACHE_HTTPD: "C:\\Apache24\\bin\\httpd.exe"
+variables:
+  APACHE_HTTPD: "C:\\Apache24\\bin\\httpd.exe"
 
 restart_apache:
-  stage: deploy
+  stage: restart
   needs:
-    - collect_static
+    - job: update_git
+    - job: trigger_celery_pipeline
   script:
     - 'cmd /c """%APACHE_HTTPD%"" -k restart"'
 ```
@@ -485,6 +519,12 @@ stages:
   - check
   - deploy
   - restart
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
 
 variables:
   PROJECT_DIR: "C:\\Projects\\celery-project"
@@ -502,7 +542,10 @@ default:
 update_git:
   stage: update
   script:
-    - git pull
+    - '$pair = "oauth2:$env:GITLAB_PAT"'
+    - '$basicAuth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))'
+    - 'git -c safe.directory="$env:PROJECT_DIR" -c http.extraHeader="Authorization: Basic $basicAuth" pull origin $env:CI_COMMIT_REF_NAME'
+
 
 update_conda_env:
   stage: update
@@ -519,7 +562,7 @@ check_celery:
     - job: update_conda_env
       optional: true
   script:
-    - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/check_celery_tasks.py --write-dotenv celery_status.env --write-child child-ci.yml"'
+    - 'cmd /c "call ""%CONDA_ACTIVATE%"" && conda activate %CONDA_ENV% && python tools/ci_check_celery_tasks.py --write-dotenv celery_status.env --write-child child-ci.yml"'
   artifacts:
     when: always
     reports:
@@ -551,7 +594,8 @@ restart_apache:
 
 ### 使用脚本启动 Celery worker
 
-1. 在 GitLab Runner（Windows）服务模式 下是无桌面会话，所以无法弹出窗口，所以在 job 里面运行启动 Celery worker 的脚本，启动的 worker 终端窗口不会显示。
-   1. 解决方法：**改用交互式 Runner**。关闭 runner 服务，然后在 runner 文件夹中运行 `.\gitlab-runner.exe run` 命令来启动 runner，这样 runner 启动的终端窗口就会显示，启动的 worker 终端窗口也会显示。
+1. 在 GitLab Runner（Windows）服务模式下是无桌面会话，所以无法弹出窗口，所以在 job 里面运行启动 Celery worker 的脚本，启动的 worker 终端窗口不会显示。
+   - 解决方法：**改用交互式 Runner**。关闭 runner 服务，然后在 runner 文件夹中运行 `.\gitlab-runner.exe run` 命令来启动 runner，这样 runner 启动的终端窗口就会显示，启动的 worker 终端窗口也会显示。
+
 2. 如果直接在 job 里面运行启动 Celery worker 的脚本，job 会一直在等待脚本执行完成，但是启动 Celery worker 的脚本是一个持续运行的脚本，导致 job 一直在运行状态，无法继续执行后续的 job。
-   1. 解决方法：不在 job 中运行启动 worker 的脚本，而是直接在 `check_worker_status.py` 脚本中通过 `subprocess` 启动 worker，这样就不会阻塞 job 的执行了。
+   - 解决方法：不在 job 中运行启动 worker 的脚本，而是直接在 `ci_check_worker_status.py` 脚本中通过 `subprocess` 启动 worker，这样就不会阻塞 job 的执行了。

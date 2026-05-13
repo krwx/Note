@@ -60,7 +60,7 @@ Node.childElementCount  //返回当前节点所有Element子节点的数目。
 Node.appendChild(node)   //向节点添加最后一个子节点
 Node.hasChildNodes()   //返回布尔值，表示当前节点是否有子节点
 Node.cloneNode(true);  // 默认为false(克隆节点), true(克隆节点及其属性，以及后代)
-Node.insertBefore(newNode,oldNode)  // 在指定子节点之前插入新的子节点
+Node.insertBefore(newNode,oldNode)  // 在指定父节点下，把某个节点放到另一个节点前面；如果这个节点原来已经存在，就会从旧位置移动到新位置。
 Node.removeChild(node)   //删除节点，在要删除节点的父节点上操作
 Node.replaceChild(newChild,oldChild)  //替换节点
 Node.contains(node)  //返回一个布尔值，表示参数节点是否为当前节点的后代节点。

@@ -13,7 +13,7 @@
   - [10. 有了解css3的动画吗？](#10-有了解css3的动画吗)
   - [11. 讲一下 em、rem、px 的区别](#11-讲一下-emrempx-的区别)
   - [12. 在项目中有用过 em、rem、px 吗](#12-在项目中有用过-emrempx-吗)
-  - [13. 怎么将一个div水平垂直居中](#13-怎么将一个div水平垂直居中)
+  - [13. 怎么将一个div水平垂直居中 / div如何垂直水平居中](#13-怎么将一个div水平垂直居中--div如何垂直水平居中)
   - [14. flex 布局设置换行通过哪个属性设置](#14-flex-布局设置换行通过哪个属性设置)
   - [15. display有哪些取值](#15-display有哪些取值)
   - [16. position 为 absolute 的 div，假如它的父 div 的 position 不是 absolute、relative，那么这个 div 以谁为基准](#16-position-为-absolute-的-div假如它的父-div-的-position-不是-absoluterelative那么这个-div-以谁为基准)
@@ -250,13 +250,13 @@ em 和 rem 的区别：
   - **举例 1（按钮/标题）：** 设计一个按钮，希望它的 `padding` 能随着文字大小变化。如果设置 `padding: 1em 2em`，当修改父级的 `font-size` 时，按钮的内边距自动跟着变，非常灵活。
   - **举例 2（text-indent）：** 段落首行缩进，通常用 `text-indent: 2em`，表示缩进两个汉字的宽度，不受字体大小影响，语义化很好。
 
-## 13. 怎么将一个div水平垂直居中
+## 13. 怎么将一个div水平垂直居中 / div如何垂直水平居中
 
 [参考 css 实现水平垂直居中](../css/usage/实现居中.md#水平垂直居中)
 
 ## 14. flex 布局设置换行通过哪个属性设置
 
-- flex-warp
+- flex-wrap
   - 指定 flex 元素单行显示还是多行显示。如果允许换行，这个属性允许你控制行的堆叠方向。
   - nowrap：默认值。flex 的元素被摆放到到一行，这可能导致 flex 容器溢出。
   - wrap：flex 元素 被打断到多个行中。cross-start 会根据 flex-direction 的值等价于 start 或before。cross-end 为确定的 cross-start 的另一端。

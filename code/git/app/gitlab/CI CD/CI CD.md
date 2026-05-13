@@ -6,12 +6,18 @@
       - [Windows](#windows)
     - [2. 创建 `.gitlab-ci.yml` 文件](#2-创建-gitlab-ciyml-文件)
     - [3. 测试并查看 pipeline](#3-测试并查看-pipeline)
+    - [4. 分支流程控制](#4-分支流程控制)
   - [Runner](#runner)
     - [Command](#command)
     - [配置多个 Runner](#配置多个-runner)
     - [配置](#配置)
     - [工作目录](#工作目录)
     - [启动 Runner](#启动-runner)
+    - [多个项目共用一个 Project Runner](#多个项目共用一个-project-runner)
+  - [并发](#并发)
+    - [多个项目共用一个 Project Runner](#多个项目共用一个-project-runner-1)
+    - [多个项目在一个 Runner 服务各自配置 Runner](#多个项目在一个-runner-服务各自配置-runner)
+    - [一个项目配置多个 Runner](#一个项目配置多个-runner)
   - [CI\_PROJECT\_DIR](#ci_project_dir)
   - [搭配 jekins 使用](#搭配-jekins-使用)
 
@@ -35,29 +41,29 @@
          ```
 
    - 安装后的文件夹：
-    ![gitlab-runner-folder](../../../img/gitlab-runner-folder.png)
+    ![gitlab-runner-folder](../../../img/gitlab/gitlab-runner-folder.png)
 
 3. `gitlab` 项目创建 `runner`
    1. 导航到项目的主页面
    2. 点击左侧边栏中的 `Settings` 菜单，然后选择 `CI / CD`。点击 `Runners` 部分
       - `Project runners`：配置给当前 Project 的 runner。也可以看到其他 Project 配置的 runner，可以使用这些 runner。
       - `Group runners`：配置给当前 Group 的 runner
-        ![gitlab-runner-folder](../../../img/gitlab-runner.png)
+        ![gitlab-runner-folder](../../../img/gitlab/gitlab-runner.png)
    3. 点击 `Create project runner` 按钮创建 runner
       - `tags`: runner 的标签，可以在 `.gitlab-ci.yml` 文件中指定使用哪个 runner 进行构建。
       - `Run untagged jobs`: 是否允许未标记的 job 使用该 runner 进行构建。
       - `description`: runner 的描述信息，方便识别不同的 runner。
       - `Lock to current project`: 是否将该 runner 锁定到当前项目，防止其他项目使用该 runner。
-      - `Paused`
+      - `Paused`：停止该 runner，不再接受新的 job。在 `gitlab` 界面上，runner 会显示为 `paused` 状态。该配置也受界面的停止图标按钮控制。
       - `Protected`: 只有在 protected 分支上运行的 job 才能使用该 runner。
-      ![gitlab-runner-create](../../../img/gitlab-runner-create.png)
+      ![gitlab-runner-create](../../../img/gitlab/gitlab-runner-create.png)
 4. 创建好后选择 Platform 为 `windows`，并复制 `Step1` 中的注册命令
     ![gitlab-runner-register](../../../img/gitlab-runner-register.png)
 5. 在本地 runner 安装目录（`C:\GitLab-Runner`）打开命令行，运行复制的命令
    1. 输入 GitLab instance URL。这里输入你的 gitlab 实例地址，例如 `http://gitlab.example.com/`
    2. 输入 runner 的名字
    3. 输入 executor，选择 `shell`
-   ![gitlab-runner-register-cmd](../../../img/gitlab-runner-cmd.png)
+   ![gitlab-runner-register-cmd](../../../img/gitlab/gitlab-runner-cmd.png)
 
 6. 修改 `config.toml` 文件
    - `shell` 默认为填成 `pwsh`，需要改成 `powershell`
@@ -89,7 +95,7 @@
         ```
 
 7. 注册成功后，可以在 `gitlab` 界面看到注册的 runner
-    ![gitlab-runner-created](../../../img/gitlab-runner-created.png)
+    ![gitlab-runner-created](../../../img/gitlab/gitlab-runner-created.png)
 
 ### 2. 创建 `.gitlab-ci.yml` 文件
 
@@ -105,8 +111,8 @@
    4. 在编辑器中编写 `.gitlab-ci.yml` 文件内容。
    5. 点击 `Commit changes` 按钮保存文件，会直接在仓库创建 `commit` 。
 
-![gitlab-pipeline-editor](../../../img/gitlab-pipeline-editor.png)
-![gitlab-pipeline-editor-edit](../../../img/gitlab-pipeline-editor-edit.png)
+![gitlab-pipeline-editor](../../../img/gitlab/gitlab-pipeline-editor.png)
+![gitlab-pipeline-editor-edit](../../../img/gitlab/gitlab-pipeline-editor-edit.png)
 
 文件例子：
 
@@ -143,9 +149,23 @@ tags:
 1. 提交代码到 gitlab 仓库。
 2. 导航到项目的主页面，点击左侧边栏中的 `Build` 菜单，然后选择 `Pipelines`。
 3. 可以看到刚刚触发的 pipeline。点击 pipeline 的 ID 查看详细信息。
-   ![gitlab-job](../../../img/gitlab-job.png)
+   ![gitlab-job](../../../img/gitlab/gitlab-job.png)
 4. 点击某个 job 可以查看该 job 的执行日志。
-   ![gitlab-job-detail](../../../img/gitlab-job-detail.png)
+   ![gitlab-job-detail](../../../img/gitlab/gitlab-job-detail.png)
+
+### 4. 分支流程控制
+
+方案1：
+
+1. 使用 master 和 develop 两个分支，master 分支用于生产环境，develop 分支用于开发环境。当 master 分支有新的 commit 时才触发 ci/cd 流程。
+
+```yml
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
+```
 
 ## Runner
 
@@ -273,13 +293,71 @@ buidls_dir: 用于指定构建目录的位置。默认情况下，GitLab Runner 
 start "GitLab Runner" .\gitlab-runner.exe run
 ```
 
-> 使用 `start` 命令可以在新的窗口中运行 Runner，这样即使关闭当前窗口，Runner 仍然会继续运行。
-> ***
-> 标题问题：需要给窗口设置一个标题，如果没设置，那么 Node 在运行的时候会报错。例如使用以下命令启动 Runner：
+`start` 命令说明：
+
+> 使用 `start` 命令可以在新的窗口中运行 Runner，这样即使关闭当前执行 `start` 命令的窗口，Runner 仍然会继续运行。
+
+标题问题：
+
+> 问题：需要给窗口设置一个标题，如果没设置，那么 Node 在运行的时候会报错。例如使用以下命令启动 Runner：
 >
 > `start "" .\gitlab-runner.exe run`
 >
 > 此时在 Runner 里面执行 `vite build` 的时候会报错： `Assertion failed: process_title, file src\win\util.c, Line 412`
+>
+> 解决：在 `start` 命令中为窗口设置一个标题，例如：
+>
+> `start "GitLab Runner" .\gitlab-runner.exe run`
+
+冲突问题：
+
+> 问题：Runner 在后台服务运行了并且也以窗口模式运行，那么它们会同时做某个 task，然后会尝试访问相同的资源，可能导致冲突或错误。
+>
+> 解决：只保留一种运行方式，建议使用服务方式运行，这样不需要担心用户登录状态，也不需要担心窗口被误关闭。
+
+### 多个项目共用一个 Project Runner
+
+**步骤**：
+
+1. 在 `gitlab` 界面上创建一个 `project runner`，不勾选 `Lock to current project` 选项，这样其他项目也可以使用这个 runner。
+2. 在其他项目的 `.gitlab-ci.yml` 文件中，使用 `tags` 来指定使用这个 runner 进行构建。需要和注册 runner 时设置的 tags 一致。
+3. 在项目的 Runner 配置界面能看到这个 runner，点击 `Enable for this project` 按钮启用这个 runner。
+
+点击 runner id 可以看到这个 runner 的详细信息：
+
+![gitlab-runner-detail](../../../img/gitlab-runner-detail.png)
+
+- `Assigned projects`：显示了哪些项目正在使用这个 runner。
+- `Runners`：显示了这个 runner 的配置和状态信息。
+- `Jobs`：显示了这个 runner 执行的 job 的历史记录。
+
+**删除 runner 问题**：
+
+1. 被多个项目共享的 runner 是没有删除按钮的，只有 `Disable for this project` 这个选项。
+2. 如果要在界面上删除，那么在所有项目都 Disable 这个 runner，然后在最后一个使用这个 runner 的项目上就可以删除这个 runner 了。
+
+## 并发
+
+### 多个项目共用一个 Project Runner
+
+如果多个项目共用一个 Runner 实例，并且同时都有 Pipeline 在运行时。
+
+1. Runner 会根据 `config.toml` 中的 `concurrent` 配置来同时运行多个作业，作业的数量取决于 `concurrent` 的值。
+2. 当有来自不同项目的新的作业触发时，如果当前运行的作业数量已经达到 `concurrent` 的限制，这个新作业会进入 Runner 的队列中等待，直到有一个正在运行的作业完成后，Runner 会从队列中取出下一个作业来执行。
+3. 如果一个项目持续触发大量作业，可能会占满 Runner 的并发槽位，导致其他项目的作业排队等待。
+
+### 多个项目在一个 Runner 服务各自配置 Runner
+
+如果多个项目在同一个 Runner 服务上各自配置了 Runner，那么每个项目的 Runner 都会独立运行，不会互相干扰。每个 Runner 都有自己的配置和状态，可以同时处理来自不同项目的作业。
+
+1. 每个项目的 Runner 都会根据自己的 `limit` 配置来同时运行多个作业，作业的数量取决于每个 Runner 的 `limit` 的值。
+2. 但是 Runner 服务的 `concurrent` 配置会限制所有 Runner 同时运行的作业总数。如果所有 Runner 的作业数量加起来超过了 `concurrent` 的限制，那么新的作业会进入 Runner 服务的队列中等待，直到有一个正在运行的作业完成后，Runner 服务会从队列中取出下一个作业来执行。
+
+### 一个项目配置多个 Runner
+
+如果一个项目配置了多个 Runner，那么这些 Runner 会根据作业的标签（tags）来决定哪个 Runner 来执行哪个作业。每个 Runner 都会独立运行，不会互相干扰。
+
+如果多个 Runner 配置了相同的 tags，那么 GitLab CI/CD 会随机选择一个 Runner 来执行匹配这些 tags 的作业。即多个 Runner 之间是竞争关系，哪个 Runner 空闲了就会执行这个作业。
 
 ## CI_PROJECT_DIR
 
@@ -345,4 +423,4 @@ flowchart TD
     - 将上一步获得的 Jenkins Webhook URL 填入，并选择触发事件（如代码推送、合并请求等）。
     - 保存后，可点击“测试”来验证连接是否成功。
 
-![gitlab-jenkins](../../../img/gitlab-jenkins.png)
+![gitlab-jenkins](../../../img/gitlab/gitlab-jenkins.png)

@@ -35,7 +35,7 @@
 
 在 `Settings` > `CI/CD` > `Variables` 页面，可以添加 CI/CD 变量。
 
-![gitlab-variable](../../img/gitlab-variable.png)
+![gitlab-variable](../../img/gitlab/gitlab-variable.png)
 
 点击 `Add variable`，填好信息后，最后点击 `Add variable` 添加变量。
 
@@ -51,4 +51,4 @@
 - `Value`：变量值，必填。
 - `Protect variable`：如果选中，变量仅在受保护的分支或标签上可用。
 
-![gitlab-variable-add](../../img/gitlab-variable-add.png)
+![gitlab-variable-add](../../img/gitlab/gitlab-variable-add.png)

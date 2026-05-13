@@ -104,6 +104,11 @@ span {
 [href^="https"] {
   text-decoration: none;
 }
+
+/* 选择所有 `id` 属性以 `w-e-elemen-ttable` 开头的元素 */
+[id^="w-e-elemen-ttable"] {
+  text-decoration: none;
+}
 ```
 
 6、`[attribute$="value"]`
@@ -125,6 +130,15 @@ span {
 /* 选择所有 `title` 属性中包含 `tutorial` 的元素 */
 [title*="tutorial"] {
   font-style: italic;
+}
+```
+
+与其他选择器配合使用：
+
+```css
+/* 选择所有 `class` 属性以 `container` 开头的 `div` 元素 */
+div[class^="container"] {
+  padding: 20px;
 }
 ```
 

@@ -10,6 +10,7 @@
     - [getAttributeNames()](#getattributenames)
     - [removeAttribute(attrName)](#removeattributeattrname)
     - [getBoundingClientRect()](#getboundingclientrect)
+    - [closest()](#closest)
 
 ## 属性
 
@@ -164,3 +165,62 @@ document.getElementById("div1").removeAttribute("align");
 - 该对象使用 `left、top、right、bottom、x、y、width 和 height` 这几个以像素为单位的只读属性描述整个矩形的位置和大小。
 - 除了 `width` 和 `height` 以外的属性是相对于**视图窗口的左上角**来计算的。(**`right` 也是相对于左上角计算**)
 - `DOMRect` 对象的 `width` 和 `height` 属性是包含了 `padding` 和 `border-width` 的
+
+### closest()
+
+`closest()` 用于**向上遍历** DOM 树（从当前元素开始，包括自身），查找与指定 CSS 选择器匹配的**最近祖先元素**（或自身）。如果找到匹配的元素，则返回该元素；否则返回 `null`。
+
+**1. 语法**
+
+```javascript
+element.closest(selectors)
+```
+
+- **参数**：`selectors` 是一个有效的 CSS 选择器字符串（如 `".class"`、`"#id"`、`"div"` 等）。
+- **返回值**：匹配选择器的最近祖先元素（或自身），无匹配则 `null`。
+
+**2. 特性**
+
+- **包含自身**：首先检查当前元素是否匹配选择器，若匹配则直接返回。
+- **向上遍历**：逐级向父元素、祖父元素…直到 `<html>` 根元素。
+- **只读**：不会修改 DOM，仅用于查询。
+
+**3. 使用场景**
+
+- **事件委托**：在事件处理中，快速找到触发事件的元素及其符合特定条件的父容器。
+- **获取上下文**：给定一个内部元素，向上查找特定的容器（如表格行、卡片、弹窗等）。
+- **表单验证**：从输入框向上找到最近的 `<form>` 或错误提示容器。
+
+**4. 示例**
+
+**4.1. 基础用法**
+
+```html
+<div class="container">
+  <div class="item">
+    <span id="target">点我</span>
+  </div>
+</div>
+
+<script>
+  const span = document.getElementById('target');
+  const item = span.closest('.item');      // 返回 div.item
+  const container = span.closest('.container'); // 返回 div.container
+  const notFound = span.closest('.nonexist');   // 返回 null
+</script>
+```
+
+**4.2. 检查元素是否在某个容器内**
+
+```javascript
+const child = document.querySelector('.some-element');
+const dialog = child.closest('.modal');
+if (dialog) {
+  console.log('元素在弹窗内');
+}
+```
+
+**5. 与 `matches()` 的区别**
+
+- `matches(el, selector)` 只检查**当前元素**是否匹配选择器，不向上遍历。
+- `closest(selector)` 从自身开始**向上查找**，直到找到匹配的祖先或根。

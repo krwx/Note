@@ -151,7 +151,7 @@ module.exports = { value: 42 };
 
 场景说明：
 
-- 前端打包（`webpack/vite/rollup`）：
+- 前端项目打包（`webpack/vite/rollup`）：
   - 默认 `npm install` 会装两者；生产环境可用 `npm install --omit=dev` 或 `npm install --production` 跳过 `devDependencies`。
   - 打包工具只会**打包被入口依赖链实际引用到的模块**。如果你在 `dependencies` 中安装了一个包，但没有在代码中引用它，那么它不会被打包进生产环境的构建结果中。
 - `Node` 服务端打包/发布：
@@ -173,6 +173,11 @@ module.exports = { value: 42 };
 - **真正合理的方式**：你的组件库**复用**用户项目中的 `react`，而不是私有一份。
 
 **peerDependency 正是为了这种“复用宿主依赖”的场景而生的。**
+
+结论：
+
+- `dependencies`：发布时不会自带源码，但 npm 安装组件库时会自动安装依赖
+- `peerDependencies`：发布时不会自带，npm 安装组件库时通常也不会替使用方安装，使用方自己安装
 
 ---
 

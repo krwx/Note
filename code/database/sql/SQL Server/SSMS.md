@@ -1,12 +1,12 @@
 # SSMS
 
 - [SSMS](#ssms)
-  - [创建脚本](#创建脚本)
+  - [创建脚本（用脚本导出数据）](#创建脚本用脚本导出数据)
   - [删除表](#删除表)
-  - [导出数据](#导出数据)
+  - [导出数据（数据库之间的数据迁移）](#导出数据数据库之间的数据迁移)
   - [修改列](#修改列)
 
-## 创建脚本
+## 创建脚本（用脚本导出数据）
 
 [官网指导](https://learn.microsoft.com/en-us/ssms/scripting/generate-and-publish-scripts-wizard?f1url=%3FappId%3DDev15IDEF1%26l%3Den-US%26k%3Dk(sql13.swb.generatescriptswizard.setscriptingoptions.f1)%26rd%3Dtrue)
 
@@ -38,7 +38,7 @@ step：
 2. 点击 Show Dependencies，可以看到该表的依赖项和 依赖本表的其他表
 3. 点击 OK 删除表
 
-## 导出数据
+## 导出数据（数据库之间的数据迁移）
 
 前提：安装 `SQL Server Native Client`（[下载地址](https://www.microsoft.com/en-us/download/details.aspx?id=50402)）
 

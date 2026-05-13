@@ -6,6 +6,8 @@
   - [output.entryFileNames](#outputentryfilenames)
   - [output.assetFileNames](#outputassetfilenames)
   - [output.manualChunks](#outputmanualchunks)
+  - [output.preserveModules](#outputpreservemodules)
+  - [output.preserveModulesRoot](#outputpreservemodulesroot)
 
 ## output.format
 
@@ -121,3 +123,106 @@ export default {
   },
 };
 ```
+
+## output.preserveModules
+
+**1、介绍**
+
+`preserveModules` 是 Rollup 的一个输出选项，作用是：**尽量保留源码的模块结构，不把多个模块合并成少量 chunk。**
+
+在 Vite 里一般这样用：
+
+````ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+export default defineConfig({
+  plugins: [vue()],
+  build: {
+    rollupOptions: {
+      output: {
+        preserveModules: true,
+        preserveModulesRoot: 'src',
+      }
+    }
+  }
+})
+````
+
+开启 `preserveModules` 后：
+
+- `src/views/A.vue`
+- `src/views/B.vue`
+- `src/utils/x.ts`
+
+这类文件编译后会**尽量对应生成独立的 JS 文件**，也就是更接近：
+
+- `dist/views/A.js`
+- `dist/views/B.js`
+- `dist/utils/x.js`
+
+而不是全部塞进一个 `index.js`。
+
+**2、场景**
+
+`preserveModules` 更适合：
+
+- **库模式打包**
+- 希望输出结构接近源码结构
+- 想让每个模块独立发布
+- 方便按模块调试或按需引用
+
+不太适合什么场景：
+
+- 对于普通前端应用，尤其是 SPA / 微前端子应用：
+  - 会生成**大量小文件**
+  - 浏览器请求数会增加
+  - 可能影响加载性能
+  - 对 qiankun 这种运行方式，路径和资源加载更容易出问题
+
+所以它**不是常规应用构建的推荐方案**。
+
+**3、它和 `manualChunks` 的区别**
+
+`manualChunks` 是“**手动分组**”：
+
+- 把一批模块打成一个 chunk
+- 比如 `vue` 单独一个、`element-plus` 单独一个、其他第三方进 `vendor`
+- 适合控制“大包拆分”
+- `manualChunks` 目标是合并
+
+`preserveModules` 是“**尽量一文件一个模块输出**”：
+
+- 不强调合并优化
+- 强调保留原始模块结构
+- 适合控制“模块颗粒度”。
+- `preserveModules` 目标是拆开
+
+> `preserveModules` 不要和 `manualChunks` 一起用，因为它们的目标相反，可能会导致输出结构混乱。
+
+## output.preserveModulesRoot
+
+`preserveModulesRoot` 用来指定“保留目录结构时的根目录”。
+
+比如：
+
+````ts
+output: {
+  preserveModules: true,
+  preserveModulesRoot: 'src',
+}
+````
+
+如果你的源文件是：
+
+- TransitionTest.vue
+
+输出时会更像：
+
+- `dist/views/TransitionTest.js`
+
+而不是：
+
+- `dist/src/views/TransitionTest.js`
+
+所以它主要是为了让输出路径更干净。
