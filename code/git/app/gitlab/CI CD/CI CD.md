@@ -13,6 +13,7 @@
     - [配置](#配置)
     - [工作目录](#工作目录)
     - [启动 Runner](#启动-runner)
+    - [删除 Runner](#删除-runner)
     - [多个项目共用一个 Project Runner](#多个项目共用一个-project-runner)
   - [并发](#并发)
     - [多个项目共用一个 Project Runner](#多个项目共用一个-project-runner-1)
@@ -315,6 +316,14 @@ start "GitLab Runner" .\gitlab-runner.exe run
 >
 > 解决：只保留一种运行方式，建议使用服务方式运行，这样不需要担心用户登录状态，也不需要担心窗口被误关闭。
 
+### 删除 Runner
+
+在 Gitlab 界面删除了 Runner，本地的 `config.toml` 文件里面会保留这个 Runner 的配置，但是这个 Runner 已经无效了。可以直接删除 `config.toml` 里面这个 Runner 的配置，或者使用以下命令删除：
+
+```sh
+.\gitlab-runner.exe unregister --name "runner-name"
+```
+
 ### 多个项目共用一个 Project Runner
 
 **步骤**：
@@ -325,7 +334,7 @@ start "GitLab Runner" .\gitlab-runner.exe run
 
 点击 runner id 可以看到这个 runner 的详细信息：
 
-![gitlab-runner-detail](../../../img/gitlab-runner-detail.png)
+![gitlab-runner-detail](../../../img/gitlab/gitlab-runner-detail.png)
 
 - `Assigned projects`：显示了哪些项目正在使用这个 runner。
 - `Runners`：显示了这个 runner 的配置和状态信息。

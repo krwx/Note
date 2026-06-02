@@ -39,7 +39,7 @@
 3. 添加 task error info 的 api
 4. 添加搜索 ldap 用户名和邮箱地址的 api。添加搜索 jira 用户名的 api
 
-**celery**：
+**main**：
 
 技术栈：python 12 + celery + sqlAlchemy + pandas + rabbitmq + sql server
 
@@ -63,3 +63,35 @@
 
 1. combine zip file into one file
 2. compare zip file
+
+## 遇到的困难
+
+### SeaRatesView
+
+#### main
+
+**1、使用 fillna 填充数据时，发现 dataframe 中有些数据没有改变。**
+
+原因：fillna 只填充 NA/NaN 值，如果数据中已经有数据了，就不会被 fillna 填充。
+
+解决：直接设置值
+
+```py
+# 旧代码
+df['column_name'] = df['column_name'].fillna(value)
+
+# 新代码
+df['column_name'] = value
+```
+
+**2、合并日期重复但是价格没有重叠的相同数据**
+
+1. 使用 groupby 进行分组，然后遍历每个分组
+2. 使用 sum 统计每个柜型是否有重叠的价格，如果有代表合并不了
+3. 然后计算日期的交集
+   1. 拿到日期的 series，用 pd.to_datetime 转换成 datetime 类型
+   2. 用 max() 和 min() 计算日期的交集
+   3. 然后去原始 series 找到日期那一行的原始文本值
+   4. 将原始文本值的日期填到第一行
+4. 遍历柜型，将柜型的价格填到第一行
+5. 然后将其他行放到一个 set，然后通过 drop 删除其他行

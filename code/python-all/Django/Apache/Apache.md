@@ -8,6 +8,7 @@
   - [使用时遇到的问题](#使用时遇到的问题)
     - [启动报错](#启动报错)
     - [python 项目导入其他项目的模块报错](#python-项目导入其他项目的模块报错)
+    - [没有管理员权限重启不了](#没有管理员权限重启不了)
 
 ## 介绍
 
@@ -74,3 +75,11 @@ log 的存放路径：`C:\Apache24\logs`
 - 解决
   - 往 `sys.path` 添加绝对路径
   - `sys.path.append(r"D:\OtherProgram\TargetProject")`
+
+### 没有管理员权限重启不了
+
+以管理员安装 apache，apache 会以后台服务的形式运行，所以需要管理员权限才能重启 apache。卸载 apache 时也要管理员身份。
+
+如果只能使用普通身份，那么安装的时候不要用管理员身份安装，使用 apache 的时候，在 bin 文件夹下运行 `.\httpd` 命令用窗口模式来启动 apache。
+
+在用管理员身份安装 apache 后，如果普通用户运行 `.\httpd` 命令启动 apache，会报错 `AH00451: no listening sockets available, shutting down`，这是因为 apache 已经以服务的形式在后台运行了，端口已经在使用了，所以普通用户无法再启动一个 apache 实例。可以更改 `httpd.conf` 文件中的 `Listen` 端口，改成一个没有被占用的端口，这样普通用户就可以启动 apache 了。

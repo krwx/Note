@@ -280,6 +280,8 @@ Worksheets("Sheet1").Range("A1").NumberFormat = "@"
 
 ### Find()
 
+**1、说明**
+
 在区域中查找特定信息。
 
 语法：`expression.Find (What, After, LookIn, LookAt, SearchOrder, SearchDirection, MatchCase, MatchByte, SearchFormat)`
@@ -288,17 +290,17 @@ Worksheets("Sheet1").Range("A1").NumberFormat = "@"
 
 **返回值**：一个 `Range` 对象，它代表在其中找到该信息的第一个单元格。
 
-|名称| 必需/可选| 数据类型| 说明|
+|名称|必需/可选|数据类型|说明|
 |--|--|--|--|
-|What| 必需|| 要搜索的数据。 可为字符串或任意 Microsoft Excel 数据类型。|
-|After| 可选|| 要在其后开始搜索的单元格。 从用户界面搜索时，这对应于活动单元格的位置。 <br><br> 请注意，After 必须是区域内的单个单元格。 请注意，搜索在此单元格之后开始；在方法回绕到此单元格之前，不会搜索指定的单元格。 <br><br> 如果未指定此参数，搜索将在区域左上角的单元格后面开始。|
-|LookIn| 可选|| 搜索什么类型的数据。可以是下列 `XlFindLookIn` 常量之一：`xlFormulas、xlValues、xlComments 或 xlCommentsThreaded。`|
-|LookAt| 可选|| 可以是下列 `XlLookAt` 常量之一：`xlWhole 或 xlPart`。<br><br>`xlPart` ：匹配任一部分搜索文本。<br>`xlWhole` ：匹配全部搜索文本。<br><br> 默认是 `xlPart`|
-|SearchOrder| 可选|| 可以是以下 `XlSearchOrder` 常量之一：`xlByRows 或 xlByColumns`。|
-|SearchDirection| 可选|| 可以是以下 `XlSearchDirection` 常量之一： `xlNext 或 xlPrevious`。|
-|MatchCase| 可选|| 如果为 True，则搜索区分大小写。 默认值为 False。|
-|MatchByte| 可选|| 仅在选择或安装了双字节语言支持时使用。 如果为 True，则双字节字符仅匹配双字节字符。 如果为 False，则双字节字符匹配其单字节等效字符。|
-|SearchFormat| 可选|| 搜索格式。|
+|What|必需||要搜索的数据。 可为字符串或任意 Microsoft Excel 数据类型。|
+|After|可选||要在其后开始搜索的单元格。 从用户界面搜索时，这对应于活动单元格的位置。 <br><br> 请注意，After 必须是区域内的单个单元格。 请注意，搜索在此单元格之后开始；在方法回绕到此单元格之前，不会搜索指定的单元格。 <br><br> 如果未指定此参数，搜索将在区域左上角的单元格后面开始。|
+|LookIn|可选||搜索什么类型的数据。可以是下列 `XlFindLookIn` 常量之一：`xlFormulas、xlValues、xlComments 或 xlCommentsThreaded。`|
+|LookAt|可选||可以是下列 `XlLookAt` 常量之一：`xlWhole 或 xlPart`。<br><br>`xlPart` ：匹配任一部分搜索文本。<br>`xlWhole` ：匹配全部搜索文本。<br><br> 默认是 `xlPart`|
+|SearchOrder|可选||可以是以下 `XlSearchOrder` 常量之一：`xlByRows 或 xlByColumns`。|
+|SearchDirection|可选||可以是以下 `XlSearchDirection` 常量之一： `xlNext 或 xlPrevious`。|
+|MatchCase|可选||如果为 True，则搜索区分大小写。 默认值为 False。|
+|MatchByte|可选||仅在选择或安装了双字节语言支持时使用。 如果为 True，则双字节字符仅匹配双字节字符。 如果为 False，则双字节字符匹配其单字节等效字符。|
+|SearchFormat|可选||搜索格式。|
 
 - 使用 `FindNext` 和 `FindPrevious` 方法可重复搜索。
 - 如果未发现匹配项，此方法返回 `Nothing` 。 Find 方法不会影响所选内容或活动单元格。
@@ -307,9 +309,9 @@ Worksheets("Sheet1").Range("A1").NumberFormat = "@"
   - 设置这些参数会更改“查找”对话框中的设置，更改“查找”对话框中的设置会更改省略参数时使用的已保存值。
   - **为避免出现问题，请在每次使用此方法时显式设置这些参数。**
 
-**注意：**
+**2、注意：**
 
-**当搜索到达指定的搜索区域末尾时，它会绕到该区域开头位置。 若要在发生此绕回时停止搜索，请保存第一个找到的单元格的地址，然后针对此保存的地址测试每个连续找到的单元格地址。**
+**2.1、当搜索到达指定的搜索区域末尾时，它会绕到该区域开头位置。 若要在发生此绕回时停止搜索，请保存第一个找到的单元格的地址，然后针对此保存的地址测试每个连续找到的单元格地址。**
 
 ```vb
 Public Sub Button12_Click()
@@ -328,7 +330,19 @@ Public Sub Button12_Click()
 End Sub
 ```
 
-例子：
+**2.2、如果没指定 `After` 参数，则搜索从区域的左上角单元格“后面”开始找。不会先检查左上角那个 cell 本身**
+
+如果要检查左上角单元格，必须指定 `After` 参数为区域的最后一个单元格。
+
+```vb
+Sub FindValue(Sheet)
+    With Sheet
+        Set FindCell = .UsedRange.Find(What:="200", LookIn:=xlValues, LookAt:=xlPart, After:=.UsedRange.Cells(.UsedRange.Cells.Count))
+    End With
+End Sub
+```
+
+**3、例子：**
 
 ```vb
 '此示例在第一个工作表的单元格区域 A1:A500 中查找包含值 2 的所有单元格，并将整个单元格的值更改为 5。 也就是说，值 1234 和 99299 均包含2，并且单元格的值将变为 5。
@@ -395,12 +409,12 @@ Worksheets("Sheet1").Range("A1:D4").Copy _
 
 参数：
 
-|名称 |必需/可选| 数据类型 |说明|
+|名称|必需/可选|数据类型|说明|
 |--|--|--|--|
-|Paste |可选| `XlPasteType` |要粘贴的区域部分，例如 xlPasteAll 或 xlPasteValues。|
-|Operation |可选| `XlPasteSpecialOperation`| 粘贴操作，例如 xlPasteSpecialOperationAdd。|
-|SkipBlanks |可选| Variant |如果为 True，则不将剪贴板上区域中的空白单元格粘贴到目标区域中。 默认值为 False。|
-|Transpose |可选 |Variant| 如果为 True ，则表示在粘贴区域时转置行和列。 默认值为 False。|
+|Paste|可选|`XlPasteType`|要粘贴的区域部分，例如 xlPasteAll 或 xlPasteValues。|
+|Operation|可选|`XlPasteSpecialOperation`|粘贴操作，例如 xlPasteSpecialOperationAdd。|
+|SkipBlanks|可选|Variant|如果为 True，则不将剪贴板上区域中的空白单元格粘贴到目标区域中。 默认值为 False。|
+|Transpose|可选|Variant|如果为 True ，则表示在粘贴区域时转置行和列。 默认值为 False。|
 
 例子：
 

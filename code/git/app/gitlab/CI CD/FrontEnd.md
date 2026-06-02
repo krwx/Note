@@ -6,6 +6,7 @@
     - [Runner 没有缓存的问题](#runner-没有缓存的问题)
   - [构建项目](#构建项目)
   - [部署项目](#部署项目)
+    - [node modules 目录过长导致删除失败问题](#node-modules-目录过长导致删除失败问题)
   - [完整 yml 文件](#完整-yml-文件)
 
 下面以 vue3 项目为例，使用 pnpm 作为包管理工具。
@@ -202,6 +203,22 @@ deploy-job:
         }
         throw
       }
+```
+
+### node modules 目录过长导致删除失败问题
+
+`deploy-job` 会删除 `dist` 和 `node_modules` 目录，因为 runner 会清理上一个 job 留下的文件，对 Git 来说，`dist` 和 `node_modules` 是未跟踪目录，所以 runner 会删除它们。
+
+但是 `node_modules` 目录下的文件路径过长，超过了 Windows 的路径长度限制，会导致 Runner 在删除 `node_modules` 目录时失败。
+
+```txt
+warning: could not open directory 'node_modules/.pnpm/@wangeditor-next+upload-ima_cc5a5017a23cd16c86d4c04da7e86d70/node_modules/@wangeditor-next/upload-image-module/dist/basic-modules/src/modules/font-size-family/menu/': Filename too long
+```
+
+可以通过给 git 设置 `core.longpaths` 配置来解决这个问题：
+
+```bash
+git config --system core.longpaths true
 ```
 
 ## 完整 yml 文件

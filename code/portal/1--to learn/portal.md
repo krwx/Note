@@ -10,6 +10,9 @@
 
 ## other
 
+- vitepress
+- wangeditor-next
+
 ## css
 
 设置除了最后一个元素的其他元素的样式，用 `:not` 和 `:last-child` 伪类

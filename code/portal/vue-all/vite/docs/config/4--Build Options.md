@@ -1,9 +1,28 @@
 # 构建选项
 
 - [构建选项](#构建选项)
+  - [build.cssCodeSplit](#buildcsscodesplit)
   - [build.minify](#buildminify)
   - [build.rolldownOptions](#buildrolldownoptions)
   - [build.rollupOptions](#buildrollupoptions)
+  - [build.sourcemap](#buildsourcemap)
+
+## build.cssCodeSplit
+
+- 类型： `boolean`
+- 默认： `true`
+
+启用/禁用 CSS 代码拆分。当启用时，在异步 chunk 中导入的 CSS 会被保留为单独的 CSS chunk，并在对应异步 chunk 被加载时一并获取。
+
+如果禁用，整个项目中的所有 CSS 将被提取到一个 CSS 文件中。
+
+```js
+export default defineConfig({
+  build: {
+    cssCodeSplit: true,
+  }
+})
+```
 
 ## build.minify
 
@@ -71,6 +90,23 @@ export default defineConfig({
         },
       },
     }
+  }
+})
+```
+
+## build.sourcemap
+
+- 类型： `boolean` | `'inline'` | `'hidden'`
+- 默认： `false`
+
+构建后是否生成 source map 文件。
+
+如果为 `true`，将会创建一个独立的 source map 文件。如果为 `'inline'`，source map 将作为一个 data URI 附加在输出文件中。`'hidden'` 的工作原理与 `true` 相似，只是 bundle 文件中相应的注释将不被保留。
+
+```js
+export default defineConfig({
+  build: {
+    sourcemap: false,
   }
 })
 ```

@@ -1,5 +1,9 @@
 # FastAPI
 
+- [FastAPI](#fastapi)
+  - [取 query param 和 body](#取-query-param-和-body)
+  - [跨域设置](#跨域设置)
+
 ## 取 query param 和 body
 
 取 body：

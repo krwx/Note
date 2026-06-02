@@ -107,7 +107,7 @@ eventSource.sendEvent('eventName', { data: 'eventData' });
 
 `WebSockets` 是一种先进的技术。它可以在用户的浏览器和服务器之间打开交互式通信会话。使用此 API，您可以向服务器发送消息并接收事件驱动的响应，而无需通过轮询服务器的方式以获得响应。
 
-`WebSocket` 通过 `TCP`（传输控制协议）通信.
+WebSocket 使用的是**应用层的 `ws`（WebSocket）或 `wss`（WebSocket Secure）协议**，它在传输层则依赖于 **TCP（Transmission Control Protocol）** 协议
 
 ### 接口
 
@@ -182,3 +182,25 @@ eventSource.sendEvent('eventName', { data: 'eventData' });
 WebSocket 服务器可以用任何实现了Berkeley sockets的服务器端编程语言编写，如 C(++) 或 Python 甚至PHP (en-US)和服务器端 JavaScript。
 
 Java 通过 ServerSocket 类实现，该类位于 java.net 包中。
+
+python fastapi [实现](../../python-all/FastAPI/docs/高级用户指南/WebSockets.md)
+
+***
+
+服务器也可以主动推送，以 node.js 为例：
+
+```js
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 8080 });
+
+wss.on('connection', function connection(ws) {
+  // 连接成功，可以主动发送欢迎消息
+  ws.send('你好！客户端，欢迎连接。');
+
+  // 示例：每隔5秒向客户端推送当前股价
+  setInterval(() => {
+      const price = getCurrentStockPrice(); // 假设这是获取实时股价的函数
+      ws.send(`当前股价：${price}`);
+  }, 5000); // 每隔5秒推送一次
+});
+```

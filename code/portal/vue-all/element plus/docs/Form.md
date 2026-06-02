@@ -12,7 +12,7 @@
 
 1、**阻止默认提交行为**
 
-- `prevent` 修饰符会自动调用 `event.preventDefault()`
+- `.prevent` 修饰符会自动调用 `event.preventDefault()`
 - 防止表单的默认提交（页面刷新跳转）
 
 2、**触发自定义提交逻辑**

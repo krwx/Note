@@ -1,0 +1,20 @@
+{
+  "Pandas API Sections": {
+    "scope": "markdown",
+    "prefix": "mdapi",
+    "body": [
+      "**1、语法**",
+      "",
+      "$1",
+      "",
+      "**2、参数**",
+      "",
+      "$2",
+      "",
+      "**3、示例**",
+      "",
+      "$0"
+    ],
+    "description": "Insert the standard pandas API markdown section template"
+  }
+}

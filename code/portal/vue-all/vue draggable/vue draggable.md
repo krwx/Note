@@ -11,6 +11,8 @@
 
 `vuedraggablenext`（`vue-draggable-next`）是一个专为 **Vue 3** 生态打造的拖拽排序组件库。底层依赖于功能强大的 **`Sortable.js`** 库，旨在帮助开发者轻松实现流畅的拖拽交互体验。
 
+[官网](https://sortablejs.github.io/vue.draggable.next/#/table-example)
+
 **核心特性：**
 
 - **Vue 3 原生适配**：完美兼容 Vue 3，特别是 Composition API。内置响应式系统能实现数据层与视图层的自动同步，拖拽后数据模型会自动更新。

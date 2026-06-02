@@ -12,6 +12,7 @@
     - [DataFrame--查询](#dataframe--查询)
       - [访问行](#访问行)
       - [访问列](#访问列)
+      - [访问单个元素](#访问单个元素)
       - [DataFrame 的属性和方法](#dataframe-的属性和方法)
       - [过滤](#过滤)
     - [DataFrame--修改](#dataframe--修改)
@@ -311,7 +312,7 @@ df = pd.DataFrame({'Name': s1, 'Age': s2, 'City': s3})
 
 #### 访问行
 
-使用 `loc` 属性返回指定行的数据，如果没有设置索引，第一行索引为 0，第二行索引为 1，以此类推:
+使用 `loc` 属性返回**指定行**的数据，如果没有设置索引，第一行索引为 0，第二行索引为 1，以此类推:
 
 注意：返回结果其实就是一个 `Pandas Series` 数据。
 
@@ -383,6 +384,30 @@ Name: day2, dtype: int64
 """
 ```
 
+遍历行数据：
+
+```py
+data = {
+  "calories": [420, 380, 390],
+  "duration": [50, 40, 45]
+}
+df = pd.DataFrame(data, index = ["day1", "day2", "day3"])
+for index, row in df.iterrows():
+    print(index, row['calories'], row['duration'])
+"""
+output:
+day1 420 50
+day2 380 40
+day3 390 45
+"""
+```
+
+获取最后两行数据：
+
+```py
+df.tail(2)
+```
+
 #### 访问列
 
 ```py
@@ -390,18 +415,27 @@ Name: day2, dtype: int64
 print(df['Column1'])
 print(df.Column1)
 
-# 访问多行
-print(df[['Name', 'Age']])  # 提取多列
+# 访问多列
+print(df[['Name', 'Age']])
    
 # 通过 .loc[] 访问
 print(df.loc[:, 'Column1'])
 
 # 通过 .iloc[] 访问
 print(df.iloc[:, 0])  # 假设 'Column1' 是第一列
+```
 
-# 访问单个元素
+#### 访问单个元素
+
+```py
+# 访问第一行且列为 'Name' 的元素
 print(df['Name'][0])
 print(df.loc[0, 'Name'])
+print(df.at[0, 'Name'])
+
+# 访问第一行第二列的元素
+print(df.iloc[0, 1])
+print(df.iat[0, 1])
 ```
 
 #### DataFrame 的属性和方法
@@ -439,7 +473,19 @@ filter_df = df[df['Column1'] > 2]
 filter_df = df[df['Column1'].isin([1, 2, 3])]
 ```
 
+使用 `.str.contains()`:
+
+```py
+# 过滤出 Column1 列包含特定字符串的行
+filter_df = df[df['Column1'].str.contains('substring')]
+
+# 使用正则表达式
+filter_df = df[df['Column1'].str.contains(r'^pattern')]
+```
+
 ### DataFrame--修改
+
+操作列数据：
 
 ```py
 # 修改列数据：直接对列进行赋值。
@@ -456,17 +502,7 @@ df['NewColumn'] = [100, 200, 300]
 df.loc[3] = [13, 14, 15, 16]
 ```
 
-`concat()` 方法用于合并两个或多个 `DataFrame`，当你想要添加一行到另一个 `DataFrame` 时，可以将新行作为一个新的 `DataFrame`，然后使用 `concat()`：
-
-```py
-# 使用concat添加新行
-new_row = pd.DataFrame([[4, 7]], columns=['A', 'B'])  # 创建一个只包含新行的DataFrame
-df = pd.concat([df, new_row], ignore_index=True)  # 将新行添加到原始DataFrame
-
-print(df)
-```
-
-**修改某一列特定几行元素的值**：
+修改某一列特定几行元素的值：
 
 ```py
 data = {
@@ -492,11 +528,22 @@ print(df)
 
 合并：使用 `concat` 或 `merge` 方法。
 
-```py
-# 纵向合并
-pd.concat([df1, df2], ignore_index=True)
+**1、concat**
 
-# 横向合并
+`concat()` 方法用于合并两个或多个 `DataFrame`，当你想要添加一行到另一个 `DataFrame` 时，可以将新行作为一个新的 `DataFrame`，然后使用 `concat()`：
+
+```py
+# 使用concat添加新行
+new_row = pd.DataFrame([[4, 7]], columns=['A', 'B'])  # 创建一个只包含新行的DataFrame
+df = pd.concat([df, new_row], ignore_index=True)  # 将新行添加到原始DataFrame
+
+print(df)
+```
+
+**2、merge**
+
+```py
+# 横向合并。沿着列的方向合并两个 DataFrame，默认是 axis=1。
 pd.merge(df1, df2, on='Column1')
 ```
 
@@ -514,6 +561,12 @@ df_dropped = df.drop('Column1', axis=1)
 df_dropped = df.drop(0)  # 删除索引为 0 的行
 ```
 
+删除重复行：使用 `drop_duplicates` 方法。
+
+```py
+df.drop_duplicates(inplace=True)  # 删除重复行，修改原 DataFrame
+```
+
 ## other
 
 使用条件筛选获取特定行和列的值：
@@ -529,9 +582,9 @@ df_dropped = df.drop(0)  # 删除索引为 0 的行
 
 ## Pandas Excel 文件操作
 
-|操作| 方法| 说明|
+|操作|方法|说明|
 |--|--|--|
-|读取 Excel 文件| pd.read_excel()| 读取 Excel 文件，返回 DataFrame|
-|将 DataFrame 写入 Excel|DataFrame.to_excel()| 将 DataFrame 写入 Excel 文件|
-|加载 Excel 文件| pd.ExcelFile()| 加载 Excel 文件并访问多个表单|
-|使用 ExcelWriter 写多个表单| pd.ExcelWriter()| 写入多个 DataFrame 到同一 Excel 文件的不同表单|
+|读取 Excel 文件|pd.read_excel()|读取 Excel 文件，返回 DataFrame|
+|将 DataFrame 写入 Excel|DataFrame.to_excel()|将 DataFrame 写入 Excel 文件|
+|加载 Excel 文件|pd.ExcelFile()|加载 Excel 文件并访问多个表单|
+|使用 ExcelWriter 写多个表单|pd.ExcelWriter()|写入多个 DataFrame 到同一 Excel 文件的不同表单|
