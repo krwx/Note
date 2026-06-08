@@ -25,3 +25,5 @@ SELECT Country, COUNT(CustomerID) AS [Number of Customers]
 FROM Customers
 GROUP BY Country;
 ```
+
+> 如果 CustomerID 这里没有使用聚合函数，SQL 会报错，因为非聚合列必须出现在 GROUP BY 子句中。

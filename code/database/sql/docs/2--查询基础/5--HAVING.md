@@ -2,7 +2,7 @@
 
 在 SQL 中增加 `HAVING` 子句原因是， `WHERE` 关键字无法与聚合函数一起使用。
 
-HAVING 子句可以让我们筛选分组后的各组数据。
+HAVING 子句可以让我们**筛选分组后的各组数据**。
 
 SQL HAVING 语法
 
@@ -23,12 +23,22 @@ HAVING condition;
 
 例子：
 
+1、列出每个国家的客户数量。只包括客户数超过 5 个的国家：
+
 ```sql
-SELECT Websites.name, Websites.url, SUM(access_log.count) AS nums FROM (access_log
-INNER JOIN Websites
-ON access_log.site_id=Websites.id)
-GROUP BY Websites.name
-HAVING SUM(access_log.count) > 200;
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5;
+```
+
+2、列出注册订单超过 10 个的员工：
+
+```sql
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM (Orders INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) > 10;
 ```
 
 ## `where` 和 `having` 的区别

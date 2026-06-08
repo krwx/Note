@@ -5,6 +5,7 @@
   - [Series.isin](#seriesisin)
   - [Series.notna](#seriesnotna)
   - [Series.str.contains](#seriesstrcontains)
+  - [Series.str.split](#seriesstrsplit)
   - [Series.to\_frame](#seriesto_frame)
   - [Series.to\_list](#seriesto_list)
 
@@ -156,9 +157,9 @@ dtype: bool
 
 - `pat`: `str`
   - 字符序列或正则表达式。
-- `case`: 布尔值，默认为 True
+- `case`: `bool`，默认为 `True`
   - 如果为 True，则区分大小写。
-- `flags`: int, 默认值 0 (无标志)
+- `flags`: `int`, 默认值 `0` (无标志)
   - 传递给 re 模块的标志，例如 re.IGNORECASE。
 - `na`: 标量，可选
   - 默认 `na=NaN`。如果值为 `NaN`，则结果返回 `NaN`。
@@ -240,6 +241,35 @@ dtype: bool
 2    house and parrot
 dtype: object
 ```
+
+## Series.str.split
+
+在给定分隔符/定界符周围分割字符串。
+
+**1、语法**
+
+`Series.str.split(pat=None, *, n=-1, expand=False, regex=None)`
+
+**2、参数**
+
+- `pat`: `str` 或已编译的正则表达式，可选
+  - 用于分割的字符串或正则表达式。如果未指定，则按空格分割。
+- `n`: `int`，默认为 `-1`（全部）
+  - 限制输出中的分割次数。 `None`、`0` 和 `-1` 将被解释为返回所有分割。
+  - 如果找到的分割数 > n，则仅进行前 n 次分割
+- `expand`: `bool`，默认为 `False`
+  - 将分割后的字符串扩展为独立的列。
+  - 如果为 `True`，则 `Series` 返回 `DataFrame`，`Index` 返回 `MultiIndex`，扩展维度。
+  - 如果为 `False`，则返回 `Series`/`Index`，包含字符串列表。
+- `regex`: `bool`，默认为 `None`
+  - 确定传入的 `pat` 是否为正则表达式。
+  - 如果为 `True`，则假设传入的模式是正则表达式。
+  - 如果为 `False`，则将模式视为文字字符串。
+  - 如果为 `None` 且 pat 的长度为 1，则将 pat 视为文字字符串。
+  - 如果为 `None` 且 pat 的长度不为 1，则将 pat 视为正则表达式。
+  - 如果 pat 是已编译的正则表达式，则不能设置为 `False`
+
+**3、示例**
 
 ## Series.to_frame
 
